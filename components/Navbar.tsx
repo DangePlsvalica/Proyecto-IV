@@ -14,7 +14,7 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navigation = [
-    { name: "Home", href: "/" },
+    { name: "Inicio", href: "/" },
     { name: "Dashboard", href: "/dashboard" },
   ];
 
@@ -87,7 +87,7 @@ const Navbar = () => {
               <>
                 <Link
                   href="/login"
-                  className="hidden lg:block lg:text-sm lg:font-semibold lg:leading-6 lg:text-gray-900"
+                  className="rounded-md bg-black px-3 py-2 border border-gray-500 border-1 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   Iniciar Sesion
                 </Link>
@@ -108,7 +108,7 @@ const Navbar = () => {
                   }}
                   className="hidden lg:block lg:text-sm lg:font-semibold lg:leading-6 lg:text-gray-900"
                 >
-                  Log out
+                  Cerrar sesion 
                 </button>
               </>
             )}
@@ -119,7 +119,7 @@ const Navbar = () => {
               className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
               onClick={() => setMobileMenuOpen(true)}
             >
-              <span className="sr-only">Open main menu</span>
+              <span className="sr-only">Abrir el menú principal</span>
               <FaBars className="h-6 w-6" aria-hidden="true" />
             </button>
           </div>
@@ -151,12 +151,18 @@ const Navbar = () => {
                   Log out
                 </button>
               ) : (
-                <Link
-                  href="/register"
-                  className="ml-auto rounded-md bg-black border border-1 border-gray-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Sign up
-                </Link>
+                <><Link
+                    href="/login"
+                    className="rounded-md bg-black px-3 py-2 border border-gray-500 border-1 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  >
+                    Iniciar Sesion
+                  </Link><Link
+                    href="/register"
+                    className="ml-auto rounded-md bg-black border border-1 border-gray-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  >
+                      Registrarse
+                    </Link></>
+                
               )}
 
               <button
@@ -164,7 +170,7 @@ const Navbar = () => {
                 className="-m-2.5 rounded-md p-2.5 text-gray-700"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <span className="sr-only">Close menu</span>
+                <span className="sr-only">Cerrar menu</span>
                 <FaXmark className="h-6 w-6" aria-hidden="true" />
               </button>
             </div>

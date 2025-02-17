@@ -28,20 +28,20 @@ const RegisterPage = () => {
     const confirmPassword = e.target[2].value;
 
     if (!isValidEmail(email)) {
-      setError("Email is invalid");
-      toast.error("Email is invalid");
+      setError("El correo es invalido");
+      toast.error("El correo es invalido");
       return;
     }
 
     if (!password || password.length < 8) {
-      setError("Password is invalid");
-      toast.error("Password is invalid");
+      setError("La contraseña es invalida");
+      toast.error("La contraseña es invalida");
       return;
     }
 
     if (confirmPassword !== password) {
-      setError("Passwords are not equal");
-      toast.error("Passwords are not equal")
+      setError("Las contraseñas no son iguales");
+      toast.error("Las contraseñas no son iguales")
       return;
     }
 
@@ -57,17 +57,17 @@ const RegisterPage = () => {
         }),
       });
       if (res.status === 400) {
-        toast.error("This email is already registered")
-        setError("The email already in use");
+        toast.error("Este correo electrónico ya está registrado")
+        setError("Este correo electrónico ya está en uso");
       }
       if (res.status === 200) {
         setError("");
-        toast.success("Registration successful");
+        toast.success("Registro exitoso");
         router.push("/login");
       }
     } catch (error) {
-      toast.error("Error, try again")
-      setError("Error, try again");
+      toast.error("Error, vuelve a intentarlo")
+      setError("Error, vuelve a intentarlo");
       console.log(error);
     }
   };

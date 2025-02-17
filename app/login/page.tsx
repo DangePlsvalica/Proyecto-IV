@@ -31,14 +31,14 @@ const NextLoginPage = () => {
     const password = e.target[1].value;
 
     if (!isValidEmail(email)) {
-      setError("Email is invalid");
-      toast.error("Email is invalid");
+      setError("El correo electrónico no es válido");
+      toast.error("El correo electrónico no es válido");
       return;
     }
 
     if (!password || password.length < 8) {
-      setError("Password is invalid");
-      toast.error("Password is invalid");
+      setError("La contraseña es invalida");
+      toast.error("La contraseña es invalida");
       return;
     }
 
@@ -49,12 +49,12 @@ const NextLoginPage = () => {
     });
 
     if (res?.error) {
-      setError("Invalid email or password");
-      toast.error("Invalid email or password");
+      setError("Contraseña o correo incorrecto");
+      toast.error("Contraseña o correo incorrecto");
       if (res?.url) router.replace("/dashboard");
     } else {
       setError("");
-      toast.success("Successful login");
+      toast.success("Inicio de sesión exitoso");
     }
   };
 
