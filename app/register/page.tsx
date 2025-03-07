@@ -60,7 +60,7 @@ const RegisterPage = () => {
         toast.error("Este correo electrónico ya está registrado")
         setError("Este correo electrónico ya está en uso");
       }
-      if (res.status === 200) {
+      if (res.status === 201) {
         setError("");
         toast.success("Registro exitoso");
         router.push("/login");
