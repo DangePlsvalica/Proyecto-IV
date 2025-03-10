@@ -8,6 +8,7 @@ import { Dialog } from "@headlessui/react";
 import { FaBars } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import Image from "next/image";
+import Divider from '../components/Divider';
 
 const Navbar = () => {
   const { data: session }: any = useSession();
@@ -15,60 +16,19 @@ const Navbar = () => {
 
   const navigation = [
     { name: "Inicio", href: "/" },
-    { name: "Dashboard", href: "/dashboard" },
+    { name: "Gestor de proyectos", href: "/gestor-de-proyectos" },
   ];
 
   return (
     <>
-      {/*
-    <div>
-      <ul className="flex justify-between m-10 item-center">
-        <div>
-          <Link href="/">
-            <li>Home</li>
-          </Link>
-        </div>
-        <div className="flex gap-10">
-          <Link href="/dashboard">
-            <li>Dashboard</li>
-          </Link>
-          {!session ? (
-            <>
-              <Link href="/login">
-                <li>Login</li>
-              </Link>
-              <Link href="/register">
-                <li>Register</li>
-              </Link>
-            </>
-          ) : (
-            <>
-              {session.user?.email}
-              <li>
-                <button
-                  onClick={() => {
-                    signOut();
-                  }}
-                  className="p-2 px-5 -mt-1 bg-blue-800 rounded-full"
-                >
-                  Logout
-                </button>
-              </li>
-            </>
-          )}
-        </div>
-      </ul>
-    </div>
-                */}
-
-      <header className="bg-white">
+      <header className="bg-sky-700">
         <nav
-          className="mx-auto flex max-w-7xl items-center justify-between gap-x-6 p-6 lg:px-8"
+          className="mx-auto flex w-full items-center justify-between gap-x-6 p-3 lg:px-8"
           aria-label="Global"
         >
           <div className="flex lg:flex-1">
             <Link href="/" className="-m-1.5 p-1.5">
-              <Image src="/logo 1.png" width={50} height={50} alt="star logo" />
+              <Image src="/logo 1.png" width={45} height={45} alt="star logo" />
             </Link>
           </div>
           <div className="hidden lg:flex lg:gap-x-12">
@@ -76,7 +36,7 @@ const Navbar = () => {
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-sm font-semibold leading-6 text-gray-900"
+                className="text-sm font-semibold leading-6 text-white"
               >
                 {item.name}
               </Link>
@@ -87,26 +47,26 @@ const Navbar = () => {
               <>
                 <Link
                   href="/login"
-                  className="rounded-md bg-black px-3 py-2 border border-gray-500 border-1 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  className="rounded-md bg-sky-950 px-3 py-2 border border-gray-500 border-1 text-sm font-semibold text-white shadow-sm hover:bg-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   Iniciar Sesion
                 </Link>
                 <Link
                   href="/register"
-                  className="rounded-md bg-black px-3 py-2 border border-gray-500 border-1 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  className="rounded-md bg-sky-950 px-3 py-2 border border-gray-500 border-1 text-sm font-semibold text-white shadow-sm hover:bg-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   Registrarse
                 </Link>
               </>
             ) : (
               <>
-                <span className="ml-10 text-sm">{session.user?.email}</span>
+                <span className="ml-10 text-sm text-white">{session.user?.email}</span>
 
                 <button
                   onClick={() => {
                     signOut();
                   }}
-                  className="hidden lg:block lg:text-sm lg:font-semibold lg:leading-6 lg:text-gray-900"
+                  className="hidden lg:block lg:text-sm lg:font-semibold lg:leading-6 lg:text-white"
                 >
                   Cerrar sesion 
                 </button>
@@ -192,6 +152,7 @@ const Navbar = () => {
           </Dialog.Panel>
         </Dialog>
       </header>
+      <Divider/>
     </>
   );
 };
