@@ -28,7 +28,7 @@ const Navbar = () => {
         >
           <div className="flex lg:flex-1">
             <Link href="/" className="-m-1.5 p-1.5">
-              <Image src="/logo 1.png" width={45} height={45} alt="star logo" />
+              <Image src="/inces.jpg" width={45} height={45} alt="star logo" className="rounded-3xl"/>
             </Link>
           </div>
           <div className="hidden lg:flex lg:gap-x-12">
