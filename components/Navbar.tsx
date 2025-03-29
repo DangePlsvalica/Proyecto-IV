@@ -17,6 +17,8 @@ const Navbar = () => {
   const navigation = [
     { name: "Inicio", href: "/" },
     { name: "Gestor de proyectos", href: "/gestor-de-proyectos" },
+    { name: "Consejos comunales", href: "/consejos-comunales" },
+    /* { name: "Comunas", href: "/comunas" }, */
   ];
 
   return (
