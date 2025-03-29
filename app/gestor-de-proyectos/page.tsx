@@ -1,10 +1,23 @@
-'use client'; // Importante si estás trabajando en un entorno Client Component
-
+'use client';
 import React, { useState } from "react";
 import Divider from "../../components/Divider";
 import { MdOutlineSearch } from "react-icons/md";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const GestorProyectos = () => {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  // Redirige al login si no hay sesión y la autenticación está cargada
+  if (status === "loading") {
+    return <p>Cargando...</p>; // Muestra un indicador de carga mientras se verifica la sesión
+  }
+
+  if (!session) {
+    router.push("/login"); // Redirige al login si no hay sesión
+    return null; // Asegura que la página no se renderice
+  }
   // Array con los datos de los proyectos
   const proyectosData = [
     {
