@@ -10,7 +10,6 @@ import toast from "react-hot-toast";
 const NextLoginPage = () => {
   const router = useRouter();
   const [error, setError] = useState("");
-  // const session = useSession();
   const { data: session, status: sessionStatus } = useSession();
 
   useEffect(() => {

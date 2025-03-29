@@ -34,12 +34,17 @@ export const authOptions: AuthOptions = {
           const user = await prisma.user.findUnique({
             where: { email: credentials.email },
           });
+          console.log("Usuario encontrado en la base de datos:", user);
 
           // Verificar si el usuario existe y tiene la contraseña cifrada
           if (!user || !user.hashedPassword) return null;
 
+          console.log("Contraseña ingresada:", credentials.password);
+          console.log("Contraseña almacenada (hash):", user.hashedPassword);
+
           // Comparar la contraseña ingresada con la almacenada en la base de datos
           const isValid = await bcrypt.compare(credentials.password, user.hashedPassword);
+          console.log("¿La contraseña es válida?:", isValid);
           
           // Si la contraseña es válida, devolver el usuario; si no, devolver null
           return isValid ? user : null;

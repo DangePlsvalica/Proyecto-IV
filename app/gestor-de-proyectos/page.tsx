@@ -1,12 +1,15 @@
 import React from "react";
 import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
 import Divider from '../../components/Divider';
 import { MdOutlineSearch } from "react-icons/md";
 
 const Dashboard = async () => {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
+  console.log("Estado de la sesión:", session);
   if (!session) {
+    // Redirige al usuario si no está autenticado
     redirect("/");
   }
   return (
