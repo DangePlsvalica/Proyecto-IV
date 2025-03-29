@@ -1,69 +1,64 @@
 'use client';
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import Divider from '../../components/Divider';
 import { MdOutlineSearch } from "react-icons/md";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
-const ConsejosComunales = () => {
-  // Array de datos
-  const consejosData = [
-    {
-      estado: "Yaracuy",
-      municipio: "Bruzual",
-      parroquia: "Campoelias",
-      cc: "11/03/2025",
-      rif: "2547189",
-      cuenta: "010254895265984",
-      fechaConstitucion: "10/03/2024",
-      fechaVencimiento: "11/03/2025",
-      vocero: "10/03/2025",
-      proyecto: "Este es un proyecto de agua",
-    },
-    {
-      estado: "Yaracuy",
-      municipio: "Bruzual",
-      parroquia: "Campoelias",
-      cc: "11/03/2025",
-      rif: "2547189",
-      cuenta: "010254895265984",
-      fechaConstitucion: "10/03/2025",
-      fechaVencimiento: "11/03/2025",
-      vocero: "10/03/2025",
-      proyecto: "Este es un proyecto de luz",
-    },
-    {
-      estado: "Yaracuy",
-      municipio: "Bruzual",
-      parroquia: "Campoelias",
-      cc: "11/03/2025",
-      rif: "2547189",
-      cuenta: "010254895265984",
-      fechaConstitucion: "10/03/2025",
-      fechaVencimiento: "11/03/2025",
-      vocero: "Maria",
-      proyecto: "Este es un proyecto de carretera",
-    },
-    {
-      estado: "Yaracuy",
-      municipio: "Bruzual",
-      parroquia: "Campoelias",
-      cc: "11/03/2025",
-      rif: "2547189",
-      cuenta: "010254895265984",
-      fechaConstitucion: "10/03/2025",
-      fechaVencimiento: "11/03/2025",
-      vocero: "Juan",
-      proyecto: "Este es un proyecto de casas",
-    },
-  ];
+// Define el tipo de los datos para ConsejoComunal
+interface ConsejoComunal {
+  id: string; // Asegúrate de que coincida con el esquema en la base de datos
+  estado: string;
+  municipio: string;
+  parroquia: string;
+  cc: string; // Nombre del Consejo Comunal
+  rif: string;
+  numeroCuenta: string;
+  fechaConstitucion: string; // Podría ser Date si quieres manejar objetos de fecha directamente
+  fechaVencimiento: string; // Podría ser Date si es necesario
+  vocero: string;
+  tlfVocero: string;
+  poblacionVotante: number; // Cantidad de población votante
+}
 
-  // Estado para el texto de búsqueda
-  const [searchTerm, setSearchTerm] = useState("");
+const ConsejosComunales: React.FC = () => {
+  const { data: session, status } = useSession();
+    const router = useRouter();
+  
+    // Redirige al login si no hay sesión y la autenticación está cargada
+    if (status === "loading") {
+      return <p>Cargando...</p>; // Muestra un indicador de carga mientras se verifica la sesión
+    }
+  
+    if (!session) {
+      router.push("/login"); // Redirige al login si no hay sesión
+      return null; // Asegura que la página no se renderice
+    }
+  // Estado para almacenar los datos de la base de datos
+  const [consejosData, setConsejosData] = useState<ConsejoComunal[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  // Hook para obtener los datos desde la API
+  useEffect(() => {
+    const fetchConsejos = async () => {
+      try {
+        const response = await fetch("/api/consejos");
+        const data: ConsejoComunal[] = await response.json();
+        console.log("Datos de consejos:", data);
+        setConsejosData(data); // Almacena los datos obtenidos
+      } catch (error) {
+        console.error("Error fetching consejos comunales:", error);
+      }
+    };
+    fetchConsejos();
+  }, []);
 
   // Filtra los datos según el término de búsqueda
   const filteredData = consejosData.filter((consejo) =>
     Object.values(consejo)
       .join(" ") // Combina todos los valores de un objeto en una cadena
-      .toLowerCase() // Convierte todo a minúsculas para una comparación más precisa
+      .toLowerCase() // Convierte todo a minúsculas para comparación insensible a mayúsculas
       .includes(searchTerm.toLowerCase()) // Compara con el término de búsqueda
   );
 
@@ -79,8 +74,8 @@ const ConsejosComunales = () => {
           <input
             type="text"
             placeholder="Buscar por nombre de proyecto"
-            value={searchTerm} // Vincula el estado con el valor del input
-            onChange={(e) => setSearchTerm(e.target.value)} // Actualiza el estado al escribir
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="w-[320px] h-[32px] px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400"
           />
           <button
@@ -104,22 +99,24 @@ const ConsejosComunales = () => {
               <th>FECHA DE CONSTITUCIÓN</th>
               <th>FECHA DE VENCIMIENTO</th>
               <th>VOCERO</th>
-              <th>PROYECTO</th>
+              <th>TELEFONO DEL VOCERO</th>
+              <th>POBLACION VOTANTE</th>
             </tr>
           </thead>
           <tbody className="text-[14px]">
-            {filteredData.map((consejo, index) => (
-              <tr key={index} className="border-b">
+            {filteredData.map((consejo) => (
+              <tr key={consejo.id} className="border-b">
                 <td>{consejo.estado}</td>
                 <td>{consejo.municipio}</td>
                 <td>{consejo.parroquia}</td>
                 <td>{consejo.cc}</td>
                 <td>{consejo.rif}</td>
-                <td>{consejo.cuenta}</td>
+                <td>{consejo.numeroCuenta}</td>
                 <td>{consejo.fechaConstitucion}</td>
                 <td>{consejo.fechaVencimiento}</td>
                 <td>{consejo.vocero}</td>
-                <td>{consejo.proyecto}</td>
+                <td>{consejo.tlfVocero}</td>
+                <td>{consejo.poblacionVotante}</td>
               </tr>
             ))}
           </tbody>
@@ -130,3 +127,4 @@ const ConsejosComunales = () => {
 };
 
 export default ConsejosComunales;
+
