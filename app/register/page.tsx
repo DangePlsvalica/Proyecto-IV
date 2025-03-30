@@ -11,21 +11,17 @@ const RegisterPage = () => {
   const router = useRouter();
   const { data: session, status: sessionStatus } = useSession();
 
-  useEffect(() => {
-    if (sessionStatus === "authenticated") {
-      router.replace("/dashboard");
-    }
-  }, [sessionStatus, router]);
-
   const isValidEmail = (email: string) => {
     const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
     return emailRegex.test(email);
   };
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     const email = e.target[0].value;
     const password = e.target[1].value;
     const confirmPassword = e.target[2].value;
+    const role = e.target[3].value; // Capturamos el rol seleccionado
 
     if (!isValidEmail(email)) {
       setError("El correo es invalido");
@@ -41,7 +37,7 @@ const RegisterPage = () => {
 
     if (confirmPassword !== password) {
       setError("Las contraseñas no son iguales");
-      toast.error("Las contraseñas no son iguales")
+      toast.error("Las contraseñas no son iguales");
       return;
     }
 
@@ -54,10 +50,11 @@ const RegisterPage = () => {
         body: JSON.stringify({
           email,
           password,
+          role, // Enviar el rol seleccionado a la API
         }),
       });
       if (res.status === 400) {
-        toast.error("Este correo electrónico ya está registrado")
+        toast.error("Este correo electrónico ya está registrado");
         setError("Este correo electrónico ya está en uso");
       }
       if (res.status === 201) {
@@ -66,7 +63,7 @@ const RegisterPage = () => {
         router.push("/login");
       }
     } catch (error) {
-      toast.error("Error, vuelve a intentarlo")
+      toast.error("Error, vuelve a intentarlo");
       setError("Error, vuelve a intentarlo");
       console.log(error);
     }
@@ -76,12 +73,11 @@ const RegisterPage = () => {
     return <h1>Cargando...</h1>;
   }
   return (
-    sessionStatus !== "authenticated" && (
       <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="flex justify-center flex-col items-center">
           <Image src="/inces.jpg" alt="star logo" width={60} height={60} />
           <h2 className="mt-6 text-center text-2xl leading-9 tracking-tight text-gray-900">
-            Regístrate 
+            Regístrate
           </h2>
         </div>
 
@@ -144,6 +140,27 @@ const RegisterPage = () => {
                   />
                 </div>
               </div>
+
+              <div>
+                <label
+                  htmlFor="role"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Rol
+                </label>
+                <div className="mt-2">
+                  <select
+                    id="role"
+                    name="role"
+                    required
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  >
+                    <option value="user">Usuario</option>
+                    <option value="Admin">Administrador</option>
+                  </select>
+                </div>
+              </div>
+
               <div>
                 <button
                   type="submit"
@@ -159,8 +176,8 @@ const RegisterPage = () => {
           </div>
         </div>
       </div>
-    )
   );
 };
 
 export default RegisterPage;
+

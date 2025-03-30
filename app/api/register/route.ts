@@ -5,13 +5,14 @@ const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
-    const { email, password } = await req.json();
+    const { email, password, role } = await req.json();
 
-    console.log("Email recibido:", email); // Log para depuración
-    console.log("Contraseña recibida:", password); // Log para depuración
+    console.log("Email recibido:", email);
+    console.log("Contraseña recibida:", password); 
+    console.log("Rol recibido:", role);
 
     // Verificar que todos los campos sean proporcionados
-    if (!email || !password ) {
+    if (!email || !password || !role ) {
       return new Response("Todos los campos son obligatorios", { status: 400 });
     }
 
@@ -40,6 +41,7 @@ export async function POST(req: Request) {
       data: {
         email,
         hashedPassword,
+        role,
       },
     });
 
