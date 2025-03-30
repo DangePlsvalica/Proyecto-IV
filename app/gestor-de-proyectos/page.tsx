@@ -18,6 +18,12 @@ const GestorProyectos = () => {
     router.push("/login"); // Redirige al login si no hay sesión
     return null; // Asegura que la página no se renderice
   }
+
+  // Redirige a "/" si el usuario no es "Admin"
+  if (session.user.role !== "Admin") {
+    router.push("/"); // Redirige al home si no es admin
+    return null; // Asegura que no se renderice la página
+  }
   // Array con los datos de los proyectos
   const proyectosData = [
     {

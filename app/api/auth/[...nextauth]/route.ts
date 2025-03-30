@@ -46,8 +46,15 @@ export const authOptions: AuthOptions = {
           const isValid = await bcrypt.compare(credentials.password, user.hashedPassword);
           console.log("¿La contraseña es válida?:", isValid);
           
-          // Si la contraseña es válida, devolver el usuario; si no, devolver null
-          return isValid ? user : null;
+          // Si la contraseña es válida, devolver el usuario con el role; si no, devolver null
+          if (isValid) {
+            return {
+              ...user,
+              role: user.role, // Incluye el rol en el objeto de usuario
+            };
+          } else {
+            return null;
+          }
         } catch (error) {
           console.error("Error durante la autenticación:", error);
           return null; // Retornar null en caso de error
@@ -55,6 +62,22 @@ export const authOptions: AuthOptions = {
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        console.log("Usuario en JWT Callback:", user); // Verifica que el `user` tiene el campo `role`
+        token.role = user.role; // Asigna el campo `role` al token
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      console.log("Token en Session Callback:", token); // Verifica el contenido del token
+      if (token?.role) {
+        session.user.role = token.role; // Asigna el campo `role` al objeto `session.user`
+      }
+      return session;
+    },
+  },
   session: {
     strategy: "jwt", // Usar JWT para la gestión de sesiones
   },
@@ -65,4 +88,3 @@ const handler = NextAuth(authOptions);
 
 // Exportar el handler para manejar GET y POST
 export { handler as GET, handler as POST };
-
