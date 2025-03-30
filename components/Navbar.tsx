@@ -21,6 +21,7 @@ const Navbar = () => {
     { name: "Inicio", href: "/" },
     session?.user?.role === "Admin" ? { name: "Gestor de proyectos", href: "/gestor-de-proyectos" } : null,
     { name: "Consejos comunales", href: "/consejos-comunales" },
+    { name: "Comunas", href: "/comunas" },
   ];
 
   return (

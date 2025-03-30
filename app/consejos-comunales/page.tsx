@@ -5,21 +5,23 @@ import Divider from '../../components/Divider';
 import { MdOutlineSearch } from "react-icons/md";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Table from '../../components/Table'
+import SearchForm from '../../components/SearchForm'
 
-// Define el tipo de los datos para ConsejoComunal
+
 interface ConsejoComunal {
-  id: string; // Asegúrate de que coincida con el esquema en la base de datos
+  id: string; 
   estado: string;
   municipio: string;
   parroquia: string;
   cc: string; // Nombre del Consejo Comunal
   rif: string;
   numeroCuenta: string;
-  fechaConstitucion: string; // Podría ser Date si quieres manejar objetos de fecha directamente
-  fechaVencimiento: string; // Podría ser Date si es necesario
+  fechaConstitucion: string; 
+  fechaVencimiento: string; 
   vocero: string;
   tlfVocero: string;
-  poblacionVotante: number; // Cantidad de población votante
+  poblacionVotante: number; 
 }
 
 const ConsejosComunales: React.FC = () => {
@@ -28,7 +30,7 @@ const ConsejosComunales: React.FC = () => {
   
     // Redirige al login si no hay sesión y la autenticación está cargada
     if (status === "loading") {
-      return <p>Cargando...</p>; // Muestra un indicador de carga mientras se verifica la sesión
+      return <p>Cargando...</p>;
     }
   
     if (!session) {
@@ -61,6 +63,27 @@ const ConsejosComunales: React.FC = () => {
       .toLowerCase() // Convierte todo a minúsculas para comparación insensible a mayúsculas
       .includes(searchTerm.toLowerCase()) // Compara con el término de búsqueda
   );
+  const headers = [
+    "Estado", "MUNICIPIO", "PARROQUIA", "CC", "RIF", 
+    "Nro DE CUENTA", "FECHA DE CONSTITUCIÓN", "FECHA DE VENCIMIENTO", 
+    "VOCERO",  "TELEFONO DEL VOCERO", "POBLACION VOTANTE" 
+  ];
+  // Función para renderizar cada fila
+  const renderRow = (consejo: ConsejoComunal, tdClassName: string) => (
+    <>
+      <td className={`pl-4 ${tdClassName}`}>{consejo.estado}</td>
+      <td className={`pl-2 ${tdClassName}`}>{consejo.municipio}</td>
+      <td className={`pl-2 ${tdClassName}`}>{consejo.parroquia}</td>
+      <td className={`pl-2 ${tdClassName}`}>{consejo.cc}</td>
+      <td className={`pl-2 ${tdClassName}`}>{consejo.rif}</td>
+      <td className={`pl-2 ${tdClassName}`}>{consejo.numeroCuenta}</td>
+      <td className={`pl-2 ${tdClassName}`}>{consejo.fechaConstitucion}</td>
+      <td className={`pl-2 ${tdClassName}`}>{consejo.fechaVencimiento}</td>
+      <td className={`pl-2 ${tdClassName}`}>{consejo.vocero}</td>
+      <td className={`pl-2 ${tdClassName}`}>{consejo.tlfVocero}</td>
+      <td className={`pl-2 ${tdClassName}`}>{consejo.poblacionVotante}</td>
+    </>
+  );
 
   return (
     <>
@@ -69,59 +92,15 @@ const ConsejosComunales: React.FC = () => {
       </div>
       <Divider />
       <div className="flex justify-between px-6 py-4">
-        <form className="flex items-center gap-3" onSubmit={(e) => e.preventDefault()}>
-          <MdOutlineSearch />
-          <input
-            type="text"
-            placeholder="Buscar por nombre de proyecto"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-[320px] h-[32px] px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400"
-          />
-          <button
-            type="submit"
-            className="border px-3 h-[32px] text-[15px] font-semibold bg-gray-200 text-black rounded-md hover:bg-gray-300 focus:outline-none"
-          >
-            Buscar
-          </button>
-        </form>
+      <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       </div>
-      <div className="px-6">
-        <table className="w-full">
-          <thead className="text-[14px] text-left border-b">
-            <tr>
-              <th>ESTADO</th>
-              <th>MUNICIPIO</th>
-              <th>PARROQUIA</th>
-              <th>CC</th>
-              <th>RIF</th>
-              <th>Nro DE CUENTA</th>
-              <th>FECHA DE CONSTITUCIÓN</th>
-              <th>FECHA DE VENCIMIENTO</th>
-              <th>VOCERO</th>
-              <th>TELEFONO DEL VOCERO</th>
-              <th>POBLACION VOTANTE</th>
-            </tr>
-          </thead>
-          <tbody className="text-[14px]">
-            {filteredData.map((consejo) => (
-              <tr key={consejo.id} className="border-b">
-                <td>{consejo.estado}</td>
-                <td>{consejo.municipio}</td>
-                <td>{consejo.parroquia}</td>
-                <td>{consejo.cc}</td>
-                <td>{consejo.rif}</td>
-                <td>{consejo.numeroCuenta}</td>
-                <td>{consejo.fechaConstitucion}</td>
-                <td>{consejo.fechaVencimiento}</td>
-                <td>{consejo.vocero}</td>
-                <td>{consejo.tlfVocero}</td>
-                <td>{consejo.poblacionVotante}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <Table 
+        headers={headers} 
+        data={filteredData} 
+        renderRow={renderRow} 
+        thClassName="text-center border-b border-sky-600"
+        tdClassName="text-left border-r border-sky-600"
+      />
     </>
   );
 };
