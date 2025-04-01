@@ -88,8 +88,7 @@ const authOptions: AuthOptions = {
   session: {
     strategy: "jwt", // Usar JWT para la gestión de sesiones
   },
-  secret:
-    "XVh338Vaqm0WH94AefkDCHAUgV8zyLBmJs0n9Rl8fV4=" /* process.env.NEXTAUTH_SECRET, */, // Clave secreta para firmar el JWT
+  secret: process.env.NEXTAUTH_SECRET, // Clave secreta para firmar el JWT
 };
 
 const handler = NextAuth(authOptions);
