@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,11 +13,11 @@ enum Role {
 }
 
 model User {
-  id             String  @id @default(uuid())
+  id             String    @id @default(uuid())
   name           String?
-  email          String  @unique
+  email          String    @unique
   emailVerified  DateTime?
-  role           Role    @default(user) // Enum con valores `user` y `Admin`
+  role           Role      @default(user) // Enum con valores `user` y `Admin`
   image          String?
   hashedPassword String?
   accounts       Account[]
@@ -50,41 +49,41 @@ model Session {
 }
 
 model ConsejoComunal {
-  id                String   @id @default(uuid())
-  estado            String   
-  municipio         String   
-  parroquia         String   
-  cc                String   
-  rif               String   @unique 
-  numeroCuenta      String   
-  fechaConstitucion String 
-  fechaVencimiento  String  
-  vocero            String  
-  tlfVocero         String  
-  poblacionVotante  Int      
+  id                String @id @default(uuid())
+  estado            String
+  municipio         String
+  parroquia         String
+  cc                String
+  rif               String @unique
+  numeroCuenta      String
+  fechaConstitucion String
+  fechaVencimiento  String
+  vocero            String
+  tlfVocero         String
+  poblacionVotante  Int
 }
 
 model Comuna {
-  id                              String   @id @default(uuid()) // Código único (Código)
-  codigo                          String   // Código de la comuna
-  numComisionPromotora            String      // N° comisión promotora
-  fechaComisionPromotora          String // FECHA DE COMISIÓN PROMOTORA
-  rif                             String   // RIF
-  cuentaBancaria                  String   // CUENTA BANCARIA
-  fechaRegistro                   String // FECHA DE REGISTRO DE LA COMUNA
-  nombre                          String   // NOMBRE DE LA COMUNA
-  direccion                       String   // DIRECCIÓN DE LA COMUNA
-  linderoNorte                    String   // LINDERO NORTE
-  linderoSur                      String   // LINDERO SUR
-  linderoEste                     String   // LINDERO ESTE
-  linderoOeste                    String   // LINDERO OESTE
-  consejoComunal                  Json    // CONSEJO COMUNAL QUE INTEGRA LA COMUNA
-  fechaUltimaEleccion             String // FECHA DE ÚLTIMA ELECCIÓN
-  municipio                       String   // MUNICIPIO
-  parroquia                       String   // PARROQUIA
-  nombreVocero                    String   // NOMBRE Y APELLIDOS DEL VOCERO
-  ciVocero                        String   // C.I del vocero
-  telefono                        String   // TELEFONO
-  cantidadConsejosComunales       Int      // CANTIDAD DE C.C QUE INTEGRA LA COMUNA
-  poblacionVotante                Int      // POBLACIÓN VOTANTE
+  id                        String @id @default(uuid()) // Código único (Código)
+  codigo                    String // Código de la comuna
+  numComisionPromotora      String // N° comisión promotora
+  fechaComisionPromotora    String // FECHA DE COMISIÓN PROMOTORA
+  rif                       String // RIF
+  cuentaBancaria            String // CUENTA BANCARIA
+  fechaRegistro             String // FECHA DE REGISTRO DE LA COMUNA
+  nombre                    String // NOMBRE DE LA COMUNA
+  direccion                 String // DIRECCIÓN DE LA COMUNA
+  linderoNorte              String // LINDERO NORTE
+  linderoSur                String // LINDERO SUR
+  linderoEste               String // LINDERO ESTE
+  linderoOeste              String // LINDERO OESTE
+  consejoComunal            Json // CONSEJO COMUNAL QUE INTEGRA LA COMUNA
+  fechaUltimaEleccion       String // FECHA DE ÚLTIMA ELECCIÓN
+  municipio                 String // MUNICIPIO
+  parroquia                 String // PARROQUIA
+  nombreVocero              String // NOMBRE Y APELLIDOS DEL VOCERO
+  ciVocero                  String // C.I del vocero
+  telefono                  String // TELEFONO
+  cantidadConsejosComunales Int // CANTIDAD DE C.C QUE INTEGRA LA COMUNA
+  poblacionVotante          Int // POBLACIÓN VOTANTE
 }
