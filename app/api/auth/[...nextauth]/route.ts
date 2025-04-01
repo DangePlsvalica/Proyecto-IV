@@ -17,19 +17,23 @@ if (process.env.NODE_ENV === "production") {
   prisma = (global as any).prisma;
 }
 
-export const authOptions: AuthOptions = {
+const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma), // Usamos PrismaAdapter para NextAuth
   providers: [
     CredentialsProvider({
       name: "credentials",
       credentials: {
-        email: { label: "Email", type: "email", placeholder: "correo@example.com" },
+        email: {
+          label: "Email",
+          type: "email",
+          placeholder: "correo@example.com",
+        },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         try {
           if (!credentials?.email || !credentials?.password) return null;
-          
+
           // Buscar el usuario en la base de datos
           const user = await prisma.user.findUnique({
             where: { email: credentials.email },
@@ -43,9 +47,12 @@ export const authOptions: AuthOptions = {
           console.log("Contraseña almacenada (hash):", user.hashedPassword);
 
           // Comparar la contraseña ingresada con la almacenada en la base de datos
-          const isValid = await bcrypt.compare(credentials.password, user.hashedPassword);
+          const isValid = await bcrypt.compare(
+            credentials.password,
+            user.hashedPassword
+          );
           console.log("¿La contraseña es válida?:", isValid);
-          
+
           // Si la contraseña es válida, devolver el usuario con el role; si no, devolver null
           if (isValid) {
             return {
