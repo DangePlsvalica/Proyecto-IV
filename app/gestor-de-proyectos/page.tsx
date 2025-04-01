@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import React, { useState } from "react";
 import Divider from "../../components/Divider";
 import { MdOutlineSearch } from "react-icons/md";
@@ -9,21 +9,6 @@ const GestorProyectos = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  // Redirige al login si no hay sesión y la autenticación está cargada
-  if (status === "loading") {
-    return <p>Cargando...</p>; // Muestra un indicador de carga mientras se verifica la sesión
-  }
-
-  if (!session) {
-    router.push("/login"); // Redirige al login si no hay sesión
-    return null; // Asegura que la página no se renderice
-  }
-
-  // Redirige a "/" si el usuario no es "Admin"
-  if (session.user.role !== "Admin") {
-    router.push("/"); // Redirige al home si no es admin
-    return null; // Asegura que no se renderice la página
-  }
   // Array con los datos de los proyectos
   const proyectosData = [
     {
@@ -64,13 +49,28 @@ const GestorProyectos = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Filtrar los proyectos según el término de búsqueda
-  const filteredProyectos = proyectosData.filter((proyecto) =>
-    Object.values(proyecto)
-      .join(" ") // Convierte los valores del objeto en una sola cadena
-      .toLowerCase() // Convierte todo a minúsculas para búsqueda insensible a mayúsculas
-      .includes(searchTerm.toLowerCase()) // Compara con el término de búsqueda
+  const filteredProyectos = proyectosData.filter(
+    (proyecto) =>
+      Object.values(proyecto)
+        .join(" ") // Convierte los valores del objeto en una sola cadena
+        .toLowerCase() // Convierte todo a minúsculas para búsqueda insensible a mayúsculas
+        .includes(searchTerm.toLowerCase()) // Compara con el término de búsqueda
   );
+  // Redirige al login si no hay sesión y la autenticación está cargada
+  if (status === "loading") {
+    return <p>Cargando...</p>; // Muestra un indicador de carga mientras se verifica la sesión
+  }
 
+  if (!session) {
+    router.push("/login"); // Redirige al login si no hay sesión
+    return null; // Asegura que la página no se renderice
+  }
+
+  // Redirige a "/" si el usuario no es "Admin"
+  if (session.user.role !== "Admin") {
+    router.push("/"); // Redirige al home si no es admin
+    return null; // Asegura que no se renderice la página
+  }
   return (
     <>
       <div className="flex flex-col items-start justify-between pl-6 py-3">
@@ -78,7 +78,10 @@ const GestorProyectos = () => {
       </div>
       <Divider />
       <div className="flex justify-between px-6 py-4">
-        <form className="flex items-center gap-3" onSubmit={(e) => e.preventDefault()}>
+        <form
+          className="flex items-center gap-3"
+          onSubmit={(e) => e.preventDefault()}
+        >
           <MdOutlineSearch />
           <input
             type="text"
@@ -132,4 +135,3 @@ const GestorProyectos = () => {
 };
 
 export default GestorProyectos;
-
