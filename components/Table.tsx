@@ -16,21 +16,21 @@ const Table: React.FC<TableProps> = ({
   tdClassName = ''
 }) => {
   return (
-    <div className="max-w-[100%] px-16">
+    <div className="max-w-[100%] px-6">
       <div className="overflow-x-auto rounded-2xl">
-        <table className="w-full table-auto rounded-2xl bg-sky-200" >
-          <thead className={`text-[14px] text-center border-b border-sky-600 ${thClassName}`}>
+        <table className="w-full table-auto rounded-2xl border-separate border-spacing-0 border border-sky-950" >
+          <thead className={`text-[14px] text-center border-b border-white ${thClassName}`}>
             <tr>
               {headers.map((header, index) => (
-                <th key={index} className={`px-4 border-r min-w-[175px] border-sky-600 ${thClassName}`}>
+                <th key={index} className={`leading-snug px-4 py-1 text-white border-r min-w-[175px] border-b bg-sky-950 border-sky-950 ${thClassName}`}>
                   {header}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="text-[14px]">
+          <tbody className="text-[14px] text-center">
             {data.map((item, index) => (
-              <tr key={index} className="border-b border-sky-600">
+              <tr key={index}>
                 {renderRow(item, tdClassName)}
               </tr>
             ))}

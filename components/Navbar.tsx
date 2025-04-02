@@ -17,8 +17,8 @@ const Navbar = () => {
     { name: "Inicio", href: "/" },
     ...(session?.user?.role === "Admin"
       ? [
-          { name: "Gestor de proyectos", href: "/gestor-de-proyectos" },
           { name: "Administrar usuarios", href: "/admin-user" },
+          { name: "Gestor de proyectos", href: "/gestor-de-proyectos" },
         ]
       : []), // Agrega elementos condicionalmente si el usuario es Admin
     { name: "Consejos comunales", href: "/consejos-comunales" },
@@ -26,146 +26,134 @@ const Navbar = () => {
   ];
 
   return (
-    <>
-      <header className="bg-sky-700">
-        <nav
-          className="mx-auto flex w-full items-center justify-between gap-x-6 p-3 lg:px-8"
-          aria-label="Global"
-        >
-          {/* Logo */}
-          <div className="flex lg:flex-1">
+    <header className="bg-sky-950 fixed top-0 left-0 w-[250px] h-full p-3 z-50">
+      <nav className="items-center py-3" aria-label="Global">
+        {/* Logo */}
+        <div className="flex gap-2 items-center">
+          <Link href="/" className="-m-1.5 p-1.5">
+            <Image
+              src="/inces.jpg"
+              width={45}
+              height={45}
+              alt="star logo"
+              className="rounded-3xl"
+            />
+          </Link>
+          <span className="text-xs text-white">{session?.user?.email}</span>
+        </div>
+
+        {/* Navegación en desktop */}
+        <div className="flex flex-col gap-6 px-3 py-6">
+          {navigation.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className="text-base font-semibold leading-6 text-white hover:text-gray-300 transition duration-150 ease-in-out"
+            >
+              {item.name}
+            </Link>
+          ))}
+        </div>
+
+        {/* Sesión y botones */}
+        <div className="flex flex-col flex-1 items-center justify-end gap-x-6">
+          {!session ? (
+            <Link
+              href="/login"
+              className="rounded-md bg-sky-950 px-3 py-2 border border-gray-500 text-sm font-semibold text-white shadow-sm hover:bg-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              Iniciar Sesión
+            </Link>
+          ) : (
+            <>
+              
+              <button
+                onClick={() => signOut()}
+                className="rounded-md bg-sky-950 px-3 py-2 border border-gray-500 text-sm font-semibold text-white shadow-sm hover:bg-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                Cerrar sesión
+              </button>
+            </>
+          )}
+        </div>
+
+        {/* Menú móvil */}
+        <div className="flex lg:hidden">
+          <button
+            type="button"
+            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+            onClick={() => setMobileMenuOpen(true)}
+          >
+            <span className="sr-only">Abrir el menú principal</span>
+            <FaBars className="h-6 w-6" aria-hidden="true" />
+          </button>
+        </div>
+      </nav>
+
+      {/* Menú móvil desplegable */}
+      <Dialog
+        as="div"
+        className="lg:hidden"
+        open={mobileMenuOpen}
+        onClose={setMobileMenuOpen}
+      >
+        <div className="fixed inset-0 z-10" />
+        <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+          <div className="flex items-center gap-x-6">
             <Link href="/" className="-m-1.5 p-1.5">
               <Image
-                src="/inces.jpg"
-                width={45}
-                height={45}
-                alt="star logo"
-                className="rounded-3xl"
+                width={50}
+                height={50}
+                src="/logo 1.png"
+                alt="star logo mobile"
               />
             </Link>
-          </div>
-
-          {/* Navegación en desktop */}
-          <div className="hidden lg:flex lg:gap-x-12">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-sm font-semibold leading-6 text-white hover:text-gray-300 transition duration-150 ease-in-out"
+            {session ? (
+              <button
+                onClick={() => signOut()}
+                className="ml-auto rounded-md bg-black border border-gray-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                {item.name}
-              </Link>
-            ))}
-          </div>
-
-          {/* Sesión y botones */}
-          <div className="flex flex-1 items-center justify-end gap-x-6">
-            {!session ? (
+                Cerrar sesión
+              </button>
+            ) : (
               <Link
                 href="/login"
-                className="rounded-md bg-sky-950 px-3 py-2 border border-gray-500 text-sm font-semibold text-white shadow-sm hover:bg-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="rounded-md bg-black px-3 py-2 border border-gray-500 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Iniciar Sesión
               </Link>
-            ) : (
-              <>
-                <span className="text-sm text-white">{session.user?.email}</span>
-                {session.user?.role === "Admin" && (
-                  <Link
-                    href="/register"
-                    className="rounded-md bg-sky-950 px-3 py-2 border border-gray-500 text-sm font-semibold text-white shadow-sm hover:bg-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                  >
-                    Registrar Usuario
-                  </Link>
-                )}
-                <button
-                  onClick={() => signOut()}
-                  className="rounded-md bg-sky-950 px-3 py-2 border border-gray-500 text-sm font-semibold text-white shadow-sm hover:bg-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Cerrar sesión
-                </button>
-              </>
             )}
-          </div>
-
-          {/* Menú móvil */}
-          <div className="flex lg:hidden">
             <button
               type="button"
-              className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
-              onClick={() => setMobileMenuOpen(true)}
+              className="-m-2.5 rounded-md p-2.5 text-gray-700"
+              onClick={() => setMobileMenuOpen(false)}
             >
-              <span className="sr-only">Abrir el menú principal</span>
-              <FaBars className="h-6 w-6" aria-hidden="true" />
+              <span className="sr-only">Cerrar menú</span>
+              <FaXmark className="h-6 w-6" aria-hidden="true" />
             </button>
           </div>
-        </nav>
-
-        {/* Menú móvil desplegable */}
-        <Dialog
-          as="div"
-          className="lg:hidden"
-          open={mobileMenuOpen}
-          onClose={setMobileMenuOpen}
-        >
-          <div className="fixed inset-0 z-10" />
-          <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-            <div className="flex items-center gap-x-6">
-              <Link href="/" className="-m-1.5 p-1.5">
-                <Image
-                  width={50}
-                  height={50}
-                  src="/logo 1.png"
-                  alt="star logo mobile"
-                />
-              </Link>
-              {session ? (
-                <button
-                  onClick={() => signOut()}
-                  className="ml-auto rounded-md bg-black border border-gray-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Cerrar sesión
-                </button>
-              ) : (
-                <Link
-                  href="/login"
-                  className="rounded-md bg-black px-3 py-2 border border-gray-500 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Iniciar Sesión
-                </Link>
-              )}
-              <button
-                type="button"
-                className="-m-2.5 rounded-md p-2.5 text-gray-700"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <span className="sr-only">Cerrar menú</span>
-                <FaXmark className="h-6 w-6" aria-hidden="true" />
-              </button>
-            </div>
-            <div className="mt-6 flow-root">
-              <div className="-my-6 divide-y divide-gray-500/10">
-                <div className="space-y-2 py-6">
-                  {navigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
-                </div>
+          <div className="mt-6 flow-root">
+            <div className="-my-6 divide-y divide-gray-500/10">
+              <div className="space-y-2 py-6">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  >
+                    {item.name}
+                  </Link>
+                ))}
               </div>
             </div>
-          </Dialog.Panel>
-        </Dialog>
-      </header>
-      <Divider />
-    </>
+          </div>
+        </Dialog.Panel>
+      </Dialog>
+    </header>
   );
 };
 
 export default Navbar;
+
 
 

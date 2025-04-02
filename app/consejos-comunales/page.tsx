@@ -67,23 +67,24 @@ const ConsejosComunales: React.FC = () => {
     "TELEFONO DEL VOCERO",
     "POBLACION VOTANTE",
   ];
+  const tdClassName = "border-b border-r border-sky-950";
   // Función para renderizar cada fila
-  const renderRow = (consejo: ConsejoComunal, tdClassName: string) => (
+  const renderRow = (consejo: ConsejoComunal) => (
     <>
-      <td className={`pl-4 ${tdClassName}`}>{consejo.estado}</td>
-      <td className={`pl-2 ${tdClassName}`}>{consejo.municipio}</td>
-      <td className={`pl-2 ${tdClassName}`}>{consejo.parroquia}</td>
-      <td className={`pl-2 ${tdClassName}`}>{consejo.cc}</td>
-      <td className={`pl-2 ${tdClassName}`}>{consejo.rif}</td>
-      <td className={`pl-2 ${tdClassName}`}>{consejo.numeroCuenta}</td>
-      <td className={`pl-2 ${tdClassName}`}>{consejo.fechaConstitucion}</td>
-      <td className={`pl-2 ${tdClassName}`}>{consejo.fechaVencimiento}</td>
-      <td className={`pl-2 ${tdClassName}`}>{consejo.vocero}</td>
-      <td className={`pl-2 ${tdClassName}`}>{consejo.tlfVocero}</td>
-      <td className={`pl-2 ${tdClassName}`}>{consejo.poblacionVotante}</td>
+      <td className={tdClassName}>{consejo.estado}</td>
+      <td className={tdClassName}>{consejo.municipio}</td>
+      <td className={tdClassName}>{consejo.parroquia}</td>
+      <td className={tdClassName}>{consejo.cc}</td>
+      <td className={tdClassName}>{consejo.rif}</td>
+      <td className={tdClassName}>{consejo.numeroCuenta}</td>
+      <td className={tdClassName}>{consejo.fechaConstitucion}</td>
+      <td className={tdClassName}>{consejo.fechaVencimiento}</td>
+      <td className={tdClassName}>{consejo.vocero}</td>
+      <td className={tdClassName}>{consejo.tlfVocero}</td>
+      <td className={tdClassName}>{consejo.poblacionVotante}</td>
     </>
   );
-  // Redirige al login si no hay sesión y la autenticación está cargada
+/*   // Redirige al login si no hay sesión y la autenticación está cargada
   if (status === "loading") {
     return <p>Cargando...</p>;
   }
@@ -91,7 +92,7 @@ const ConsejosComunales: React.FC = () => {
   if (!session) {
     router.push("/login"); // Redirige al login si no hay sesión
     return null; // Asegura que la página no se renderice
-  }
+  } */
 
   return (
     <>

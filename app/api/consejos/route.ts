@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 export async function GET() {
   try {
     const consejos = await prisma.consejoComunal.findMany();
-    console.log('Datos de la base de datos:', consejos); // Verifica qué devuelve Prisma
     return NextResponse.json(consejos);
   } catch (error: unknown) {
     if (error instanceof Error) {

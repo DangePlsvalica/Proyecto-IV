@@ -89,9 +89,9 @@ const ConsejosComunales: React.FC = () => {
     "Cantidad de C.C que integra la Comuna",
     "Población Votante",
   ];
-
+const tdClassName = "border-b border-r border-sky-950";
   // Renderiza cada fila
-  const renderRow = (comuna: Comuna, tdClassName: string) => {
+  const renderRow = (comuna: Comuna) => {
     let consejosArray: string[] = []; // Inicializa como array vacío
 
     try {
@@ -103,21 +103,21 @@ const ConsejosComunales: React.FC = () => {
 
     return (
       <>
-        <td className={`pl-4 ${tdClassName}`}>{comuna.codigo}</td>
-        <td className={`pl-2 ${tdClassName}`}>{comuna.numComisionPromotora}</td>
-        <td className={`pl-2 ${tdClassName}`}>
+        <td className={tdClassName}>{comuna.codigo}</td>
+        <td className={tdClassName}>{comuna.numComisionPromotora}</td>
+        <td className={tdClassName}>
           {comuna.fechaComisionPromotora}
         </td>
-        <td className={`pl-2 ${tdClassName}`}>{comuna.rif}</td>
-        <td className={`pl-2 ${tdClassName}`}>{comuna.cuentaBancaria}</td>
-        <td className={`pl-2 ${tdClassName}`}>{comuna.fechaRegistro}</td>
-        <td className={`pl-2 ${tdClassName}`}>{comuna.nombre}</td>
-        <td className={`pl-2 ${tdClassName}`}>{comuna.direccion}</td>
-        <td className={`pl-2 ${tdClassName}`}>{comuna.linderoNorte}</td>
-        <td className={`pl-2 ${tdClassName}`}>{comuna.linderoSur}</td>
-        <td className={`pl-2 ${tdClassName}`}>{comuna.linderoEste}</td>
-        <td className={`pl-2 ${tdClassName}`}>{comuna.linderoOeste}</td>
-        <td className={`pl-2 ${tdClassName}`}>
+        <td className={tdClassName}>{comuna.rif}</td>
+        <td className={tdClassName}>{comuna.cuentaBancaria}</td>
+        <td className={tdClassName}>{comuna.fechaRegistro}</td>
+        <td className={tdClassName}>{comuna.nombre}</td>
+        <td className={tdClassName}>{comuna.direccion}</td>
+        <td className={tdClassName}>{comuna.linderoNorte}</td>
+        <td className={tdClassName}>{comuna.linderoSur}</td>
+        <td className={tdClassName}>{comuna.linderoEste}</td>
+        <td className={tdClassName}>{comuna.linderoOeste}</td>
+        <td className={tdClassName}>
           {/* Renderiza cada consejo comunal como lista */}
           <ol className="list-decimal list-inside">
             {consejosArray.map((consejo, index) => (
@@ -125,16 +125,16 @@ const ConsejosComunales: React.FC = () => {
             ))}
           </ol>
         </td>
-        <td className={`pl-2 ${tdClassName}`}>{comuna.fechaUltimaEleccion}</td>
-        <td className={`pl-2 ${tdClassName}`}>{comuna.municipio}</td>
-        <td className={`pl-2 ${tdClassName}`}>{comuna.parroquia}</td>
-        <td className={`pl-2 ${tdClassName}`}>{comuna.nombreVocero}</td>
-        <td className={`pl-2 ${tdClassName}`}>{comuna.ciVocero}</td>
-        <td className={`pl-2 ${tdClassName}`}>{comuna.telefono}</td>
-        <td className={`pl-2 ${tdClassName}`}>
+        <td className={tdClassName}>{comuna.fechaUltimaEleccion}</td>
+        <td className={tdClassName}>{comuna.municipio}</td>
+        <td className={tdClassName}>{comuna.parroquia}</td>
+        <td className={tdClassName}>{comuna.nombreVocero}</td>
+        <td className={tdClassName}>{comuna.ciVocero}</td>
+        <td className={tdClassName}>{comuna.telefono}</td>
+        <td className={tdClassName}>
           {comuna.cantidadConsejosComunales}
         </td>
-        <td className={`pl-2 ${tdClassName}`}>{comuna.poblacionVotante}</td>
+        <td className={tdClassName}>{comuna.poblacionVotante}</td>
       </>
     );
   };

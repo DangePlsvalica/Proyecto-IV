@@ -60,7 +60,7 @@ const RegisterPage = () => {
       if (res.status === 201) {
         setError("");
         toast.success("Registro exitoso");
-        router.push("/login");
+        router.push("/admin-user");
       }
     } catch (error) {
       toast.error("Error, vuelve a intentarlo");
@@ -72,12 +72,22 @@ const RegisterPage = () => {
   if (sessionStatus === "loading") {
     return <h1>Cargando...</h1>;
   }
+  if (!session) {
+    router.push("/login"); // Redirige al login si no hay sesión
+    return null; // Asegura que la página no se renderice
+  }
+
+  if (session.user.role !== "Admin") {
+    router.push("/"); // Redirige al home si no es admin
+    return null; // Asegura que no se renderice la página
+  }
+
   return (
       <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="flex justify-center flex-col items-center">
           <Image src="/inces.jpg" alt="star logo" width={60} height={60} />
           <h2 className="mt-6 text-center text-2xl leading-9 tracking-tight text-gray-900">
-            Regístrate
+            Regístrar nuevo usuario
           </h2>
         </div>
 
@@ -164,7 +174,7 @@ const RegisterPage = () => {
               <div>
                 <button
                   type="submit"
-                  className="flex w-full border border-black justify-center rounded-md bg-black px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-white transition-colors hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                  className="flex w-full border border-black justify-center rounded-md bg-sky-950 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-white transition-colors hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 >
                   Registrarse
                 </button>

@@ -4,6 +4,7 @@ import Divider from "../../components/Divider";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import Link from "next/link";
 
 interface AdminUser {
   id: string;
@@ -143,6 +144,14 @@ const AdminUser: React.FC = () => {
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="flex justify-center pt-6">
+      <Link
+        href="/register"
+        className="rounded-md bg-sky-950 px-3 py-2 border border-gray-500 text-sm font-semibold text-white shadow-sm hover:bg-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+      >
+        Registrar nuevo usuario
+      </Link>
       </div>
     </>
   );

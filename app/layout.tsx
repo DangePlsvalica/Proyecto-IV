@@ -23,12 +23,19 @@ export default async function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <SessionProvider session={session}>
-          <div className="mx-auto text-2xl gap-2 mb-10">
+          <div className="flex">
+            {/* Navbar ocupa un ancho fijo */}
             <Navbar />
-            <Providers>{children}</Providers>
+            {/* Contenido ocupa el resto del ancho */}
+            <Providers>
+            <main className="flex-1 pl-[250px] py-6 max-w-[1920px]">
+              {children}
+            </main>
+            </Providers>
           </div>
         </SessionProvider>
       </body>
     </html>
   );
 }
+
