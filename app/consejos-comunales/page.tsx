@@ -84,7 +84,7 @@ const ConsejosComunales: React.FC = () => {
       <td className={tdClassName}>{consejo.poblacionVotante}</td>
     </>
   );
-/*   // Redirige al login si no hay sesión y la autenticación está cargada
+  // Redirige al login si no hay sesión y la autenticación está cargada
   if (status === "loading") {
     return <p>Cargando...</p>;
   }
@@ -92,7 +92,7 @@ const ConsejosComunales: React.FC = () => {
   if (!session) {
     router.push("/login"); // Redirige al login si no hay sesión
     return null; // Asegura que la página no se renderice
-  } */
+  }
 
   return (
     <>

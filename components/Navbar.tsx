@@ -6,7 +6,9 @@ import { Dialog } from "@headlessui/react";
 import { FaBars } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import Image from "next/image";
-import Divider from "../components/Divider";
+import { FaRegUser, FaCog, FaUsers } from 'react-icons/fa';
+import { IoHomeOutline, IoSettingsOutline } from "react-icons/io5";
+import { RiCommunityLine } from "react-icons/ri";
 
 const Navbar = () => {
   const { data: session }: any = useSession();
@@ -14,15 +16,15 @@ const Navbar = () => {
 
   // Crear la navegación dependiendo del rol del usuario
   const navigation = [
-    { name: "Inicio", href: "/" },
+    { name: "Inicio", href: "/", icon: <IoHomeOutline /> },
     ...(session?.user?.role === "Admin"
       ? [
-          { name: "Administrar usuarios", href: "/admin-user" },
-          { name: "Gestor de proyectos", href: "/gestor-de-proyectos" },
+          { name: "Administrar usuarios", href: "/admin-user", icon: <FaRegUser /> },
+          { name: "Gestor de proyectos", href: "/gestor-de-proyectos", icon: <IoSettingsOutline /> },
         ]
-      : []), // Agrega elementos condicionalmente si el usuario es Admin
-    { name: "Consejos comunales", href: "/consejos-comunales" },
-    { name: "Comunas", href: "/comunas" },
+      : []),
+    { name: "Consejos comunales", href: "/consejos-comunales", icon: <FaUsers /> },
+    { name: "Comunas", href: "/comunas", icon: <RiCommunityLine /> },
   ];
 
   return (
@@ -48,8 +50,9 @@ const Navbar = () => {
             <Link
               key={item.name}
               href={item.href}
-              className="text-base font-semibold leading-6 text-white hover:text-gray-300 transition duration-150 ease-in-out"
+              className="flex gap-2 items-center text-base font-semibold leading-6 text-white hover:text-gray-300 transition duration-150 ease-in-out"
             >
+              {item.icon}
               {item.name}
             </Link>
           ))}

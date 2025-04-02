@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 interface AdminUser {
   id: string;
@@ -133,12 +134,15 @@ const AdminUser: React.FC = () => {
                   </select>
                 </td>
                 <td className="text-center border-b border-sky-950">
+                <div className="flex justify-center items-center">
                   <button
                     onClick={() => deleteUser(user.id)}
-                    className="bg-red-700 text-white text-sm px-3 py-2 rounded-lg hover:bg-red-800"
+                    className="bg-red-700 flex gap-2 items-center text-white text-sm px-3 py-2 rounded-lg hover:bg-red-800"
                   >
+                    <FaRegTrashAlt />
                     Eliminar
                   </button>
+                  </div>
                 </td>
               </tr>
             ))}
