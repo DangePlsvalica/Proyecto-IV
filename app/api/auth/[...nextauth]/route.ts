@@ -38,20 +38,15 @@ const authOptions: AuthOptions = {
           const user = await prisma.user.findUnique({
             where: { email: credentials.email },
           });
-          console.log("Usuario encontrado en la base de datos:", user);
 
           // Verificar si el usuario existe y tiene la contraseña cifrada
           if (!user || !user.hashedPassword) return null;
-
-          console.log("Contraseña ingresada:", credentials.password);
-          console.log("Contraseña almacenada (hash):", user.hashedPassword);
 
           // Comparar la contraseña ingresada con la almacenada en la base de datos
           const isValid = await bcrypt.compare(
             credentials.password,
             user.hashedPassword
           );
-          console.log("¿La contraseña es válida?:", isValid);
 
           // Si la contraseña es válida, devolver el usuario con el role; si no, devolver null
           if (isValid) {
@@ -72,13 +67,11 @@ const authOptions: AuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        console.log("Usuario en JWT Callback:", user); // Verifica que el `user` tiene el campo `role`
         token.role = user.role; // Asigna el campo `role` al token
       }
       return token;
     },
     async session({ session, token }) {
-      console.log("Token en Session Callback:", token); // Verifica el contenido del token
       if (token?.role) {
         session.user.role = token.role; // Asigna el campo `role` al objeto `session.user`
       }

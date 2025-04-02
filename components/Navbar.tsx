@@ -10,16 +10,17 @@ import Divider from "../components/Divider";
 
 const Navbar = () => {
   const { data: session }: any = useSession();
-  console.log("Rol del usuario:", session?.user?.role);
-  if (session?.user?.role === "Admin") {
-    console.log("El usuario es Admin");
-  }
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Crear la navegación dependiendo del rol del usuario
   const navigation = [
     { name: "Inicio", href: "/" },
-    session?.user?.role === "Admin" ? { name: "Gestor de proyectos", href: "/gestor-de-proyectos" } : null,
+    ...(session?.user?.role === "Admin"
+      ? [
+          { name: "Gestor de proyectos", href: "/gestor-de-proyectos" },
+          { name: "Administrar usuarios", href: "/admin-user" },
+        ]
+      : []), // Agrega elementos condicionalmente si el usuario es Admin
     { name: "Consejos comunales", href: "/consejos-comunales" },
     { name: "Comunas", href: "/comunas" },
   ];
@@ -31,57 +32,63 @@ const Navbar = () => {
           className="mx-auto flex w-full items-center justify-between gap-x-6 p-3 lg:px-8"
           aria-label="Global"
         >
+          {/* Logo */}
           <div className="flex lg:flex-1">
             <Link href="/" className="-m-1.5 p-1.5">
-              <Image src="/inces.jpg" width={45} height={45} alt="star logo" className="rounded-3xl" />
+              <Image
+                src="/inces.jpg"
+                width={45}
+                height={45}
+                alt="star logo"
+                className="rounded-3xl"
+              />
             </Link>
           </div>
+
+          {/* Navegación en desktop */}
           <div className="hidden lg:flex lg:gap-x-12">
-            {navigation.map(
-              (item) =>
-                item && (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="text-sm font-semibold leading-6 text-white"
-                  >
-                    {item.name}
-                  </Link>
-                )
-            )}
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className="text-sm font-semibold leading-6 text-white hover:text-gray-300 transition duration-150 ease-in-out"
+              >
+                {item.name}
+              </Link>
+            ))}
           </div>
+
+          {/* Sesión y botones */}
           <div className="flex flex-1 items-center justify-end gap-x-6">
             {!session ? (
-              <>
-                <Link
-                  href="/login"
-                  className="rounded-md bg-sky-950 px-3 py-2 border border-gray-500 border-1 text-sm font-semibold text-white shadow-sm hover:bg-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Iniciar Sesion
-                </Link>
-              </>
+              <Link
+                href="/login"
+                className="rounded-md bg-sky-950 px-3 py-2 border border-gray-500 text-sm font-semibold text-white shadow-sm hover:bg-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                Iniciar Sesión
+              </Link>
             ) : (
               <>
-                <span className="ml-10 text-sm text-white">{session.user?.email}</span>
+                <span className="text-sm text-white">{session.user?.email}</span>
                 {session.user?.role === "Admin" && (
                   <Link
                     href="/register"
-                    className="rounded-md bg-sky-950 px-3 py-2 border border-gray-500 border-1 text-sm font-semibold text-white shadow-sm hover:bg-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    className="rounded-md bg-sky-950 px-3 py-2 border border-gray-500 text-sm font-semibold text-white shadow-sm hover:bg-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
                     Registrar Usuario
                   </Link>
                 )}
                 <button
-                  onClick={() => {
-                    signOut();
-                  }}
-                  className="rounded-md bg-sky-950 px-3 py-2 border border-gray-500 border-1 text-sm font-semibold text-white shadow-sm hover:bg-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  onClick={() => signOut()}
+                  className="rounded-md bg-sky-950 px-3 py-2 border border-gray-500 text-sm font-semibold text-white shadow-sm hover:bg-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   Cerrar sesión
                 </button>
               </>
             )}
           </div>
+
+          {/* Menú móvil */}
           <div className="flex lg:hidden">
             <button
               type="button"
@@ -93,6 +100,8 @@ const Navbar = () => {
             </button>
           </div>
         </nav>
+
+        {/* Menú móvil desplegable */}
         <Dialog
           as="div"
           className="lg:hidden"
@@ -103,23 +112,26 @@ const Navbar = () => {
           <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
             <div className="flex items-center gap-x-6">
               <Link href="/" className="-m-1.5 p-1.5">
-                <Image width={50} height={50} src="/logo 1.png" alt="star logo mobile" />
+                <Image
+                  width={50}
+                  height={50}
+                  src="/logo 1.png"
+                  alt="star logo mobile"
+                />
               </Link>
               {session ? (
                 <button
-                  onClick={() => {
-                    signOut();
-                  }}
-                  className="ml-auto rounded-md bg-black border border-1 border-gray-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  onClick={() => signOut()}
+                  className="ml-auto rounded-md bg-black border border-gray-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   Cerrar sesión
                 </button>
               ) : (
                 <Link
                   href="/login"
-                  className="rounded-md bg-black px-3 py-2 border border-gray-500 border-1 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  className="rounded-md bg-black px-3 py-2 border border-gray-500 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
-                  Iniciar Sesion
+                  Iniciar Sesión
                 </Link>
               )}
               <button
@@ -134,18 +146,15 @@ const Navbar = () => {
             <div className="mt-6 flow-root">
               <div className="-my-6 divide-y divide-gray-500/10">
                 <div className="space-y-2 py-6">
-                  {navigation.map(
-                    (item) =>
-                      item && (
-                        <Link
-                          key={item.name}
-                          href={item.href}
-                          className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                        >
-                          {item.name}
-                        </Link>
-                      )
-                  )}
+                  {navigation.map((item) => (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
                 </div>
               </div>
             </div>
@@ -158,4 +167,5 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
 
