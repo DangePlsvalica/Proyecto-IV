@@ -134,6 +134,7 @@ const AdminUser: React.FC = () => {
                     />
         </div>
       ) : (
+        <div className="animate-fade-in opacity-0">
       <div className="overflow-x-auto pt-5">
         <table className="table-auto w-[50%] m-auto border-separate border-spacing-0 border border-sky-950 rounded-lg overflow-hidden">
           <thead>
@@ -175,7 +176,7 @@ const AdminUser: React.FC = () => {
           </tbody>
         </table>
       </div>
-    )}
+   </div> )}
       <div className="flex justify-center pt-6">
       <Link
         href="/register"

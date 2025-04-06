@@ -50,7 +50,7 @@ const Navbar = () => {
             <Link
               key={item.name}
               href={item.href}
-              className="flex gap-2 items-center text-base font-semibold leading-6 text-white hover:text-gray-300 transition duration-150 ease-in-out"
+              className="flex gap-2 items-center text-base font-semibold leading-6 text-white hover:text-gray-300 transition duration-150 ease-in-out hover:translate-x-2.5"
             >
               {item.icon}
               {item.name}
