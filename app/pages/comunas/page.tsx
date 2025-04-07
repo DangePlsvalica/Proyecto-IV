@@ -1,10 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Divider from "../../components/Divider";
+import Divider from "../../../components/Divider";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import SearchForm from "../../components/SearchForm";
-import Table from "../../components/Table";
+import SearchForm from "../../../components/SearchForm";
+import Table from "../../../components/Table";
 import Image from "next/image";
 import Button from "@/components/Button";
 
@@ -174,7 +174,7 @@ const tdClassName = "border-b border-r border-sky-950";
       <Divider />
       <div className="flex justify-between px-6 py-4">
         <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        <Button onClick={() => router.push("/register-comuna")} title={"Registrar nueva comuna"}></Button>
+        <Button onClick={() => router.push("/pages/comunas/register-comuna")} title={"Registrar nueva comuna"}></Button>
       </div>
       {isLoading ? (
         <div className="flex flex-col items-center justify-center h-96">

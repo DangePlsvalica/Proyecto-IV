@@ -20,13 +20,13 @@ const Navbar = () => {
     { name: "Inicio", href: "/", icon: <IoHomeOutline /> },
     ...(session?.user?.role === "Admin"
       ? [
-          { name: "Administrar usuarios", href: "/admin-user", icon: <FaRegUser /> },
-          { name: "Gestor de proyectos", href: "/gestor-de-proyectos", icon: <IoSettingsOutline /> },
+          { name: "Administrar usuarios", href: "/pages/admin-user", icon: <FaRegUser /> },
+          { name: "Gestor de proyectos", href: "/pages/gestor-de-proyectos", icon: <IoSettingsOutline /> },
         ]
       : []),
-    { name: "Consejos comunales", href: "/consejos-comunales", icon: <FaUsers /> },
-    { name: "Comunas", href: "/comunas", icon: <RiCommunityLine /> },
-    { name: "Vehiculos", href: "/vehiculos", icon: <FaCar /> },
+    { name: "Consejos comunales", href: "/pages/consejos-comunales", icon: <FaUsers /> },
+    { name: "Comunas", href: "/pages/comunas", icon: <RiCommunityLine /> },
+    { name: "Vehiculos", href: "/pages/vehiculos", icon: <FaCar /> },
   ];
 
   return (

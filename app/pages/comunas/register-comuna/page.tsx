@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Select from "react-select";
 import Button from "@/components/Button";
+import FormInput from '@/components/FormInput'
 
 const RegisterComunaPage = () => {
   type OptionType = {
@@ -47,8 +48,8 @@ const RegisterComunaPage = () => {
 
       // Formatea los datos al formato esperado por react-select
       const formattedOptions = data.map((consejo: { id: string; cc: string }) => ({
-        value: consejo.cc, // Usa "cc" como el valor
-        label: consejo.cc, // Usa "cc" como la etiqueta visible
+        value: consejo.cc,
+        label: consejo.cc, 
       }));
 
       setConsejos(formattedOptions);
@@ -101,7 +102,7 @@ const RegisterComunaPage = () => {
 
       if (res.ok) {
         toast.success("Comuna registrada exitosamente");
-        router.push("/comunas"); // Redirige a la lista de comunas
+        router.push("/pages/comunas"); // Redirige a la lista de comunas
       } else {
         toast.error("Error al registrar la comuna");
       }
@@ -112,23 +113,16 @@ const RegisterComunaPage = () => {
   };
 
   return (
-    <div className="mx-auto p-20">
+    <div className="mx-auto my-7 max-w-[95%] p-20 border border-sky-200 rounded-xl bg-[#f8f8f8]">
       <h1 className="text-2xl font-bold mb-6">Registrar Nueva Comuna</h1>
       <form onSubmit={handleSubmit} className=" grid grid-cols-4 gap-4">
-        <div>
-          <label htmlFor="codigo" className="block text-sm font-medium">
-            Código
-          </label>
-          <input
-            type="text"
-            id="codigo"
-            name="codigo"
-            value={formData.codigo}
-            onChange={handleChange}
-            required
-            className="block w-full border px-4 py-2 rounded-md"
-          />
-        </div>
+        <FormInput 
+          label={"Código"} 
+          id={"codigo"} 
+          value={formData.codigo} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
         <div>
           <label htmlFor="numComisionPromotora" className="block text-sm font-medium">
             N° comisión promotora

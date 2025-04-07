@@ -1,11 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Divider from "../../components/Divider";
+import Divider from "../../../components/Divider";
 import { MdOutlineSearch } from "react-icons/md";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import Table from "../../components/Table";
-import SearchForm from "../../components/SearchForm";
+import Table from "../../../components/Table";
+import SearchForm from "../../../components/SearchForm";
 import Image from "next/image";
 
 interface ConsejoComunal {

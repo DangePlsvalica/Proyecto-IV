@@ -49,6 +49,16 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model Proyecto {
+  id                String   @id @default(uuid())
+  nombre            String   @unique
+  status            String
+  fechaCreacion     DateTime
+  ultimaActividad   DateTime
+  categoria         String
+  comuna             String
+}
+
 model ConsejoComunal {
   id                String @id @default(uuid())
   estado            String

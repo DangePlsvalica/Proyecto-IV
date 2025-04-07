@@ -59,7 +59,7 @@ const RegisterPage = () => {
       if (res.status === 201) {
         setError("");
         toast.success("Registro exitoso");
-        router.push("/admin-user");
+        router.push("/pages/admin-user");
       }
     } catch (error) {
       toast.error("Error, vuelve a intentarlo");
@@ -72,7 +72,7 @@ const RegisterPage = () => {
     return <h1>Cargando...</h1>;
   }
   if (!session) {
-    router.push("/login"); // Redirige al login si no hay sesión
+    router.push("/pages/login"); // Redirige al login si no hay sesión
     return null; // Asegura que la página no se renderice
   }
 
