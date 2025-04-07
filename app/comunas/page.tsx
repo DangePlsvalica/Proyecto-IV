@@ -1,22 +1,21 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import Divider from "../../components/Divider";
-import { MdOutlineSearch } from "react-icons/md";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import SearchForm from "../../components/SearchForm";
 import Table from "../../components/Table";
+import Button from "@/components/Button";
 
 // Define el tipo de los datos para Comuna
 interface Comuna {
   id: string;
   codigo: string;
   numComisionPromotora: string;
-  fechaComisionPromotora: string;
+  fechaComisionPromotora: Date;
   rif: string;
   cuentaBancaria: string;
-  fechaRegistro: string;
+  fechaRegistro: Date;
   nombre: string;
   direccion: string;
   linderoNorte: string;
@@ -24,7 +23,7 @@ interface Comuna {
   linderoEste: string;
   linderoOeste: string;
   consejoComunal: string; // JSON en formato string
-  fechaUltimaEleccion: string;
+  fechaUltimaEleccion: Date;
   municipio: string;
   parroquia: string;
   nombreVocero: string;
@@ -34,7 +33,7 @@ interface Comuna {
   poblacionVotante: number;
 }
 
-const ConsejosComunales: React.FC = () => {
+const Comunas: React.FC = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -106,11 +105,13 @@ const tdClassName = "border-b border-r border-sky-950";
         <td className={tdClassName}>{comuna.codigo}</td>
         <td className={tdClassName}>{comuna.numComisionPromotora}</td>
         <td className={tdClassName}>
-          {comuna.fechaComisionPromotora}
+          {new Date(comuna.fechaComisionPromotora).toLocaleDateString()}
         </td>
         <td className={tdClassName}>{comuna.rif}</td>
         <td className={tdClassName}>{comuna.cuentaBancaria}</td>
-        <td className={tdClassName}>{comuna.fechaRegistro}</td>
+        <td className={tdClassName}>
+          {new Date(comuna.fechaRegistro).toLocaleDateString()}
+        </td>
         <td className={tdClassName}>{comuna.nombre}</td>
         <td className={tdClassName}>{comuna.direccion}</td>
         <td className={tdClassName}>{comuna.linderoNorte}</td>
@@ -125,7 +126,9 @@ const tdClassName = "border-b border-r border-sky-950";
             ))}
           </ol>
         </td>
-        <td className={tdClassName}>{comuna.fechaUltimaEleccion}</td>
+        <td className={tdClassName}>
+          {new Date(comuna.fechaUltimaEleccion).toLocaleDateString()}
+        </td>
         <td className={tdClassName}>{comuna.municipio}</td>
         <td className={tdClassName}>{comuna.parroquia}</td>
         <td className={tdClassName}>{comuna.nombreVocero}</td>
@@ -155,13 +158,7 @@ const tdClassName = "border-b border-r border-sky-950";
       <Divider />
       <div className="flex justify-between px-6 py-4">
         <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        <button
-          type="button"
-          onClick={() => router.push("/register-comuna")}
-          className="border h-[32px] text-[15px] px-3 font-medium bg-green-700 text-white rounded-md hover:bg-green-800 focus:outline-none"
-        >
-          Registrar nueva comuna
-        </button>
+        <Button onClick={() => router.push("/register-comuna")} title={"Registrar nueva comuna"}></Button>
       </div>
       <Table
         headers={headers}
@@ -174,4 +171,4 @@ const tdClassName = "border-b border-r border-sky-950";
   );
 };
 
-export default ConsejosComunales;
+export default Comunas;

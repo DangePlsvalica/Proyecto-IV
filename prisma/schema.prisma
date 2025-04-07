@@ -57,8 +57,8 @@ model ConsejoComunal {
   cc                String
   rif               String @unique
   numeroCuenta      String
-  fechaConstitucion String
-  fechaVencimiento  String
+  fechaConstitucion DateTime
+  fechaVencimiento  DateTime
   vocero            String
   tlfVocero         String
   poblacionVotante  Int
@@ -68,10 +68,10 @@ model Comuna {
   id                        String @id @default(uuid()) // Código único (Código)
   codigo                    String // Código de la comuna
   numComisionPromotora      String // N° comisión promotora
-  fechaComisionPromotora    String // FECHA DE COMISIÓN PROMOTORA
+  fechaComisionPromotora    DateTime // FECHA DE COMISIÓN PROMOTORA
   rif                       String // RIF
   cuentaBancaria            String // CUENTA BANCARIA
-  fechaRegistro             String // FECHA DE REGISTRO DE LA COMUNA
+  fechaRegistro             DateTime // FECHA DE REGISTRO DE LA COMUNA
   nombre                    String // NOMBRE DE LA COMUNA
   direccion                 String // DIRECCIÓN DE LA COMUNA
   linderoNorte              String // LINDERO NORTE
@@ -79,7 +79,7 @@ model Comuna {
   linderoEste               String // LINDERO ESTE
   linderoOeste              String // LINDERO OESTE
   consejoComunal            Json // CONSEJO COMUNAL QUE INTEGRA LA COMUNA
-  fechaUltimaEleccion       String // FECHA DE ÚLTIMA ELECCIÓN
+  fechaUltimaEleccion       DateTime // FECHA DE ÚLTIMA ELECCIÓN
   municipio                 String // MUNICIPIO
   parroquia                 String // PARROQUIA
   nombreVocero              String // NOMBRE Y APELLIDOS DEL VOCERO
@@ -88,3 +88,23 @@ model Comuna {
   cantidadConsejosComunales Int // CANTIDAD DE C.C QUE INTEGRA LA COMUNA
   poblacionVotante          Int // POBLACIÓN VOTANTE
 }
+
+model Vehiculo {
+  id                Int      @id @default(autoincrement()) // ID único
+  placa             String   // Placa del ítem
+  clase             String   // Clase del ítem
+  cc                String   // CC (Cilindrada u otra información)
+  comuna            String   // Comuna asociada
+  marca             String   // Marca del ítem
+  modelo            String   // Modelo del ítem
+  color             String   // Color del ítem
+  ano               Int      // Año de fabricación
+  municipio         String   // Municipio asociado
+  serialCarroceria  String   // Serial de la carrocería
+  voceroAsignado    String   // Nombre del vocero asignado
+  fechaDeEntrega    DateTime // Fecha de entrega
+  estatus           String   // Estatus del ítem
+  observacionArchivo String?   // URL o referencia del archivo PDF/Word relacionado con la observación
+  observacion       String?  // Observación textual (opcional)
+}
+

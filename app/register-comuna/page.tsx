@@ -1,9 +1,9 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Select from "react-select";
+import Button from "@/components/Button";
 
 const RegisterComunaPage = () => {
   type OptionType = {
@@ -92,6 +92,9 @@ const RegisterComunaPage = () => {
           ...formData,
           cantidadConsejosComunales: parseInt(formData.cantidadConsejosComunales),
           poblacionVotante: parseInt(formData.poblacionVotante),
+          fechaComisionPromotora: new Date(formData.fechaComisionPromotora).toISOString(),
+          fechaRegistro: new Date(formData.fechaComisionPromotora).toISOString(),
+          fechaUltimaEleccion: new Date(formData.fechaComisionPromotora).toISOString(),
           consejoComunal: formData.consejoComunal.map((option) => option.value), // Enviar solo los valores seleccionados
         }),
       });
@@ -145,7 +148,7 @@ const RegisterComunaPage = () => {
             Fecha de Comisión Promotora
           </label>
           <input
-            type="text"
+            type="date"
             id="fechaComisionPromotora"
             name="fechaComisionPromotora"
             value={formData.fechaComisionPromotora}
@@ -187,7 +190,7 @@ const RegisterComunaPage = () => {
             Fecha de Registro
           </label>
           <input
-            type="text"
+            type="date"
             id="fechaRegistro"
             name="fechaRegistro"
             value={formData.fechaRegistro}
@@ -341,7 +344,7 @@ const RegisterComunaPage = () => {
             Fecha de Última Elección
           </label>
           <input
-            type="text"
+            type="date"
             id="fechaUltimaEleccion"
             name="fechaUltimaEleccion"
             value={formData.fechaUltimaEleccion}
@@ -421,7 +424,7 @@ const RegisterComunaPage = () => {
             </div>
             <div>
               <label htmlFor="cantidadConsejosComunales" className="block text-sm font-medium">
-                Cantidad de Consejos Comunales que Integran la Comuna
+                Cantidad de C.C que Integran la Comuna
               </label>
               <input
                 type="number"
@@ -449,13 +452,7 @@ const RegisterComunaPage = () => {
             </div>      
           </form>
           <div className="flex justify-center pt-6">
-            <button
-              type="button"
-              onClick={handleSubmit}
-              className="rounded-md bg-sky-950 px-3 py-2 border border-gray-500 border-1 text-lg font-semibold text-white shadow-sm hover:bg-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Registrar Comuna
-            </button>
+            <Button onClick={handleSubmit} title="Registrar Comuna"></Button>
           </div>
         </div>
       );

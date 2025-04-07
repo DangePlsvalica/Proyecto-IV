@@ -28,7 +28,7 @@ export default async function RootLayout({
             <Navbar />
             {/* Contenido ocupa el resto del ancho */}
             <Providers>
-            <main className="flex-1 pl-[250px] py-6 max-w-[1920px]">
+            <main className="flex-1 pl-[250px] py-6 2xl:max-w-[1920px] lg:max-w-[1270px]">
               {children}
             </main>
             </Providers>

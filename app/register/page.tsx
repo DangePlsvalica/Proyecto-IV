@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -50,7 +49,7 @@ const RegisterPage = () => {
         body: JSON.stringify({
           email,
           password,
-          role, // Enviar el rol seleccionado a la API
+          role,
         }),
       });
       if (res.status === 400) {
@@ -92,7 +91,7 @@ const RegisterPage = () => {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-          <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
+          <div className="bg-white  px-6 py-12 shadow sm:rounded-lg sm:px-12">
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label
@@ -176,7 +175,7 @@ const RegisterPage = () => {
                   type="submit"
                   className="flex w-full border border-black justify-center rounded-md bg-sky-950 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-white transition-colors hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 >
-                  Registrarse
+                  Registrar
                 </button>
                 <p className="text-red-600 text-center text-[16px] my-4">
                   {error && error}

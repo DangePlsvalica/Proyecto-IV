@@ -6,9 +6,10 @@ import { Dialog } from "@headlessui/react";
 import { FaBars } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import Image from "next/image";
-import { FaRegUser, FaCog, FaUsers } from 'react-icons/fa';
+import { FaRegUser, FaUsers, FaCar } from 'react-icons/fa';
 import { IoHomeOutline, IoSettingsOutline } from "react-icons/io5";
 import { RiCommunityLine } from "react-icons/ri";
+import Button from './Button'
 
 const Navbar = () => {
   const { data: session }: any = useSession();
@@ -25,6 +26,7 @@ const Navbar = () => {
       : []),
     { name: "Consejos comunales", href: "/consejos-comunales", icon: <FaUsers /> },
     { name: "Comunas", href: "/comunas", icon: <RiCommunityLine /> },
+    { name: "Vehiculos", href: "/vehiculos", icon: <FaCar /> },
   ];
 
   return (
@@ -61,21 +63,10 @@ const Navbar = () => {
         {/* Sesión y botones */}
         <div className="flex flex-col flex-1 items-center justify-end gap-x-6">
           {!session ? (
-            <Link
-              href="/login"
-              className="rounded-md bg-sky-950 px-3 py-2 border border-gray-500 text-sm font-semibold text-white shadow-sm hover:bg-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Iniciar Sesión
-            </Link>
+            <Button href="/login" title="Iniciar Sesion"></Button>
           ) : (
             <>
-              
-              <button
-                onClick={() => signOut()}
-                className="rounded-md bg-sky-950 px-3 py-2 border border-gray-500 text-sm font-semibold text-white shadow-sm hover:bg-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Cerrar sesión
-              </button>
+              <Button onClick={() => signOut()} title="Cerrar sesión"></Button>
             </>
           )}
         </div>
@@ -112,19 +103,9 @@ const Navbar = () => {
               />
             </Link>
             {session ? (
-              <button
-                onClick={() => signOut()}
-                className="ml-auto rounded-md bg-black border border-gray-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Cerrar sesión
-              </button>
+              <Button onClick={() => signOut()} title="Cerrar sesión"></Button>
             ) : (
-              <Link
-                href="/login"
-                className="rounded-md bg-black px-3 py-2 border border-gray-500 text-sm font-semibold text-white shadow-sm hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Iniciar Sesión
-              </Link>
+              <Button href="/login" title="Iniciar Sesion"></Button>
             )}
             <button
               type="button"

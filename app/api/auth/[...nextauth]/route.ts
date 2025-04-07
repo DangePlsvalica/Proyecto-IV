@@ -16,7 +16,6 @@ if (process.env.NODE_ENV === "production") {
   }
   prisma = (global as any).prisma;
 }
-console.log("NEXTAUTH_SECRET:", process.env.NEXTAUTH_SECRET);
 const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma), // Usamos PrismaAdapter para NextAuth
   providers: [
