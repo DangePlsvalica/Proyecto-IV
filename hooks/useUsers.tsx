@@ -1,62 +1,58 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { get, post, del, put } from "@/lib/request/api";
 import toast from "react-hot-toast";
-import { AdminUser, UsersQueryResult } from './interfaces/users.interface'
+import { AdminUser, UsersQueryResult } from './interfaces/users.interface';
 
 export const useUsersQuery = (): UsersQueryResult => {
-  const [users, setUsers] = useState<AdminUser[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-  const fetchUsers = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const data = await get<AdminUser[]>({ path: "/api/users" });
-      setUsers(data);
-    } catch (err: any) {
-      setError(err.message || "Error al cargar usuarios");
-      toast.error(err.message || "Error al cargar usuarios");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // Consulta para obtener usuarios
+  const { data: users = [], isLoading, error, refetch } = useQuery<AdminUser[], Error>({
+    queryKey: ["users"],
+    queryFn: () => get<AdminUser[]>({ path: "/api/users" }),
+    staleTime: 1000 * 60 * 5, // 5 minutos de datos frescos
+    gcTime: 1000 * 60 * 10, // 10 minutos en caché
+    retry: false,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false, // No recargar al montar el componente
+  });
 
-  const deleteUser = async (id: string) => {
-    try {
-      await del({ path: "/api/users", body: { id } });
-      setUsers(prev => prev.filter(user => user.id !== id));
+  // Mutación para eliminar usuario
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => del({ path: "/api/users", body: { id } }),
+    onSuccess: (_, id) => {
+      queryClient.setQueryData<AdminUser[]>(["users"], (old) => 
+        old?.filter(user => user.id !== id) || []
+      );
       toast.success("Usuario eliminado exitosamente");
-    } catch (err: any) {
+    },
+    onError: (err: Error) => {
       toast.error(err.message || "Error al eliminar usuario");
-      throw err;
     }
-  };
+  });
 
-  const updateUserRole = async (id: string, newRole: string) => {
-    try {
-      await put({ path: "/api/users", body: { id, role: newRole } });
-      setUsers(prev => 
-        prev.map(user => user.id === id ? { ...user, role: newRole } : user)
+  // Mutación para actualizar rol
+  const updateRoleMutation = useMutation({
+    mutationFn: ({ id, role }: { id: string; role: string }) => 
+      put({ path: "/api/users", body: { id, role } }),
+    onSuccess: (_, variables) => {
+      queryClient.setQueryData<AdminUser[]>(["users"], (old) =>
+        old?.map(user => user.id === variables.id ? { ...user, role: variables.role } : user) || []
       );
       toast.success("Rol actualizado exitosamente");
-    } catch (err: any) {
+    },
+    onError: (err: Error) => {
       toast.error(err.message || "Error al actualizar rol");
-      throw err;
     }
-  };
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  });
 
   return {
     users,
     isLoading,
-    error,
-    deleteUser,
-    updateUserRole,
-    refetch: fetchUsers,
+    error: error?.message || null,
+    deleteUser: deleteMutation.mutate,
+    updateUserRole: (id: string, newRole: string) => updateRoleMutation.mutate({ id, role: newRole }),
+    refetch,
   };
 };

@@ -1,3 +1,5 @@
+import { QueryObserverResult } from "@tanstack/react-query";
+
 export interface AdminUser {
   id: string;
   email: string;
@@ -8,8 +10,8 @@ export interface UsersQueryResult {
   users: AdminUser[];
   isLoading: boolean;
   error: string | null;
-  deleteUser: (id: string) => Promise<void>;
-  updateUserRole: (id: string, newRole: string) => Promise<void>;
-  refetch: () => Promise<void>;
+  deleteUser: (id: string) => void; // Cambiado de Promise<void> a void
+  updateUserRole: (id: string, newRole: string) => void; // Igual aquí
+  refetch: () => Promise<QueryObserverResult<AdminUser[], Error>>; // Tipo más preciso
 }
   
