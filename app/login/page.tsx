@@ -57,7 +57,18 @@ const NextLoginPage = () => {
   };
 
   if (sessionStatus === "loading") {
-    return <h1>Cargando...</h1>;
+    return <main className="relative flex min-h-screen items-center justify-center overflow-hidden p-12">
+      <div className="flex flex-col md:flex-row items-center gap-8 w-24 max-w-6xl mx-auto justify-center">
+            <Image
+              src="/espera.gif"
+              width={100}
+              height={100}
+              alt="espera gif"
+              className="rounded-3xl"
+            />
+  </div>
+  </main>
+;
   }
   return (
     sessionStatus !== "authenticated" && (

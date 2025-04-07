@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { FaRegTrashAlt } from "react-icons/fa";
+import Image from "next/image";
 
 interface AdminUser {
   id: string;
@@ -16,6 +17,7 @@ interface AdminUser {
 const AdminUser: React.FC = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
+    const [isLoading, setIsLoading] = useState(true);
 
   // Estado para almacenar los datos de la base de datos
   const [usersData, setUsersData] = useState<AdminUser[]>([]);
@@ -24,12 +26,15 @@ const AdminUser: React.FC = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
+        setIsLoading(true); // Activar animacion de carga
         const response = await fetch("/api/users");
         const data: AdminUser[] = await response.json();
         console.log("Datos de users:", data);
         setUsersData(data); // Almacena los datos obtenidos
       } catch (error) {
         console.error("Error fetching users:", error);
+      }finally {
+        setIsLoading(false); // Desactivar animacion de carga
       }
     };
     fetchUsers();
@@ -89,7 +94,17 @@ const AdminUser: React.FC = () => {
   
   // Redirige al login si no hay sesión y la autenticación está cargada
   if (status === "loading") {
-    return <p>Cargando...</p>;
+    return <main className="relative flex min-h-screen items-center justify-center overflow-hidden p-12">
+              <div className="flex flex-col md:flex-row items-center gap-8 w-24 max-w-6xl mx-auto justify-center">
+                    <Image
+                      src="/espera.gif"
+                      width={100}
+                      height={100}
+                      alt="espera gif"
+                      className="rounded-3xl"
+                    />
+          </div>
+          </main>;
   }
 
   if (!session) {
@@ -108,6 +123,18 @@ const AdminUser: React.FC = () => {
         <h1 className="text-xl max-[500px]:text-xl">Administrar Usuarios</h1>
       </div>
       <Divider />
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center h-96">
+                    <Image
+                      src="/espera.gif"
+                      width={100}
+                      height={100}
+                      alt="espera gif"
+                      className="rounded-3xl"
+                    />
+        </div>
+      ) : (
+        <div className="animate-fade-in opacity-0">
       <div className="overflow-x-auto pt-5">
         <table className="table-auto w-[50%] m-auto border-separate border-spacing-0 border border-sky-950 rounded-lg overflow-hidden">
           <thead>
@@ -149,6 +176,7 @@ const AdminUser: React.FC = () => {
           </tbody>
         </table>
       </div>
+   </div> )}
       <div className="flex justify-center pt-6">
       <Link
         href="/register"

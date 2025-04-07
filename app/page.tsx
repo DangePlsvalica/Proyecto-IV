@@ -1,10 +1,28 @@
+import Image from "next/image";
+
 export default function Home() {
   return (
-    <main className="flex item flex-col items-center justify-center text-center p-12">
-      <h1 className="text-5xl max-[500px]:text-2xl">
-        Sistema de Gestión de Comunas y Logística vehicular del Ministerio del
-        Poder Popular para las comunas
-      </h1>
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden p-12">
+      <div className="flex flex-col md:flex-row items-center gap-8 w-full max-w-6xl mx-auto">
+        {/* Logo */}
+        <div className="animate-logo-entrance opacity-0 w-full md:w-auto">
+          <Image
+            src="/funacomunal.png"
+            width={300}
+            height={300}
+            alt="logo"
+            className="rounded-3xl mx-auto md:mx-0"
+          />
+        </div>
+
+        {/* Título */}
+        <div className="animate-title-entrance opacity-0 w-full md:w-auto">
+          <h1 className="text-5xl max-[500px]:text-2xl text-center md:text-left">
+            Sistema de Gestión de Comunas y Logística vehicular del Ministerio del
+            Poder Popular para las comunas
+          </h1>
+        </div>
+      </div>
     </main>
   );
 }

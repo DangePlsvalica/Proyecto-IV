@@ -31,7 +31,7 @@ const Navbar = () => {
 
   return (
     <header className="bg-sky-950 fixed top-0 left-0 w-[250px] h-full p-3 z-50">
-      <nav className="items-center py-3" aria-label="Global">
+      <nav className="nav-link animate-link-fade opacity-0  items-center py-3" aria-label="Global">
         {/* Logo */}
         <div className="flex gap-2 items-center">
           <Link href="/" className="-m-1.5 p-1.5">
@@ -52,7 +52,7 @@ const Navbar = () => {
             <Link
               key={item.name}
               href={item.href}
-              className="flex gap-2 items-center text-base font-semibold leading-6 text-white hover:text-gray-300 transition duration-150 ease-in-out"
+              className="flex gap-2 items-center text-base font-semibold leading-6 text-white hover:text-gray-300 transition duration-150 ease-in-out hover:translate-x-2.5"
             >
               {item.icon}
               {item.name}
