@@ -137,14 +137,14 @@ const NextLoginPage = () => {
                 >
                   <div className="w-full border-t border-gray-200" />
                 </div>
-                <div className="relative flex justify-center text-sm font-medium leading-6">
+                {/* <div className="relative flex justify-center text-sm font-medium leading-6">
                   <span className="bg-white px-6 text-gray-900">
                     O continuar con
                   </span>
-                </div>
+                </div> */}
               </div>
 
-              <div className="mt-6 grid grid-cols-2 gap-4">
+              {/* <div className="mt-6 grid grid-cols-2 gap-4">
                 <button
                   onClick={() => {
                     signIn("google");
@@ -179,8 +179,7 @@ const NextLoginPage = () => {
                     GitHub
                   </span>
                 </button>
-                
-              </div>
+              </div> */}
               <p className="text-red-600 text-center text-[16px] my-4">
                   {error && error}
                 </p>

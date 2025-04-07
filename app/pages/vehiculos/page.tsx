@@ -95,13 +95,12 @@ const tdClassName = "border-b border-r border-sky-950";
      </>
    );
  };
- // Manejo de sesión y redirección
  if (status === "loading") {
    return <p>Cargando...</p>;
  }
 
  if (!session) {
-   router.push("/login");
+   router.push("/pages/login");
    return null;
  }
  return (
