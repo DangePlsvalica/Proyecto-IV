@@ -70,7 +70,6 @@ const Comunas: React.FC = () => {
       .includes(searchTerm.toLowerCase())
   );
 
-  // Encabezados de la tabla
   const headers = [
     "Codigo",
     "N° comisión promotora",
@@ -147,7 +146,6 @@ const tdClassName = "border-b border-r border-sky-950";
       </>
     );
   };
-  // Manejo de sesión y redirección
   if (status === "loading") {
     return <main className="relative flex min-h-screen items-center justify-center overflow-hidden p-12">
           <div className="flex flex-col md:flex-row items-center gap-8 w-24 max-w-6xl mx-auto justify-center">
@@ -161,9 +159,8 @@ const tdClassName = "border-b border-r border-sky-950";
       </div>
       </main>;
   }
-
   if (!session) {
-    router.push("/login");
+    router.push("/pages/login");
     return null;
   }
   return (

@@ -63,7 +63,7 @@ const Navbar = () => {
         {/* Sesión y botones */}
         <div className="flex flex-col flex-1 items-center justify-end gap-x-6">
           {!session ? (
-            <Button href="/login" title="Iniciar Sesion"></Button>
+            <Button href="/pages/login" title="Iniciar Sesion"></Button>
           ) : (
             <>
               <Button onClick={() => signOut()} title="Cerrar sesión"></Button>
@@ -105,7 +105,7 @@ const Navbar = () => {
             {session ? (
               <Button onClick={() => signOut()} title="Cerrar sesión"></Button>
             ) : (
-              <Button href="/login" title="Iniciar Sesion"></Button>
+              <Button href="/pages/login" title="Iniciar Sesion"></Button>
             )}
             <button
               type="button"

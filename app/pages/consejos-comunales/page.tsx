@@ -13,7 +13,7 @@ interface ConsejoComunal {
   estado: string;
   municipio: string;
   parroquia: string;
-  cc: string; // Nombre del Consejo Comunal
+  cc: string;
   rif: string;
   numeroCuenta: string;
   fechaConstitucion: Date;
@@ -92,7 +92,6 @@ const ConsejosComunales: React.FC = () => {
       <td className={tdClassName}>{consejo.poblacionVotante}</td>
     </>
   );
-  // Redirige al login si no hay sesión y la autenticación está cargada
   if (status === "loading") {
     return <main className="relative flex min-h-screen items-center justify-center overflow-hidden p-12">
               <div className="flex flex-col md:flex-row items-center gap-8 w-24 max-w-6xl mx-auto justify-center">
@@ -108,8 +107,8 @@ const ConsejosComunales: React.FC = () => {
   }
 
   if (!session) {
-    router.push("/login"); // Redirige al login si no hay sesión
-    return null; // Asegura que la página no se renderice
+    router.push("/pages/login"); 
+    return null;
   }
 
   return (
