@@ -7,7 +7,6 @@ const prisma = new PrismaClient();
 export async function GET() {
   try {
     const comunas = await prisma.comuna.findMany();
-    console.log('Datos de la base de datos:', comunas); // Verifica qué devuelve Prisma
     return NextResponse.json(comunas);
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -33,7 +32,6 @@ export async function POST(req: Request) {
         consejoComunal: JSON.stringify(consejoComunal),
       },
     });
-    console.log("Nueva comuna creada:", nuevaComuna);
     return NextResponse.json(nuevaComuna, { status: 201 });
   } catch (error: unknown) {
     if (error instanceof Error) {

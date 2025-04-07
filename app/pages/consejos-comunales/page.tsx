@@ -1,63 +1,33 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Divider from "../../../components/Divider";
-import { MdOutlineSearch } from "react-icons/md";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Table from "../../../components/Table";
 import SearchForm from "../../../components/SearchForm";
-import Image from "next/image";
-
-interface ConsejoComunal {
-  id: string;
-  estado: string;
-  municipio: string;
-  parroquia: string;
-  cc: string;
-  rif: string;
-  numeroCuenta: string;
-  fechaConstitucion: Date;
-  fechaVencimiento: Date;
-  vocero: string;
-  tlfVocero: string;
-  poblacionVotante: number;
-}
+import useConsejos from "@/hooks/useConsejos";
+import { ConsejoComunal } from "@/hooks/interfaces/consejo.comunal.interface";
+import Loading from "@/components/Loading";
+import Tittle from '@/components/Tittle'
 
 const ConsejosComunales: React.FC = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Estado para almacenar los datos de la base de datos
-  const [consejosData, setConsejosData] = useState<ConsejoComunal[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
-  // Hook para obtener los datos desde la API
-  useEffect(() => {
-    const fetchConsejos = async () => {
-      try {
-        setIsLoading(true); // Activar animacion de carga
-        const response = await fetch("/api/consejos");
-        const data: ConsejoComunal[] = await response.json();
-        console.log("Datos de consejos:", data);
-        setConsejosData(data); // Almacena los datos obtenidos
-      } catch (error) {
-        console.error("Error fetching consejos comunales:", error);
-      } finally {
-        setIsLoading(false); // Desactivar animacion de carga
-      }
-    };
-    fetchConsejos();
-  }, []);
+  // Usamos el hook para obtener proyectos
+  const { data: consejosData, isLoading } = useConsejos();
 
-  // Filtra los datos según el término de búsqueda
-  const filteredData = consejosData.filter(
-    (consejo) =>
+  // Filtra datos según el término de búsqueda
+  const filteredData = consejosData
+    ? consejosData.filter((consejo) =>
       Object.values(consejo)
-        .join(" ") // Combina todos los valores de un objeto en una cadena
-        .toLowerCase() // Convierte todo a minúsculas para comparación insensible a mayúsculas
-        .includes(searchTerm.toLowerCase()) // Compara con el término de búsqueda
-  );
+        .join(" ")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    )
+    : [];
+
   const headers = [
     "Estado",
     "MUNICIPIO",
@@ -92,53 +62,32 @@ const ConsejosComunales: React.FC = () => {
       <td className={tdClassName}>{consejo.poblacionVotante}</td>
     </>
   );
-  if (status === "loading") {
-    return <main className="relative flex min-h-screen items-center justify-center overflow-hidden p-12">
-              <div className="flex flex-col md:flex-row items-center gap-8 w-24 max-w-6xl mx-auto justify-center">
-                    <Image
-                      src="/espera.gif"
-                      width={100}
-                      height={100}
-                      alt="espera gif"
-                      className="rounded-3xl"
-                    />
-          </div>
-          </main>;
-  }
 
+  if (status === "loading") {
+    return (<Loading />);
+  }
   if (!session) {
-    router.push("/pages/login"); 
+    router.push("/pages/login");
     return null;
+  }
+  if (isLoading) {
+    return (<Loading />);
   }
 
   return (
     <>
-      <div className="flex flex-col items-start justify-between pl-6 py-3">
-        <h1 className="text-xl max-[500px]:text-xl">Consejos Comunales</h1>
-      </div>
+      <Tittle title={"Consejos Comunales"} />
       <Divider />
       <div className="flex justify-between px-6 py-4">
         <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       </div>
-      {isLoading ? (
-        <div className="flex flex-col items-center justify-center h-96">
-                    <Image
-                      src="/espera.gif"
-                      width={100}
-                      height={100}
-                      alt="espera gif"
-                      className="rounded-3xl"
-                    />
-        </div>
-      ) : (
-        <Table
-          headers={headers}
-          data={filteredData}
-          renderRow={renderRow}
-          thClassName="text-center border-b border-sky-600"
-          tdClassName="text-left border-r border-sky-600"
-        />
-      )}
+      <Table
+        headers={headers}
+        data={filteredData}
+        renderRow={renderRow}
+        thClassName="text-center border-b border-sky-600"
+        tdClassName="text-left border-r border-sky-600"
+      />
     </>
   );
 };
