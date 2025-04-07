@@ -11,7 +11,7 @@ export interface RegisterOptions {
   role: string;
 }
 
-export interface RegisterResponse {
+export interface RegisterResponse extends RegisterData {
   success: boolean;
   error?: string;
 }

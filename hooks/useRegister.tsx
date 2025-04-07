@@ -1,13 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { post } from "@/lib/request/api";
-import { RegisterData, RegisterOptions, RegisterResponse } from './interfaces/register.interface';
+import { RegisterOptions, RegisterResponse } from './interfaces/register.interface';
 
 export const useRegister = () => {
-  const [error, setError] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
   const validateInputs = ({ email, password, confirmPassword }: Omit<RegisterOptions, 'role'>) => {
     const errors = {
       email: !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email) 
@@ -27,22 +24,16 @@ export const useRegister = () => {
     };
   };
 
-  const registerUser = async (
-    values: RegisterOptions
-  ): Promise<RegisterResponse> => {
-    const { isValid, errors } = validateInputs(values);
-    
-    if (!isValid) {
-      const firstError = Object.values(errors).find(Boolean);
-      setError(firstError || "");
-      toast.error(firstError || "Datos inválidos");
-      return { success: false, error: firstError };
-    }
+  const mutation = useMutation<RegisterResponse, Error, RegisterOptions>({
+    mutationFn: async (values) => {
+      const { isValid, errors } = validateInputs(values);
+      
+      if (!isValid) {
+        const firstError = Object.values(errors).find(Boolean);
+        throw new Error(firstError || "Datos inválidos");
+      }
 
-    setIsLoading(true);
-    
-    try {
-      await post<RegisterData>({
+      const response = await post<RegisterResponse>({
         path: "/api/register",
         body: {
           email: values.email,
@@ -51,22 +42,20 @@ export const useRegister = () => {
         }
       });
 
+      return response;
+    },
+    onSuccess: () => {
       toast.success("Registro exitoso");
-      return { success: true };
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message || "Error al registrar usuario";
-      setError(errorMessage);
-      toast.error(errorMessage);
-      return { success: false, error: errorMessage };
-    } finally {
-      setIsLoading(false);
+    },
+    onError: (error) => {
+      toast.error(error.message);
     }
-  };
+  });
 
   return {
-    registerUser,
-    error,
-    isLoading,
-    resetError: () => setError(""),
+    registerUser: mutation.mutateAsync,
+    error: mutation.error?.message || "",
+    isLoading: mutation.isPending,
+    resetError: () => mutation.reset(),
   };
 };
