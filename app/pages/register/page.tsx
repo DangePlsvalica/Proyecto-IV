@@ -72,13 +72,13 @@ const RegisterPage = () => {
     return <h1>Cargando...</h1>;
   }
   if (!session) {
-    router.push("/pages/login"); 
-    return null;
+    router.push("/pages/login"); // Redirige al login si no hay sesión
+    return null; // Asegura que la página no se renderice
   }
 
   if (session.user.role !== "Admin") {
-    router.push("/");
-    return null;
+    router.push("/"); // Redirige al home si no es admin
+    return null; // Asegura que no se renderice la página
   }
 
   return (
