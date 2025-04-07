@@ -1,10 +1,10 @@
-"use client"; // Indica que el componente es del lado del cliente
+"use client"; 
 import React, { useState, useEffect } from "react";
-import Divider from "../../components/Divider";
+import Divider from "../../../components/Divider";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import SearchForm from "../../components/SearchForm";
-import Table from "../../components/Table";
+import SearchForm from "../../../components/SearchForm";
+import Table from "../../../components/Table";
 import Button from "@/components/Button";
 
 interface Vehiculo {

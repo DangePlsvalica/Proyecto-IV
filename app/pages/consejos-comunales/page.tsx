@@ -1,11 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Divider from "../../components/Divider";
+import Divider from "../../../components/Divider";
 import { MdOutlineSearch } from "react-icons/md";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import Table from "../../components/Table";
-import SearchForm from "../../components/SearchForm";
+import Table from "../../../components/Table";
+import SearchForm from "../../../components/SearchForm";
+import Image from "next/image";
 
 interface ConsejoComunal {
   id: string;
@@ -25,6 +26,7 @@ interface ConsejoComunal {
 const ConsejosComunales: React.FC = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
 
   // Estado para almacenar los datos de la base de datos
   const [consejosData, setConsejosData] = useState<ConsejoComunal[]>([]);
@@ -34,12 +36,15 @@ const ConsejosComunales: React.FC = () => {
   useEffect(() => {
     const fetchConsejos = async () => {
       try {
+        setIsLoading(true); // Activar animacion de carga
         const response = await fetch("/api/consejos");
         const data: ConsejoComunal[] = await response.json();
         console.log("Datos de consejos:", data);
         setConsejosData(data); // Almacena los datos obtenidos
       } catch (error) {
         console.error("Error fetching consejos comunales:", error);
+      } finally {
+        setIsLoading(false); // Desactivar animacion de carga
       }
     };
     fetchConsejos();
@@ -89,7 +94,17 @@ const ConsejosComunales: React.FC = () => {
   );
   // Redirige al login si no hay sesión y la autenticación está cargada
   if (status === "loading") {
-    return <p>Cargando...</p>;
+    return <main className="relative flex min-h-screen items-center justify-center overflow-hidden p-12">
+              <div className="flex flex-col md:flex-row items-center gap-8 w-24 max-w-6xl mx-auto justify-center">
+                    <Image
+                      src="/espera.gif"
+                      width={100}
+                      height={100}
+                      alt="espera gif"
+                      className="rounded-3xl"
+                    />
+          </div>
+          </main>;
   }
 
   if (!session) {
@@ -106,13 +121,25 @@ const ConsejosComunales: React.FC = () => {
       <div className="flex justify-between px-6 py-4">
         <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       </div>
-      <Table
-        headers={headers}
-        data={filteredData}
-        renderRow={renderRow}
-        thClassName="text-center border-b border-sky-600"
-        tdClassName="text-left border-r border-sky-600"
-      />
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center h-96">
+                    <Image
+                      src="/espera.gif"
+                      width={100}
+                      height={100}
+                      alt="espera gif"
+                      className="rounded-3xl"
+                    />
+        </div>
+      ) : (
+        <Table
+          headers={headers}
+          data={filteredData}
+          renderRow={renderRow}
+          thClassName="text-center border-b border-sky-600"
+          tdClassName="text-left border-r border-sky-600"
+        />
+      )}
     </>
   );
 };

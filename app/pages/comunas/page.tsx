@@ -1,11 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Divider from "../../components/Divider";
+import Divider from "../../../components/Divider";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import SearchForm from "../../components/SearchForm";
-import Table from "../../components/Table";
+import SearchForm from "../../../components/SearchForm";
+import Table from "../../../components/Table";
+import Image from "next/image";
 import Button from "@/components/Button";
+
 
 // Define el tipo de los datos para Comuna
 interface Comuna {
@@ -36,6 +38,7 @@ interface Comuna {
 const Comunas: React.FC = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
 
   // Estado para almacenar datos
   const [comunasData, setComunasData] = useState<Comuna[]>([]);
@@ -45,12 +48,15 @@ const Comunas: React.FC = () => {
   useEffect(() => {
     const fetchComunas = async () => {
       try {
+        setIsLoading(true); // Activar animacion de carga
         const response = await fetch("/api/comunas", { method: "GET" });
         const data: Comuna[] = await response.json();
         console.log("Datos de comunas:", data);
         setComunasData(data);
       } catch (error) {
         console.error("Error fetching comunas:", error);
+      } finally {
+        setIsLoading(false); // Desactivar animacion de carga
       }
     };
     fetchComunas();
@@ -143,7 +149,17 @@ const tdClassName = "border-b border-r border-sky-950";
   };
   // Manejo de sesión y redirección
   if (status === "loading") {
-    return <p>Cargando...</p>;
+    return <main className="relative flex min-h-screen items-center justify-center overflow-hidden p-12">
+          <div className="flex flex-col md:flex-row items-center gap-8 w-24 max-w-6xl mx-auto justify-center">
+                <Image
+                  src="/espera.gif"
+                  width={100}
+                  height={100}
+                  alt="espera gif"
+                  className="rounded-3xl"
+                />
+      </div>
+      </main>;
   }
 
   if (!session) {
@@ -158,15 +174,27 @@ const tdClassName = "border-b border-r border-sky-950";
       <Divider />
       <div className="flex justify-between px-6 py-4">
         <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        <Button onClick={() => router.push("/register-comuna")} title={"Registrar nueva comuna"}></Button>
+        <Button onClick={() => router.push("/pages/comunas/register-comuna")} title={"Registrar nueva comuna"}></Button>
       </div>
-      <Table
-        headers={headers}
-        data={filteredData}
-        renderRow={renderRow}
-        thClassName="text-center border-b border-sky-600"
-        tdClassName="text-left border-r border-sky-600"
-      />
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center h-96">
+                    <Image
+                      src="/espera.gif"
+                      width={100}
+                      height={100}
+                      alt="espera gif"
+                      className="rounded-3xl"
+                    />
+        </div>
+      ) : (
+        <Table
+          headers={headers}
+          data={filteredData}
+          renderRow={renderRow}
+          thClassName="text-center border-b border-sky-600"
+          tdClassName="text-left border-r border-sky-600"
+        />
+      )}
     </>
   );
 };
