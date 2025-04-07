@@ -38,7 +38,6 @@ const RegisterComunaPage = () => {
   });
 
   const [consejos, setConsejos] = useState<OptionType[]>([]);
- // Estado para almacenar los consejos comunales
 
   useEffect(() => {
   const fetchConsejos = async () => {
@@ -102,7 +101,7 @@ const RegisterComunaPage = () => {
 
       if (res.ok) {
         toast.success("Comuna registrada exitosamente");
-        router.push("/pages/comunas"); // Redirige a la lista de comunas
+        router.push("/pages/comunas");
       } else {
         toast.error("Error al registrar la comuna");
       }
@@ -113,8 +112,8 @@ const RegisterComunaPage = () => {
   };
 
   return (
-    <div className="mx-auto my-7 max-w-[95%] p-20 border border-sky-200 rounded-xl bg-[#f8f8f8]">
-      <h1 className="text-2xl font-bold mb-6">Registrar Nueva Comuna</h1>
+    <div className="mx-auto my-7 max-w-[95%] p-16 border border-sky-200 rounded-xl bg-[#f8f8f8]">
+      <h1 className="text-2xl font-bold mb-6 text-sky-950">Registrar Nueva Comuna</h1>
       <form onSubmit={handleSubmit} className=" grid grid-cols-4 gap-4">
         <FormInput 
           label={"Código"} 
@@ -123,159 +122,84 @@ const RegisterComunaPage = () => {
           onChange={handleChange}
           required={true}>
         </FormInput>
-        <div>
-          <label htmlFor="numComisionPromotora" className="block text-sm font-medium">
-            N° comisión promotora
-          </label>
-          <input
-            type="text"
-            id="numComisionPromotora"
-            name="numComisionPromotora"
-            value={formData.numComisionPromotora}
-            onChange={handleChange}
-            required
-            className="block w-full border px-4 py-2 rounded-md"
-          />
-        </div>
-        <div>
-          <label htmlFor="fechaComisionPromotora" className="block text-sm font-medium">
-            Fecha de Comisión Promotora
-          </label>
-          <input
-            type="date"
-            id="fechaComisionPromotora"
-            name="fechaComisionPromotora"
-            value={formData.fechaComisionPromotora}
-            onChange={handleChange}
-            required
-            className="block w-full border px-4 py-2 rounded-md"
-          />
-        </div>
-        <div>
-          <label htmlFor="rif" className="block text-sm font-medium">
-            RIF
-          </label>
-          <input
-            type="text"
-            id="rif"
-            name="rif"
-            value={formData.rif}
-            onChange={handleChange}
-            required
-            className="block w-full border px-4 py-2 rounded-md"
-          />
-        </div>
-        <div>
-          <label htmlFor="cuentaBancaria" className="block text-sm font-medium">
-            Cuenta Bancaria
-          </label>
-          <input
-            type="text"
-            id="cuentaBancaria"
-            name="cuentaBancaria"
-            value={formData.cuentaBancaria}
-            onChange={handleChange}
-            required
-            className="block w-full border px-4 py-2 rounded-md"
-          />
-        </div>
-        <div>
-          <label htmlFor="fechaRegistro" className="block text-sm font-medium">
-            Fecha de Registro
-          </label>
-          <input
-            type="date"
-            id="fechaRegistro"
-            name="fechaRegistro"
-            value={formData.fechaRegistro}
-            onChange={handleChange}
-            required
-            className="block w-full border px-4 py-2 rounded-md"
-          />
-        </div>
-        <div>
-          <label htmlFor="nombre" className="block text-sm font-medium">
-            Nombre de la Comuna
-          </label>
-          <input
-            type="text"
-            id="nombre"
-            name="nombre"
-            value={formData.nombre}
-            onChange={handleChange}
-            required
-            className="block w-full border px-4 py-2 rounded-md"
-          />
-        </div>
-        <div>
-          <label htmlFor="direccion" className="block text-sm font-medium">
-            Dirección
-          </label>
-          <textarea
-            id="direccion"
-            name="direccion"
-            value={formData.direccion}
-            onChange={handleChange}
-            required
-            className="block w-full border px-4 py-2 rounded-md"
-          ></textarea>
-        </div>
-        <div>
-          <label htmlFor="linderoNorte" className="block text-sm font-medium">
-            Lindero Norte
-          </label>
-          <input
-            type="text"
-            id="linderoNorte"
-            name="linderoNorte"
-            value={formData.linderoNorte}
-            onChange={handleChange}
-            required
-            className="block w-full border px-4 py-2 rounded-md"
-          />
-        </div>
-        <div>
-          <label htmlFor="linderoSur" className="block text-sm font-medium">
-            Lindero Sur
-          </label>
-          <input
-            type="text"
-            id="linderoSur"
-            name="linderoSur"
-            value={formData.linderoSur}
-            onChange={handleChange}
-            required
-            className="block w-full border px-4 py-2 rounded-md"
-          />
-        </div>
-        <div>
-          <label htmlFor="linderoEste" className="block text-sm font-medium">
-            Lindero Este
-          </label>
-          <input
-            type="text"
-            id="linderoEste"
-            name="linderoEste"
-            value={formData.linderoEste}
-            onChange={handleChange}
-            required
-            className="block w-full border px-4 py-2 rounded-md"
-          />
-        </div>
-        <div>
-          <label htmlFor="linderoOeste" className="block text-sm font-medium">
-            Lindero Oeste
-          </label>
-          <input
-            type="text"
-            id="linderoOeste"
-            name="linderoOeste"
-            value={formData.linderoOeste}
-            onChange={handleChange}
-            required
-            className="block w-full border px-4 py-2 rounded-md"
-          />
-        </div>
+        <FormInput 
+          label={"N° comisión promotora"} 
+          id={"numComisionPromotora"} 
+          value={formData.numComisionPromotora} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
+        <FormInput 
+          type={"date"}
+          label={"Fecha de Comisión Promotora"} 
+          id={"fechaComisionPromotora"} 
+          value={formData.fechaComisionPromotora} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
+        <FormInput 
+          label={"RIF"} 
+          id={"rif"} 
+          value={formData.rif} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
+        <FormInput 
+          label={"Cuenta Bancaria"} 
+          id={"cuentaBancaria"} 
+          value={formData.cuentaBancaria} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
+        <FormInput 
+          label={"Fecha de Registro"} 
+          id={"fechaRegistro"} 
+          value={formData.fechaRegistro} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
+        <FormInput 
+          label={"Nombre de la Comuna"} 
+          id={"nombre"} 
+          value={formData.nombre} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
+        <FormInput 
+          label={"Dirección"} 
+          id={"direccion"} 
+          value={formData.direccion} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
+        <FormInput 
+          label={"Lindero Norte"} 
+          id={"linderoNorte"} 
+          value={formData.linderoNorte} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
+        <FormInput 
+          label={"Lindero Sur"} 
+          id={"linderoSur"} 
+          value={formData.linderoSur} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
+        <FormInput 
+          label={"Lindero Este"} 
+          id={"linderoEste"} 
+          value={formData.linderoEste} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
+        <FormInput 
+          label={"Lindero Oeste"} 
+          id={"linderoOeste"} 
+          value={formData.linderoOeste} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
         <div>
           <label htmlFor="consejoComunal" className="block text-sm font-medium">
             Consejo Comunal que integra la Comuna
@@ -284,7 +208,7 @@ const RegisterComunaPage = () => {
             id="consejoComunal"
             name="consejoComunal"
             options={consejos} // Opciones formateadas desde el backend
-            isMulti // Permitir múltiples selecciones
+            isMulti
             placeholder="Selecciona los consejos comunales"
             onChange={(selectedOptions) =>
               setFormData({
@@ -333,117 +257,65 @@ const RegisterComunaPage = () => {
             }}
           />
         </div>
-        <div>
-          <label htmlFor="fechaUltimaEleccion" className="block text-sm font-medium">
-            Fecha de Última Elección
-          </label>
-          <input
-            type="date"
-            id="fechaUltimaEleccion"
-            name="fechaUltimaEleccion"
-            value={formData.fechaUltimaEleccion}
-            onChange={handleChange}
-            required
-            className="block w-full border px-4 py-2 rounded-md"
-          />
-        </div>
-        <div>
-          <label htmlFor="municipio" className="block text-sm font-medium">
-            Municipio
-          </label>
-          <input
-            type="text"
-            id="municipio"
-            name="municipio"
-            value={formData.municipio}
-            onChange={handleChange}  
-            className="block w-full border px-4 py-2 rounded-md"       
-            />
-            </div>
-            <div>
-              <label htmlFor="parroquia" className="block text-sm font-medium">
-                Parroquia
-              </label>
-              <input
-                type="text"
-                id="parroquia"
-                name="parroquia"
-                value={formData.parroquia}
-                onChange={handleChange}
-                required
-                className="block w-full border px-4 py-2 rounded-md"
-              />
-            </div>
-            <div>
-              <label htmlFor="nombreVocero" className="block text-sm font-medium">
-                Nombre y Apellidos del Vocero
-              </label>
-              <input
-                type="text"
-                id="nombreVocero"
-                name="nombreVocero"
-                value={formData.nombreVocero}
-                onChange={handleChange}
-                required
-                className="block w-full border px-4 py-2 rounded-md"
-              />
-            </div>
-            <div>
-              <label htmlFor="ciVocero" className="block text-sm font-medium">
-                Cédula de Identidad del Vocero
-              </label>
-              <input
-                type="text"
-                id="ciVocero"
-                name="ciVocero"
-                value={formData.ciVocero}
-                onChange={handleChange}
-                required
-                className="block w-full border px-4 py-2 rounded-md"
-              />
-            </div>
-            <div>
-              <label htmlFor="telefono" className="block text-sm font-medium">
-                Teléfono del Vocero
-              </label>
-              <input
-                type="text"
-                id="telefono"
-                name="telefono"
-                value={formData.telefono}
-                onChange={handleChange}
-                required
-                className="block w-full border px-4 py-2 rounded-md"
-              />
-            </div>
-            <div>
-              <label htmlFor="cantidadConsejosComunales" className="block text-sm font-medium">
-                Cantidad de C.C que Integran la Comuna
-              </label>
-              <input
-                type="number"
-                id="cantidadConsejosComunales"
-                name="cantidadConsejosComunales"
-                value={formData.cantidadConsejosComunales}
-                onChange={handleChange}
-                required
-                className="block w-full border px-4 py-2 rounded-md"
-              />
-            </div>
-            <div>
-              <label htmlFor="poblacionVotante" className="block text-sm font-medium">
-                Población Votante
-              </label>
-              <input
-                type="number"
-                id="poblacionVotante"
-                name="poblacionVotante"
-                value={formData.poblacionVotante}
-                onChange={handleChange}
-                required
-                className="block w-full border px-4 py-2 rounded-md"
-              />
-            </div>      
+        <FormInput 
+          type={"date"}
+          label={"Fecha de Última Elección"} 
+          id={"fechaUltimaEleccion"} 
+          value={formData.fechaUltimaEleccion} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
+        <FormInput 
+          label={"Municipio"} 
+          id={"municipio"} 
+          value={formData.municipio} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
+        <FormInput 
+          label={"Parroquia"} 
+          id={"parroquia"} 
+          value={formData.parroquia} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
+        <FormInput 
+          label={"Nombres y Apellidos del Vocero"} 
+          id={"nombreVocero"} 
+          value={formData.nombreVocero} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
+        <FormInput 
+          label={"Cédula de Identidad del Vocero"} 
+          id={"ciVocero"} 
+          value={formData.ciVocero} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
+        <FormInput 
+          label={"Teléfono del Vocero"} 
+          id={"telefono"} 
+          value={formData.telefono} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
+        <FormInput 
+          type={"number"}
+          label={"Cantidad de C.C que Integran la Comuna"} 
+          id={"cantidadConsejosComunales"} 
+          value={formData.cantidadConsejosComunales} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
+        <FormInput 
+          type={"number"}
+          label={"Población Votante"} 
+          id={"poblacionVotante"} 
+          value={formData.poblacionVotante} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>    
           </form>
           <div className="flex justify-center pt-6">
             <Button onClick={handleSubmit} title="Registrar Comuna"></Button>
@@ -453,4 +325,3 @@ const RegisterComunaPage = () => {
     };
     
     export default RegisterComunaPage;
-    

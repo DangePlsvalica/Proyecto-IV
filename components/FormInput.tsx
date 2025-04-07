@@ -12,7 +12,7 @@ interface FormInputProps {
 const FormInput: React.FC<FormInputProps> = ({ label, id, type = 'text', value, onChange, required = false, placeholder = '', textarea = false }) => {
     return (
       <div>
-        <label htmlFor={id} className="block text-sm font-medium">
+        <label htmlFor={id} className="block pb-2 text-sm font-medium text-sky-950">
           {label}
         </label>
         {textarea ? (

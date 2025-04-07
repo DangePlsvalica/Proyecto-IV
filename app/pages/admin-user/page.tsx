@@ -92,7 +92,6 @@ const AdminUser: React.FC = () => {
     }
   };
   
-  // Redirige al login si no hay sesión y la autenticación está cargada
   if (status === "loading") {
     return <main className="relative flex min-h-screen items-center justify-center overflow-hidden p-12">
               <div className="flex flex-col md:flex-row items-center gap-8 w-24 max-w-6xl mx-auto justify-center">
@@ -108,13 +107,12 @@ const AdminUser: React.FC = () => {
   }
 
   if (!session) {
-    router.push("/login"); // Redirige al login si no hay sesión
-    return null; // Asegura que la página no se renderice
+    router.push("/pages/login");
+    return null; 
   }
-
   if (session.user.role !== "Admin") {
-    router.push("/"); // Redirige al home si no es admin
-    return null; // Asegura que no se renderice la página
+    router.push("/");
+    return null;
   }
 
   return (
