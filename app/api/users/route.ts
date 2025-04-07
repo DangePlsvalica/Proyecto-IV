@@ -34,10 +34,8 @@ export async function DELETE(request: NextRequest) {
     const deletedUser = await prisma.user.delete({
       where: { id },
     });
-    console.log("Usuario eliminado exitosamente:", deletedUser);
     return NextResponse.json({ message: "User deleted successfully", deletedUser });
   } catch (error) {
-    console.error("Error al eliminar el usuario:", error);
     return NextResponse.json({ error: "Error deleting user" }, { status: 500 });
   }
 }
@@ -63,7 +61,6 @@ export async function PUT(request: NextRequest) {
       where: { id },
       data: { role },
     });
-    console.log("Usuario actualizado exitosamente:", updatedUser); // Log del usuario actualizado
     return NextResponse.json(updatedUser);
   } catch (error: unknown) {
     if (error instanceof Error) {

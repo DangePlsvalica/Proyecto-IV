@@ -7,68 +7,27 @@ import SearchForm from "../../../components/SearchForm";
 import Table from "../../../components/Table";
 import Image from "next/image";
 import Button from "@/components/Button";
-
-
-// Define el tipo de los datos para Comuna
-interface Comuna {
-  id: string;
-  codigo: string;
-  numComisionPromotora: string;
-  fechaComisionPromotora: Date;
-  rif: string;
-  cuentaBancaria: string;
-  fechaRegistro: Date;
-  nombre: string;
-  direccion: string;
-  linderoNorte: string;
-  linderoSur: string;
-  linderoEste: string;
-  linderoOeste: string;
-  consejoComunal: string; // JSON en formato string
-  fechaUltimaEleccion: Date;
-  municipio: string;
-  parroquia: string;
-  nombreVocero: string;
-  ciVocero: string;
-  telefono: string;
-  cantidadConsejosComunales: number;
-  poblacionVotante: number;
-}
+import { Comuna } from "@/hooks/interfaces/comuna.interface";
+import useComunas from "@/hooks/useComunas";
+import Loading from "@/components/Loading";
+import Tittle from '@/components/Tittle'
 
 const Comunas: React.FC = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Estado para almacenar datos
-  const [comunasData, setComunasData] = useState<Comuna[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
-  // Hook para obtener datos desde la API
-  useEffect(() => {
-    const fetchComunas = async () => {
-      try {
-        setIsLoading(true); // Activar animacion de carga
-        const response = await fetch("/api/comunas", { method: "GET" });
-        const data: Comuna[] = await response.json();
-        console.log("Datos de comunas:", data);
-        setComunasData(data);
-      } catch (error) {
-        console.error("Error fetching comunas:", error);
-      } finally {
-        setIsLoading(false); // Desactivar animacion de carga
-      }
-    };
-    fetchComunas();
-  }, []);
+  const { data: comunasData, isLoading } = useComunas();
 
   // Filtra datos según el término de búsqueda
-  const filteredData = comunasData.filter((comuna) =>
-    Object.values(comuna)
-      .join(" ")
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
-  );
+  const filteredData = comunasData
+    ? comunasData.filter((comuna) =>
+      Object.values(comuna)
+        .join(" ")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    )
+    : [];
 
   const headers = [
     "Codigo",
@@ -146,44 +105,26 @@ const tdClassName = "border-b border-r border-sky-950";
       </>
     );
   };
+
   if (status === "loading") {
-    return <main className="relative flex min-h-screen items-center justify-center overflow-hidden p-12">
-          <div className="flex flex-col md:flex-row items-center gap-8 w-24 max-w-6xl mx-auto justify-center">
-                <Image
-                  src="/espera.gif"
-                  width={100}
-                  height={100}
-                  alt="espera gif"
-                  className="rounded-3xl"
-                />
-      </div>
-      </main>;
+    return ( <Loading /> );
   }
   if (!session) {
     router.push("/pages/login");
     return null;
   }
+  if (isLoading) {
+    return ( <Loading /> );
+  }
+
   return (
     <>
-      <div className="flex flex-col items-start justify-between pl-6 py-3">
-        <h1 className="text-xl max-[500px]:text-xl">Comunas</h1>
-      </div>
+      <Tittle title={"Comunas"}/>
       <Divider />
       <div className="flex justify-between px-6 py-4">
         <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         <Button onClick={() => router.push("/pages/comunas/register-comuna")} title={"Registrar nueva comuna"}></Button>
       </div>
-      {isLoading ? (
-        <div className="flex flex-col items-center justify-center h-96">
-                    <Image
-                      src="/espera.gif"
-                      width={100}
-                      height={100}
-                      alt="espera gif"
-                      className="rounded-3xl"
-                    />
-        </div>
-      ) : (
         <Table
           headers={headers}
           data={filteredData}
@@ -191,7 +132,6 @@ const tdClassName = "border-b border-r border-sky-950";
           thClassName="text-center border-b border-sky-600"
           tdClassName="text-left border-r border-sky-600"
         />
-      )}
     </>
   );
 };
