@@ -7,10 +7,6 @@ export async function POST(req: Request) {
   try {
     const { email, password, role } = await req.json();
 
-    console.log("Email recibido:", email);
-    console.log("Contraseña recibida:", password); 
-    console.log("Rol recibido:", role);
-
     // Verificar que todos los campos sean proporcionados
     if (!email || !password || !role ) {
       return new Response("Todos los campos son obligatorios", { status: 400 });
@@ -27,7 +23,7 @@ export async function POST(req: Request) {
       where: { email },
     });
     
-    console.log("Usuario encontrado:", existingUser); // Log para depuración
+    console.log("Usuario encontrado:", existingUser); 
 
     if (existingUser) {
       return new Response("El correo electrónico ya está registrado", { status: 400 });

@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import Divider from "../../components/Divider";
 import { MdOutlineSearch } from "react-icons/md";
@@ -17,8 +16,8 @@ interface ConsejoComunal {
   cc: string; // Nombre del Consejo Comunal
   rif: string;
   numeroCuenta: string;
-  fechaConstitucion: string;
-  fechaVencimiento: string;
+  fechaConstitucion: Date;
+  fechaVencimiento: Date;
   vocero: string;
   tlfVocero: string;
   poblacionVotante: number;
@@ -82,8 +81,12 @@ const ConsejosComunales: React.FC = () => {
       <td className={tdClassName}>{consejo.cc}</td>
       <td className={tdClassName}>{consejo.rif}</td>
       <td className={tdClassName}>{consejo.numeroCuenta}</td>
-      <td className={tdClassName}>{consejo.fechaConstitucion}</td>
-      <td className={tdClassName}>{consejo.fechaVencimiento}</td>
+      <td className={tdClassName}>
+        {new Date(consejo.fechaConstitucion).toLocaleDateString()}
+      </td>
+      <td className={tdClassName}>
+        {new Date(consejo.fechaVencimiento).toLocaleDateString()}
+      </td>
       <td className={tdClassName}>{consejo.vocero}</td>
       <td className={tdClassName}>{consejo.tlfVocero}</td>
       <td className={tdClassName}>{consejo.poblacionVotante}</td>
