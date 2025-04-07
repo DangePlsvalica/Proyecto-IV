@@ -13,8 +13,8 @@ const Button: React.FC<ButtonProps> = ({ href, title, className, onClick }) => {
       <button
         onClick={onClick}
         className={`rounded-md bg-sky-950 px-3 py-2 border border-gray-500 
-                  text-sm font-semibold text-white shadow-sm hover:bg-sky-900 
-                  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 
+                  text-sm font-semibold text-white shadow-sm transition-all duration-200 ease-in-out
+                hover:bg-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 
                   focus-visible:outline-indigo-600 ${className}`}
       >
         {title}
