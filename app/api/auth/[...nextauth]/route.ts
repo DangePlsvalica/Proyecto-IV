@@ -4,7 +4,6 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-// Usar una instancia global de Prisma para evitar la reconexión repetida en desarrollo
 let prisma: PrismaClient;
 
 if (process.env.NODE_ENV === "production") {
@@ -17,7 +16,7 @@ if (process.env.NODE_ENV === "production") {
   prisma = (global as any).prisma;
 }
 const authOptions: AuthOptions = {
-  adapter: PrismaAdapter(prisma), // Usamos PrismaAdapter para NextAuth
+  adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -47,18 +46,17 @@ const authOptions: AuthOptions = {
             user.hashedPassword
           );
 
-          // Si la contraseña es válida, devolver el usuario con el role; si no, devolver null
           if (isValid) {
             return {
               ...user,
-              role: user.role, // Incluye el rol en el objeto de usuario
+              role: user.role,
             };
           } else {
             return null;
           }
         } catch (error) {
           console.error("Error durante la autenticación:", error);
-          return null; // Retornar null en caso de error
+          return null;
         }
       },
     }),
