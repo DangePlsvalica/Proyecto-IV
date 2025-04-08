@@ -1,12 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+import React, { useState } from "react";
 import Select from "react-select";
 import Button from "@/components/Button";
 import FormInput from '@/components/FormInput'
 import { useQueryClient } from '@tanstack/react-query';
 import { ConsejoComunal } from '@/hooks/interfaces/consejo.comunal.interface';
+import { useRegisterComuna } from '@/hooks/useRegisterComuna';
 
 const RegisterComunaPage = () => {
   type OptionType = {
@@ -15,7 +14,7 @@ const RegisterComunaPage = () => {
   };
   const queryClient = useQueryClient();
   
-  const router = useRouter();
+  const { mutate: registerComuna } = useRegisterComuna();
   const [formData, setFormData] = useState({
     codigo: "",
     numComisionPromotora: "",
@@ -36,18 +35,16 @@ const RegisterComunaPage = () => {
     nombreVocero: "",
     ciVocero: "",
     telefono: "",
-    cantidadConsejosComunales: "",
-    poblacionVotante: "",
+    cantidadConsejosComunales: 0,
+    poblacionVotante: 0,
   });
 
   // Obtener datos de la cache y transformar a formato para react-select
   const consejosData = queryClient.getQueryData<ConsejoComunal[]>(["consejoscomunal"]);
-  console.log(consejosData)
   const consejosOptions = consejosData?.map(consejo => ({
     value: consejo.cc,
     label: consejo.cc, 
   })) || [];
-
 
   // Manejar el cambio en los campos del formulario
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
@@ -70,33 +67,7 @@ const RegisterComunaPage = () => {
   // Manejar el envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const res = await fetch("/api/comunas", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          cantidadConsejosComunales: parseInt(formData.cantidadConsejosComunales),
-          poblacionVotante: parseInt(formData.poblacionVotante),
-          fechaComisionPromotora: new Date(formData.fechaComisionPromotora).toISOString(),
-          fechaRegistro: new Date(formData.fechaRegistro).toISOString(),
-          fechaUltimaEleccion: new Date(formData.fechaUltimaEleccion).toISOString(),
-          consejoComunal: formData.consejoComunal.map((option) => option.value), // Enviar solo los valores seleccionados
-        }),
-      });
-
-      if (res.ok) {
-        toast.success("Comuna registrada exitosamente");
-        router.push("/pages/comunas");
-      } else {
-        toast.error("Error al registrar la comuna");
-      }
-    } catch (error) {
-      console.error("Error al registrar comuna:", error);
-      toast.error("Hubo un problema al registrar la comuna");
-    }
+    registerComuna(formData);
   };
 
   return (

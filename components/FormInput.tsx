@@ -2,7 +2,7 @@ interface FormInputProps {
   label: string;
   id: string;
   type?: string;
-  value: string;
+  value: string | number;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
   required?: boolean;
   placeholder?: string;
