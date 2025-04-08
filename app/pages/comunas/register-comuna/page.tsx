@@ -5,12 +5,15 @@ import toast from "react-hot-toast";
 import Select from "react-select";
 import Button from "@/components/Button";
 import FormInput from '@/components/FormInput'
+import { useQueryClient } from '@tanstack/react-query';
+import { ConsejoComunal } from '@/hooks/interfaces/consejo.comunal.interface';
 
 const RegisterComunaPage = () => {
   type OptionType = {
     value: string;
     label: string;
   };
+  const queryClient = useQueryClient();
   
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -37,29 +40,14 @@ const RegisterComunaPage = () => {
     poblacionVotante: "",
   });
 
-  const [consejos, setConsejos] = useState<OptionType[]>([]);
+  // Obtener datos de la cache y transformar a formato para react-select
+  const consejosData = queryClient.getQueryData<ConsejoComunal[]>(["consejoscomunal"]);
+  console.log(consejosData)
+  const consejosOptions = consejosData?.map(consejo => ({
+    value: consejo.cc,
+    label: consejo.cc, 
+  })) || [];
 
-  useEffect(() => {
-  const fetchConsejos = async () => {
-    try {
-      const response = await fetch("/api/consejos");
-      const data = await response.json();
-
-      // Formatea los datos al formato esperado por react-select
-      const formattedOptions = data.map((consejo: { id: string; cc: string }) => ({
-        value: consejo.cc,
-        label: consejo.cc, 
-      }));
-
-      setConsejos(formattedOptions);
-    } catch (error) {
-      console.error("Error al cargar los consejos comunales:", error);
-      toast.error("No se pudieron cargar los consejos comunales");
-    }
-  };
-
-  fetchConsejos();
-}, []);
 
   // Manejar el cambio en los campos del formulario
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
@@ -93,8 +81,8 @@ const RegisterComunaPage = () => {
           cantidadConsejosComunales: parseInt(formData.cantidadConsejosComunales),
           poblacionVotante: parseInt(formData.poblacionVotante),
           fechaComisionPromotora: new Date(formData.fechaComisionPromotora).toISOString(),
-          fechaRegistro: new Date(formData.fechaComisionPromotora).toISOString(),
-          fechaUltimaEleccion: new Date(formData.fechaComisionPromotora).toISOString(),
+          fechaRegistro: new Date(formData.fechaRegistro).toISOString(),
+          fechaUltimaEleccion: new Date(formData.fechaUltimaEleccion).toISOString(),
           consejoComunal: formData.consejoComunal.map((option) => option.value), // Enviar solo los valores seleccionados
         }),
       });
@@ -152,6 +140,7 @@ const RegisterComunaPage = () => {
           required={true}>
         </FormInput>
         <FormInput 
+          type={"date"}
           label={"Fecha de Registro"} 
           id={"fechaRegistro"} 
           value={formData.fechaRegistro} 
@@ -201,13 +190,13 @@ const RegisterComunaPage = () => {
           required={true}>
         </FormInput>
         <div>
-          <label htmlFor="consejoComunal" className="block text-sm font-medium">
+          <label htmlFor="consejoComunal" className="block pb-[11px] text-sm text-sky-950 font-medium">
             Consejo Comunal que integra la Comuna
           </label>
           <Select
             id="consejoComunal"
             name="consejoComunal"
-            options={consejos} // Opciones formateadas desde el backend
+            options={consejosOptions} // Opciones formateadas desde el backend
             isMulti
             placeholder="Selecciona los consejos comunales"
             onChange={(selectedOptions) =>
