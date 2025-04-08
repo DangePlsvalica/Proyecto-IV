@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import SearchForm from "../../../components/SearchForm";
 import Table from "../../../components/Table";
-import Image from "next/image";
 import Button from "@/components/Button";
 import { Comuna } from "@/hooks/interfaces/comuna.interface";
 import useComunas from "@/hooks/useComunas";
@@ -49,8 +48,6 @@ const Comunas: React.FC = () => {
     "Nombre y Apellidos del Vocero",
     "C.I",
     "Telefono",
-    "Cantidad de C.C que integra la Comuna",
-    "Población Votante",
   ];
 const tdClassName = "border-b border-r border-sky-950";
   // Renderiza cada fila
@@ -66,7 +63,7 @@ const tdClassName = "border-b border-r border-sky-950";
 
     return (
       <>
-        <td className={tdClassName}>{comuna.codigo}</td>
+        <td className={tdClassName} onClick={() => router.push("/pages/comunas/view-comuna")}>{comuna.codigo}</td>
         <td className={tdClassName}>{comuna.numComisionPromotora}</td>
         <td className={tdClassName}>
           {new Date(comuna.fechaComisionPromotora).toLocaleDateString()}
@@ -98,10 +95,8 @@ const tdClassName = "border-b border-r border-sky-950";
         <td className={tdClassName}>{comuna.nombreVocero}</td>
         <td className={tdClassName}>{comuna.ciVocero}</td>
         <td className={tdClassName}>{comuna.telefono}</td>
-        <td className={tdClassName}>
-          {comuna.cantidadConsejosComunales}
-        </td>
-        <td className={tdClassName}>{comuna.poblacionVotante}</td>
+        {/* <td className={tdClassName}>{comuna.cantidadConsejosComunales}</td>
+        <td className={tdClassName}>{comuna.poblacionVotante}</td> */}
       </>
     );
   };
