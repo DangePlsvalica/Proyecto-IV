@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 import Image from "next/image";
 import toast from "react-hot-toast";
+import Loading from "@/components/Loading";
 
 
 const NextLoginPage = () => {
@@ -14,7 +15,7 @@ const NextLoginPage = () => {
 
   useEffect(() => {
     if (sessionStatus === "authenticated") {
-      router.replace("/pages/gestor-de-proyectos");
+      router.replace("/");
     }
   }, [sessionStatus, router]);
 
@@ -57,17 +58,7 @@ const NextLoginPage = () => {
   };
 
   if (sessionStatus === "loading") {
-    return <main className="relative flex min-h-screen items-center justify-center overflow-hidden p-12">
-      <div className="flex flex-col md:flex-row items-center gap-8 w-24 max-w-6xl mx-auto justify-center">
-        <Image
-          src="/espera.gif"
-          width={100}
-          height={100}
-          alt="espera gif"
-          className="rounded-3xl"
-        />
-      </div>
-    </main>;
+    return (<Loading />);
     }
   return (
     sessionStatus !== "authenticated" && (
