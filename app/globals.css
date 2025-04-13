@@ -69,3 +69,214 @@
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out forwards;
 }
+
+@keyframes fadeCenterR {
+  from {
+    opacity: 0;
+    transform: translateX(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-centerr {
+  animation: fadeCenterR 0.5s ease-out forwards;
+}
+
+@keyframes fadeCenterL {
+  from {
+    opacity: 0;
+    transform: translateX(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-centerl {
+  animation: fadeCenterL 0.5s ease-out forwards;
+}
+/* botones generales */ 
+/* From Uiverse.io by Voxybuns */ 
+.button {
+  /* Variables */
+  --button_radius: 0.75em;
+  --button_color: #e8e8e8;
+  --button_outline_color: #000000;
+  font-size: 17px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--button_radius);
+  background: var(--button_outline_color);
+}
+
+.button_top {
+  display: block;
+  box-sizing: border-box;
+  border: 2px solid var(--button_outline_color);
+  border-radius: var(--button_radius);
+  padding: 0.75em 1.5em;
+  background: var(--button_color);
+  color: var(--button_outline_color);
+  transform: translateY(-0.2em);
+  transition: transform 0.1s ease;
+}
+
+.button:hover .button_top {
+  /* Pull the button upwards when hovered */
+  transform: translateY(-0.33em);
+}
+
+.button:active .button_top {
+  /* Push the button downwards when pressed */
+  transform: translateY(0);
+}
+
+
+
+
+/* botones de agregar */ 
+.buttonadd {
+  --main-focus: #2d8cf0;
+  --font-color: #323232;
+  --bg-color-sub: #dedede;
+  --bg-color: #eee;
+  --main-color: #323232;
+  position: relative;
+  min-width: 40px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  border: 2px solid var(--main-color);
+  box-shadow: 4px 4px var(--main-color);
+  background-color: var(--bg-color);
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 0 20px;
+  transition: all 0.3s;
+}
+
+.buttonadd, .buttonadd__icon, .buttonadd__text {
+  transition: all 0.3s;
+}
+
+.buttonadd .buttonadd__text {
+  color: var(--font-color);
+  font-weight: 600;
+  white-space: nowrap;
+  padding-right: 10px;
+}
+
+.buttonadd .buttonadd__icon {
+  position: absolute;
+  right: -39px;
+  height: 100%;
+  width: 39px;
+  background-color: var(--bg-color-sub);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.buttonadd .svg {
+  width: 20px;
+  fill: var(--main-color);
+}
+
+.buttonadd:hover {
+  background: var(--bg-color);
+}
+
+.buttonadd:hover .buttonadd__text {
+  color: transparent;
+}
+
+.buttonadd:hover .buttonadd__icon {
+  right: 0;
+  width: 100%;
+}
+
+.buttonadd:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0px 0px var(--main-color);
+}
+
+/* Input de buscar */ 
+.searchcontainer {
+  position: relative;
+  display: inline-block;
+}
+.searchsvg {
+  position: absolute;
+  left: 0.875rem;       /* Posición inicial igual al padding del input */
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;           /* Inicialmente invisible */
+  pointer-events: none;
+  width: 1.25rem;       /* w-5 = 1.25rem */
+  fill: #6b7280;        /* fill-gray-500 */
+  transition: all 0.25s ease;
+}
+
+.searchinput {
+  font-family: '__Inter_Fallback_d65c78';
+  font-weight: bold;
+  width: 190px;
+  padding: 0.875rem;
+  padding-left: 0.875rem; /* Padding inicial */
+  font-size: 1rem;
+  border: 1.5px solid #000;
+  border-radius: 0.5rem;
+  box-shadow: 2.5px 3px 0 #000;
+  outline: none;
+  transition: all 0.25s ease;
+}
+
+/* Cuando el input está enfocado o tiene contenido */
+.searchinput:focus,
+.searchinput:not(:placeholder-shown) {
+  padding-left: 2.5rem;    /* Espacio para el SVG */
+  box-shadow: 5.5px 7px 0 black;
+}
+
+/* Mostrar SVG cuando el input está enfocado o tiene contenido */
+.searchinput:focus ~ .searchsvg,
+.searchinput:not(:placeholder-shown) ~ .searchsvg {
+  opacity: 1;
+  left: 0.625rem;         /* Ajuste fino de posición */
+}
+
+
+
+/* Titulo animado */
+.typewriter h1 {
+  color: #111;
+  overflow: hidden;
+  border-right: .15em solid transparent; /* Cursor inicialmente transparente */
+  white-space: nowrap;
+  margin: 0 auto;
+  font-weight: bold;
+  letter-spacing: .15em;
+  animation: 
+    typing 0.5s steps(30, end),
+    cursor-blink 0.5s step-end 6,
+    hide-cursor 0s step-end 3.5s; /* 0.5s + 2.5s + 0.5s */
+}
+
+@keyframes typing {
+  from { width: 45%; }
+  to { width: 100%; }
+}
+
+@keyframes cursor-blink {
+  0%, 100% { border-color: transparent; }
+  50% { border-color: Black; }
+}
+
+@keyframes hide-cursor {
+  to { border-color: transparent; }
+}

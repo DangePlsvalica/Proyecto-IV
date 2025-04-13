@@ -5,11 +5,12 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import SearchForm from "../../../components/SearchForm";
 import Table from "../../../components/Table";
-import Button from "@/components/Button";
 import { Vehiculo } from "@/hooks/interfaces/vehiculo.interface";
 import Loading from "@/components/Loading";
 import Tittle from '@/components/Tittle'
 import useVehiculos from "@/hooks/useVehiculos";
+import Buttonadd from '../../../components/Buttonadd'
+
 
 const Vehiculos: React.FC = () => {
   const { data: session, status } = useSession();
@@ -86,7 +87,7 @@ const Vehiculos: React.FC = () => {
       <Divider />
       <div className="flex justify-between px-6 py-4">
         <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        <Button onClick={() => router.push("/register-comuna")} title={"Registrar nuevo vehiculo"}></Button>
+        <Buttonadd onClick={() => router.push("/register-comuna")} title={"Registrar nuevo vehiculo"}></Buttonadd>
       </div>
       <Table
         headers={headers}
