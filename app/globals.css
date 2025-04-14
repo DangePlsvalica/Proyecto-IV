@@ -25,12 +25,13 @@
 }
 
 .animate-logo-entrance {
-  animation: logo-entrance 1s ease-out forwards;
+  animation: logo-entrance 2s ease-out forwards;
+  animation-delay: 3s;
 }
 
 .animate-title-entrance {
-  animation: title-entrance 1s ease-out forwards;
-  animation-delay: 0.2s;
+  animation: title-entrance 3s ease-out forwards;
+  animation-delay: 1s;
 }
 
 /* Mantenemos las animaciones del sidebar */
@@ -99,13 +100,16 @@
 .animate-fade-centerl {
   animation: fadeCenterL 0.5s ease-out forwards;
 }
-/* botones generales */ 
-/* From Uiverse.io by Voxybuns */ 
+:root {
+  --bg-general: #eee;
+  --color-outline: #000000;
+}
+
+/* Botones generales */
 .button {
-  /* Variables */
   --button_radius: 0.75em;
-  --button_color: #e8e8e8;
-  --button_outline_color: #000000;
+  --button_color: var(--bg-general);
+  --button_outline_color: var(--color-outline);
   font-size: 17px;
   font-weight: bold;
   border: none;
@@ -126,26 +130,13 @@
   transition: transform 0.1s ease;
 }
 
-.button:hover .button_top {
-  /* Pull the button upwards when hovered */
-  transform: translateY(-0.33em);
-}
-
-.button:active .button_top {
-  /* Push the button downwards when pressed */
-  transform: translateY(0);
-}
-
-
-
-
-/* botones de agregar */ 
+/* Botones de agregar */
 .buttonadd {
   --main-focus: #2d8cf0;
-  --font-color: #323232;
-  --bg-color-sub: #dedede;
-  --bg-color: #eee;
-  --main-color: #323232;
+  --font-color: var(--color-outline);
+  --bg-color-sub: var(--bg-general);
+  --bg-color: var(--bg-general);
+  --main-color: var(--color-outline);
   position: relative;
   min-width: 40px;
   cursor: pointer;
@@ -158,6 +149,30 @@
   overflow: hidden;
   padding: 0 20px;
   transition: all 0.3s;
+}
+
+/* Input de buscar */
+.searchinput {
+  font-family: '__Inter_Fallback_d65c78';
+  font-weight: bold;
+  width: 190px;
+  background-color: var(--bg-general);
+  padding: 0.875rem;
+  padding-left: 0.875rem;
+  font-size: 1rem;
+  border: 2px solid var(--color-outline);
+  border-radius: 0.5rem;
+  box-shadow: 2.5px 3px 0 var(--color-outline);
+  outline: none;
+  transition: all 0.25s ease;
+}
+
+.button:hover .button_top {
+  transform: translateY(-0.33em);
+}
+
+.button:active .button_top {
+  transform: translateY(0);
 }
 
 .buttonadd, .buttonadd__icon, .buttonadd__text {
@@ -205,58 +220,40 @@
   box-shadow: 0px 0px var(--main-color);
 }
 
-/* Input de buscar */ 
 .searchcontainer {
   position: relative;
   display: inline-block;
 }
+
 .searchsvg {
   position: absolute;
-  left: 0.875rem;       /* Posición inicial igual al padding del input */
+  left: 0.875rem;
   top: 50%;
   transform: translateY(-50%);
-  opacity: 0;           /* Inicialmente invisible */
+  opacity: 0;
   pointer-events: none;
-  width: 1.25rem;       /* w-5 = 1.25rem */
-  fill: #6b7280;        /* fill-gray-500 */
+  width: 1.25rem;
+  fill: #6b7280;
   transition: all 0.25s ease;
 }
 
-.searchinput {
-  font-family: '__Inter_Fallback_d65c78';
-  font-weight: bold;
-  width: 190px;
-  padding: 0.875rem;
-  padding-left: 0.875rem; /* Padding inicial */
-  font-size: 1rem;
-  border: 1.5px solid #000;
-  border-radius: 0.5rem;
-  box-shadow: 2.5px 3px 0 #000;
-  outline: none;
-  transition: all 0.25s ease;
-}
-
-/* Cuando el input está enfocado o tiene contenido */
 .searchinput:focus,
 .searchinput:not(:placeholder-shown) {
-  padding-left: 2.5rem;    /* Espacio para el SVG */
-  box-shadow: 5.5px 7px 0 black;
+  padding-left: 2.5rem;
+  box-shadow: 5.5px 7px 0 var(--color-outline);
 }
 
-/* Mostrar SVG cuando el input está enfocado o tiene contenido */
 .searchinput:focus ~ .searchsvg,
 .searchinput:not(:placeholder-shown) ~ .searchsvg {
   opacity: 1;
-  left: 0.625rem;         /* Ajuste fino de posición */
+  left: 0.625rem;
 }
 
-
-
-/* Titulo animado */
+/* Titulo de cada pagina */
 .typewriter h1 {
   color: #111;
   overflow: hidden;
-  border-right: .15em solid transparent; /* Cursor inicialmente transparente */
+  border-right: .15em solid transparent;
   white-space: nowrap;
   margin: 0 auto;
   font-weight: bold;
@@ -264,7 +261,7 @@
   animation: 
     typing 0.5s steps(30, end),
     cursor-blink 0.5s step-end 6,
-    hide-cursor 0s step-end 3.5s; /* 0.5s + 2.5s + 0.5s */
+    hide-cursor 0s step-end 3.5s;
 }
 
 @keyframes typing {
@@ -274,7 +271,7 @@
 
 @keyframes cursor-blink {
   0%, 100% { border-color: transparent; }
-  50% { border-color: Black; }
+  50% { border-color: var(--color-outline); }
 }
 
 @keyframes hide-cursor {
