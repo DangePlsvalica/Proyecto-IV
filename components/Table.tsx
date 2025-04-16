@@ -16,8 +16,8 @@ const Table: React.FC<TableProps> = ({
   tdClassName = ''
 }) => {
   return (
-    <div className="max-w-[100%] px-6">
-      <div className="overflow-x-auto rounded-2xl">
+    <div className="animate-fade-in opacity-0 max-w-[100%] px-6">
+      <div className="shadow-lg overflow-x-auto rounded-2xl">
         <table className="w-full table-auto rounded-2xl border-separate border-spacing-0 border border-sky-950" >
           <thead className={`text-[14px] text-center border-b border-white ${thClassName}`}>
             <tr>

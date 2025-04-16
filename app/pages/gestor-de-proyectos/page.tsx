@@ -10,6 +10,7 @@ import useProyectos from "@/hooks/useProyectos";
 import { Proyecto } from "@/hooks/interfaces/proyecto.interface";
 import Loading from "@/components/Loading";
 import Tittle from '@/components/Tittle'
+import Buttonadd from "@/components/Buttonadd";
 
 const GestorProyectos: React.FC = () => {
   const { data: session, status } = useSession();
@@ -75,7 +76,7 @@ const GestorProyectos: React.FC = () => {
       <Divider />
       <div className="flex justify-between px-6 py-4">
         <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        <Button onClick={() => router.push("/register-comuna")} title={"Registrar nuevo proyecto"}></Button>
+        <Buttonadd onClick={() => router.push("/register-comuna")} title={"Registrar nuevo proyecto"}></Buttonadd>
       </div>
       <Table
         headers={headers}

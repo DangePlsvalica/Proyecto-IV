@@ -25,12 +25,13 @@
 }
 
 .animate-logo-entrance {
-  animation: logo-entrance 1s ease-out forwards;
+  animation: logo-entrance 2s ease-out forwards;
+  animation-delay: 3s;
 }
 
 .animate-title-entrance {
-  animation: title-entrance 1s ease-out forwards;
-  animation-delay: 0.2s;
+  animation: title-entrance 3s ease-out forwards;
+  animation-delay: 1s;
 }
 
 /* Mantenemos las animaciones del sidebar */
@@ -68,4 +69,211 @@
 
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeCenterR {
+  from {
+    opacity: 0;
+    transform: translateX(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-centerr {
+  animation: fadeCenterR 0.5s ease-out forwards;
+}
+
+@keyframes fadeCenterL {
+  from {
+    opacity: 0;
+    transform: translateX(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-centerl {
+  animation: fadeCenterL 0.5s ease-out forwards;
+}
+:root {
+  --bg-general: #eee;
+  --color-outline: #000000;
+}
+
+/* Botones generales */
+.button {
+  --button_radius: 0.75em;
+  --button_color: var(--bg-general);
+  --button_outline_color: var(--color-outline);
+  font-size: 17px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--button_radius);
+  background: var(--button_outline_color);
+}
+
+.button_top {
+  display: block;
+  box-sizing: border-box;
+  border: 2px solid var(--button_outline_color);
+  border-radius: var(--button_radius);
+  padding: 0.75em 1.5em;
+  background: var(--button_color);
+  color: var(--button_outline_color);
+  transform: translateY(-0.2em);
+  transition: transform 0.1s ease;
+}
+
+/* Botones de agregar */
+.buttonadd {
+  --main-focus: #2d8cf0;
+  --font-color: var(--color-outline);
+  --bg-color-sub: var(--bg-general);
+  --bg-color: var(--bg-general);
+  --main-color: var(--color-outline);
+  position: relative;
+  min-width: 40px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  border: 2px solid var(--main-color);
+  box-shadow: 4px 4px var(--main-color);
+  background-color: var(--bg-color);
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 0 20px;
+  transition: all 0.3s;
+}
+
+/* Input de buscar */
+.searchinput {
+  font-family: '__Inter_Fallback_d65c78';
+  font-weight: bold;
+  width: 190px;
+  background-color: var(--bg-general);
+  padding: 0.875rem;
+  padding-left: 0.875rem;
+  font-size: 1rem;
+  border: 2px solid var(--color-outline);
+  border-radius: 0.5rem;
+  box-shadow: 2.5px 3px 0 var(--color-outline);
+  outline: none;
+  transition: all 0.25s ease;
+}
+
+.button:hover .button_top {
+  transform: translateY(-0.33em);
+}
+
+.button:active .button_top {
+  transform: translateY(0);
+}
+
+.buttonadd, .buttonadd__icon, .buttonadd__text {
+  transition: all 0.3s;
+}
+
+.buttonadd .buttonadd__text {
+  color: var(--font-color);
+  font-weight: 600;
+  white-space: nowrap;
+  padding-right: 10px;
+}
+
+.buttonadd .buttonadd__icon {
+  position: absolute;
+  right: -39px;
+  height: 100%;
+  width: 39px;
+  background-color: var(--bg-color-sub);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.buttonadd .svg {
+  width: 20px;
+  fill: var(--main-color);
+}
+
+.buttonadd:hover {
+  background: var(--bg-color);
+}
+
+.buttonadd:hover .buttonadd__text {
+  color: transparent;
+}
+
+.buttonadd:hover .buttonadd__icon {
+  right: 0;
+  width: 100%;
+}
+
+.buttonadd:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0px 0px var(--main-color);
+}
+
+.searchcontainer {
+  position: relative;
+  display: inline-block;
+}
+
+.searchsvg {
+  position: absolute;
+  left: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  pointer-events: none;
+  width: 1.25rem;
+  fill: #6b7280;
+  transition: all 0.25s ease;
+}
+
+.searchinput:focus,
+.searchinput:not(:placeholder-shown) {
+  padding-left: 2.5rem;
+  box-shadow: 5.5px 7px 0 var(--color-outline);
+}
+
+.searchinput:focus ~ .searchsvg,
+.searchinput:not(:placeholder-shown) ~ .searchsvg {
+  opacity: 1;
+  left: 0.625rem;
+}
+
+/* Titulo de cada pagina */
+.typewriter h1 {
+  color: #111;
+  overflow: hidden;
+  border-right: .15em solid transparent;
+  white-space: nowrap;
+  margin: 0 auto;
+  font-weight: bold;
+  letter-spacing: .15em;
+  animation: 
+    typing 0.5s steps(30, end),
+    cursor-blink 0.5s step-end 6,
+    hide-cursor 0s step-end 3.5s;
+}
+
+@keyframes typing {
+  from { width: 45%; }
+  to { width: 100%; }
+}
+
+@keyframes cursor-blink {
+  0%, 100% { border-color: transparent; }
+  50% { border-color: var(--color-outline); }
+}
+
+@keyframes hide-cursor {
+  to { border-color: transparent; }
 }

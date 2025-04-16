@@ -1,4 +1,10 @@
+"use client";
 import Image from "next/image";
+import BlurText from "../components/BlurText";
+
+const handleAnimationComplete = () => {
+  console.log('Animation completed!');
+};
 
 export default function Home() {
   return (
@@ -16,11 +22,15 @@ export default function Home() {
         </div>
 
         {/* Título */}
-        <div className="animate-title-entrance opacity-0 w-full md:w-auto">
-          <h1 className="text-5xl max-[500px]:text-2xl text-center md:text-left">
-            Sistema de Gestión de Comunas y Logística vehicular del Ministerio del
-            Poder Popular para las comunas
-          </h1>
+        <div className="w-full md:w-auto">
+        <BlurText
+  text="Sistema de Gestión de Comunas y Logística vehicular del Ministerio del Poder Popular para las comunas"
+  delay={60}
+  animateBy="words"
+  direction="top"
+  onAnimationComplete={handleAnimationComplete}
+  className="text-5xl max-[500px]:text-2xl text-center md:text-left"
+/>
         </div>
       </div>
     </main>

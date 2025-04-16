@@ -9,7 +9,7 @@ import Image from "next/image";
 import { FaRegUser, FaUsers, FaCar } from 'react-icons/fa';
 import { IoHomeOutline, IoSettingsOutline } from "react-icons/io5";
 import { RiCommunityLine } from "react-icons/ri";
-import Button from './Button'
+import Buttonanimation from './Buttonanimation'
 
 const Navbar = () => {
   const { data: session }: any = useSession();
@@ -63,10 +63,10 @@ const Navbar = () => {
         {/* Sesión y botones */}
         <div className="flex flex-col flex-1 items-center justify-end gap-x-6">
           {!session ? (
-            <Button href="/pages/login" title="Iniciar Sesion"></Button>
+            <Buttonanimation href="/pages/login" title="Iniciar Sesion"></Buttonanimation>
           ) : (
             <>
-              <Button onClick={() => signOut()} title="Cerrar sesión"></Button>
+              <Buttonanimation onClick={() => signOut()} title="Cerrar sesión"></Buttonanimation>
             </>
           )}
         </div>
@@ -103,9 +103,9 @@ const Navbar = () => {
               />
             </Link>
             {session ? (
-              <Button onClick={() => signOut()} title="Cerrar sesión"></Button>
+              <Buttonanimation onClick={() => signOut()} title="Cerrar sesión"></Buttonanimation>
             ) : (
-              <Button href="/pages/login" title="Iniciar Sesion"></Button>
+              <Buttonanimation href="/pages/login" title="Iniciar Sesion"></Buttonanimation>
             )}
             <button
               type="button"

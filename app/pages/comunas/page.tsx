@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import SearchForm from "../../../components/SearchForm";
 import Table from "../../../components/Table";
-import Button from "@/components/Button";
+import Buttonadd from "@/components/Buttonadd";
 import { Comuna } from "@/hooks/interfaces/comuna.interface";
 import useComunas from "@/hooks/useComunas";
 import Loading from "@/components/Loading";
@@ -118,7 +118,7 @@ const tdClassName = "border-b border-r border-sky-950";
       <Divider />
       <div className="flex justify-between px-6 py-4">
         <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        <Button onClick={() => router.push("/pages/comunas/register-comuna")} title={"Registrar nueva comuna"}></Button>
+        <Buttonadd onClick={() => router.push("/pages/comunas/register-comuna")} title={"Registrar nueva comuna"}></Buttonadd>
       </div>
         <Table
           headers={headers}
