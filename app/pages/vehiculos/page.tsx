@@ -87,7 +87,7 @@ const Vehiculos: React.FC = () => {
       <Divider />
       <div className="flex justify-between px-6 py-4">
         <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        <Buttonadd onClick={() => router.push("/register-comuna")} title={"Registrar nuevo vehiculo"}></Buttonadd>
+        <Buttonadd onClick={() => router.push("/pages/vehiculos/register-vehiculo")} title={"Registrar nuevo vehiculo"}></Buttonadd>
       </div>
       <Table
         headers={headers}

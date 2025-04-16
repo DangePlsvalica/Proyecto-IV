@@ -75,59 +75,57 @@ const RegisterComunaPage = () => {
       <h1 className="text-2xl font-bold mb-6 text-sky-950">Registrar Nueva Comuna</h1>
       <form onSubmit={handleSubmit} className=" grid grid-cols-4 gap-4">
         <FormInput 
-          label={"Código"} 
-          id={"codigo"} 
+          label={"Placa"} 
+          id={"placa"} 
           value={formData.codigo} 
           onChange={handleChange}
           required={true}>
         </FormInput>
         <FormInput 
-          label={"N° comisión promotora"} 
-          id={"numComisionPromotora"} 
+          label={"Clase"} 
+          id={"clase"} 
           value={formData.numComisionPromotora} 
           onChange={handleChange}
           required={true}>
         </FormInput>
         <FormInput 
-          type={"date"}
-          label={"Fecha de Comisión Promotora"} 
-          id={"fechaComisionPromotora"} 
+          label={"Consejo Comunal"} 
+          id={"consejoComunal"} 
           value={formData.fechaComisionPromotora} 
           onChange={handleChange}
           required={true}>
         </FormInput>
         <FormInput 
-          label={"RIF"} 
-          id={"rif"} 
+          label={"Comuna"} 
+          id={"comuna"} 
           value={formData.rif} 
           onChange={handleChange}
           required={true}>
         </FormInput>
         <FormInput 
-          label={"Cuenta Bancaria"} 
-          id={"cuentaBancaria"} 
+          label={"Marca"} 
+          id={"marca"} 
           value={formData.cuentaBancaria} 
           onChange={handleChange}
           required={true}>
         </FormInput>
         <FormInput 
-          type={"date"}
-          label={"Fecha de Registro"} 
-          id={"fechaRegistro"} 
+          label={"Modelo"} 
+          id={"modelo"} 
           value={formData.fechaRegistro} 
           onChange={handleChange}
           required={true}>
         </FormInput>
         <FormInput 
-          label={"Nombre de la Comuna"} 
-          id={"nombre"} 
+          label={"Color"} 
+          id={"color"} 
           value={formData.nombre} 
           onChange={handleChange}
           required={true}>
         </FormInput>
         <FormInput 
-          textarea={true}
-          label={"Dirección"} 
+          type={"number"}
+          label={"Anio"} 
           id={"direccion"} 
           value={formData.direccion} 
           onChange={handleChange}
@@ -280,6 +278,7 @@ const RegisterComunaPage = () => {
           </form>
           <div className="flex justify-center pt-6">
             <Button onClick={handleSubmit} title="Registrar Comuna"></Button>
+            <Button onClick={handleSubmit} title={"gregory"}></Button>
           </div>
         </div>
       );

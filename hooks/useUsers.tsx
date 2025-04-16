@@ -1,6 +1,6 @@
 "use client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { get, post, del, put } from "@/lib/request/api";
+import { get, del, put } from "@/lib/request/api";
 import toast from "react-hot-toast";
 import { AdminUser, UsersQueryResult } from './interfaces/users.interface';
 
