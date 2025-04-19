@@ -1,4 +1,3 @@
-import { MdOutlineSearch } from "react-icons/md";
 
 interface SearchFormProps {
   searchTerm: string;
