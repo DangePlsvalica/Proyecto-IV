@@ -116,9 +116,15 @@ const tdClassName = "border-b border-r border-sky-950";
     <>
       <Tittle title={"Comunas"}/>
       <Divider />
-      <div className="flex justify-between px-6 py-4">
+      <div className="animate-fade-in opacity-0 flex justify-between px-6 py-4">
         <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        <Button onClick={() => router.push("/pages/comunas/register-comuna")} title={"Registrar nueva comuna"}></Button>
+        {session.user.role === "Admin" && (
+          <Button
+            onClick={() =>
+              router.push("/pages/comunas/register-comuna")
+            }
+            title={"Registrar nueva comuna"}
+          />)}
       </div>
         <Table
           headers={headers}

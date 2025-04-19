@@ -1,17 +1,17 @@
 "use client";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import Select, { SingleValue } from "react-select";
 import Button from "@/components/Button";
 import FormInput from '@/components/FormInput'
 import { useQueryClient } from '@tanstack/react-query';
 import { ConsejoComunal } from '@/hooks/interfaces/consejo.comunal.interface';
-import { useRegisterVehiculo } from '@/hooks/useRegisterVehiculo';
+import { useRegisterProyecto } from '@/hooks/useRegisterProyecto';
 import toast from "react-hot-toast";
 import Tittle from "@/components/Tittle";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
-const RegisterVehiculoPage = () => {
+const RegisterProyectoPage = () => {
   type OptionType = {
     value: string;
     label: string;
@@ -20,23 +20,15 @@ const RegisterVehiculoPage = () => {
   const { data: session, } = useSession();
   const queryClient = useQueryClient();
   
-  const { mutate: registerVehiculo } = useRegisterVehiculo();
+  const { mutate: registerProyecto } = useRegisterProyecto();
   const [formData, setFormData] = useState({
-    placa: "",
-    clase: "",
-    cc: "",
+    id: "",
+    nombre: "",
+    status: "",
+    fechaCreacion: "",
+    ultimaActividad: "",
+    categoria: "",
     comuna: "",
-    marca: "",
-    modelo: "",
-    color: "",
-    ano: 0,
-    municipio: "",
-    serialCarroceria: "",
-    voceroAsignado: "",
-    fechaDeEntrega: "",
-    estatus: "",
-    observacionArchivo: "",
-    observacion: "",
   });
 
   // Obtener datos de la cache y transformar a formato para react-select
@@ -58,11 +50,11 @@ const RegisterVehiculoPage = () => {
   // Manejar el envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  if (!formData.placa || !formData.clase || !formData.cc) {
-    toast.error("Por favor completa todos los campos antes de registrar el vehículo.");
+  if (!formData.categoria || !formData.comuna || !formData.status) {
+    toast.error("Por favor completa todos los campos antes de registrar el Proyecto.");
     return;
   }
-  registerVehiculo(formData);
+  registerProyecto(formData);
   };
 
   if (!session) {
@@ -77,38 +69,68 @@ const RegisterVehiculoPage = () => {
 
   return (
     <div className="animate-fade-in opacity-0 mx-auto my-7 max-w-[95%] p-12 border border-sky-200 rounded-xl bg-[#f8f8f8]">
-      <Tittle title={"Registrar Nuevo Vehiculo"}></Tittle>
+      <Tittle title={"Registrar nuevo Proyecto"}></Tittle>
       <form onSubmit={handleSubmit} className="pt-6 px-6 grid grid-cols-4 gap-4">
         <FormInput 
-          label={"Placa"} 
-          id={"placa"} 
-          value={formData.placa} 
+          label={"Id"} 
+          id={"id"} 
+          value={formData.id} 
           onChange={handleChange}
           required={true}>
         </FormInput>
         <FormInput 
-          label={"Clase"} 
-          id={"clase"} 
-          value={formData.clase} 
+          label={"Nombre"} 
+          id={"nombre"} 
+          value={formData.nombre} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
+        <FormInput 
+          label={"Estado"} 
+          id={"status"} 
+          value={formData.status} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
+        <FormInput 
+          type="date"
+          label={"Fecha de creacion"} 
+          id={"fechaCreacion"} 
+          value={formData.fechaCreacion} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
+        <FormInput 
+          type="date"
+          label={"Ultima actividad"} 
+          id={"ultimaActividad"} 
+          value={formData.ultimaActividad} 
+          onChange={handleChange}
+          required={true}>
+        </FormInput>
+        <FormInput 
+          label={"Categoria"} 
+          id={"categoria"} 
+          value={formData.categoria} 
           onChange={handleChange}
           required={true}>
         </FormInput>
         <div>
           <label htmlFor="consejoComunal" className="block pb-[11px] text-sm text-sky-950 font-medium">
-            Consejo Comunal
+            Comuna
           </label>
           <Select
-            id="consejoComunal"
-            name="consejoComunal"
+            id="comuna"
+            name="comuna"
             options={consejosOptions} // Opciones formateadas desde el backend
-            placeholder="Selecciona a que cc pertenece"
+            placeholder="Selecciona a que comuna pertenece"
             onChange={(selectedOption: SingleValue<OptionType>) =>
               setFormData({
                 ...formData,
-                cc: selectedOption?.value || "",
+                comuna: selectedOption?.value || "",
               })
             }
-            value={consejosOptions.find(option => option.value === formData.cc)}// Mantener la selección
+            value={consejosOptions.find(option => option.value === formData.comuna)}// Mantener la selección
             styles={{
               control: (provided) => ({
                 ...provided,
@@ -149,95 +171,12 @@ const RegisterVehiculoPage = () => {
             }}
           />
         </div>
-        <FormInput 
-          label={"Comuna"} 
-          id={"comuna"} 
-          value={formData.comuna} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          label={"Marca"} 
-          id={"marca"} 
-          value={formData.marca} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          label={"Modelo"} 
-          id={"modelo"} 
-          value={formData.modelo} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          label={"Color"} 
-          id={"color"} 
-          value={formData.color} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          type={"number"}
-          label={"Anio"} 
-          id={"ano"} 
-          value={formData.ano} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          label={"Municipio"} 
-          id={"municipio"} 
-          value={formData.municipio} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          label={"Serial de carroceria"} 
-          id={"serialCarroceria"} 
-          value={formData.serialCarroceria} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          label={"Vocero asignado"} 
-          id={"voceroAsignado"} 
-          value={formData.voceroAsignado} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          type="date"
-          label={"Fecha de entrega"} 
-          id={"fechaDeEntrega"} 
-          value={formData.fechaDeEntrega} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          label={"Estado"} 
-          id={"estatus"} 
-          value={formData.estatus} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          textarea={true}
-          label={"Observacion"} 
-          id={"observacion"} 
-          value={formData.observacion} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <div className="pt-8">
-          <Button href="" title={"Subir archivo"}></Button>   
-        </div>
           </form>
           <div className="flex justify-center pt-6">
-            <Button onClick={handleSubmit} title="Registrar Vehiculo"></Button>
+            <Button onClick={handleSubmit} title="Registrar Proyecto"></Button>
           </div>
         </div>
       );
     };
     
-    export default RegisterVehiculoPage;
+    export default RegisterProyectoPage;

@@ -21,9 +21,9 @@ const Navbar = () => {
     ...(session?.user?.role === "Admin"
       ? [
           { name: "Administrar usuarios", href: "/pages/admin-user", icon: <FaRegUser /> },
-          { name: "Gestor de proyectos", href: "/pages/gestor-de-proyectos", icon: <IoSettingsOutline /> },
         ]
       : []),
+    { name: "Proyectos", href: "/pages/gestor-de-proyectos", icon: <IoSettingsOutline /> },
     { name: "Consejos comunales", href: "/pages/consejos-comunales", icon: <FaUsers /> },
     { name: "Comunas", href: "/pages/comunas", icon: <RiCommunityLine /> },
     { name: "Vehiculos", href: "/pages/vehiculos", icon: <FaCar /> },

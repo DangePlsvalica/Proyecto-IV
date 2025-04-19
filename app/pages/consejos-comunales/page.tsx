@@ -78,7 +78,7 @@ const ConsejosComunales: React.FC = () => {
     <>
       <Tittle title={"Consejos Comunales"} />
       <Divider />
-      <div className="flex justify-between px-6 py-4">
+      <div className="animate-fade-in opacity-0 flex justify-between px-6 py-4">
         <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       </div>
       <Table

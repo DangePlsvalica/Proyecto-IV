@@ -11,10 +11,10 @@ const SearchForm: React.FC<SearchFormProps> = ({ searchTerm, setSearchTerm }) =>
       <MdOutlineSearch />
       <input
         type="text"
-        placeholder="Buscar"
+        placeholder="Buscar..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-[320px] h-[32px] px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400"
+        className="w-[320px] h-[32px] p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400"
       />
     </form>
   );

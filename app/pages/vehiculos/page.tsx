@@ -84,9 +84,15 @@ const Vehiculos: React.FC = () => {
     <>
       <Tittle title={"Vehiculos"} />
       <Divider />
-      <div className="flex justify-between px-6 py-4">
+      <div className="animate-fade-in opacity-0 flex justify-between px-6 py-4">
         <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        <Button onClick={() => router.push("/pages/vehiculos/register-vehiculo")} title={"Registrar nuevo vehiculo"}></Button>
+        {session.user.role === "Admin" && (
+          <Button
+            onClick={() =>
+              router.push("/pages/vehiculos/register-vehiculo")
+            }
+            title={"Registrar nuevo vehiculo"}
+          />)}
       </div>
       <Table
         headers={headers}

@@ -45,7 +45,7 @@ const GestorProyectos: React.FC = () => {
       <>
         <td className={tdClassName}>{proyecto.id}</td>
         <td className={tdClassName}>{proyecto.nombre}</td>
-        <td className={tdClassName}>{proyecto.estatus}</td>
+        <td className={tdClassName}>{proyecto.status}</td>
         <td className={tdClassName}>
           {new Date(proyecto.fechaCreacion).toLocaleDateString()}
         </td>
@@ -71,11 +71,17 @@ const GestorProyectos: React.FC = () => {
 
   return (
     <>
-      <Tittle title={"Gestor de Proyectos"}/>
+      <Tittle title={"Proyectos"}/>
       <Divider />
-      <div className="flex justify-between px-6 py-4">
+      <div className="animate-fade-in opacity-0 flex justify-between px-6 py-4">
         <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        <Button onClick={() => router.push("/register-comuna")} title={"Registrar nuevo proyecto"}></Button>
+        {session.user.role === "Admin" && (
+          <Button
+            onClick={() =>
+              router.push("/pages/gestor-de-proyectos/register-proyecto")
+            }
+            title={"Registrar nuevo proyecto"}
+          />)}
       </div>
       <Table
         headers={headers}

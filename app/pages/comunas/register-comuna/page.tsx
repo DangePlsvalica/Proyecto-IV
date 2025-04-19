@@ -1,17 +1,22 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Select from "react-select";
 import Button from "@/components/Button";
 import FormInput from '@/components/FormInput'
 import { useQueryClient } from '@tanstack/react-query';
 import { ConsejoComunal } from '@/hooks/interfaces/consejo.comunal.interface';
 import { useRegisterComuna } from '@/hooks/useRegisterComuna';
+import Tittle from "@/components/Tittle";
 
 const RegisterComunaPage = () => {
   type OptionType = {
     value: string;
     label: string;
   };
+  const router = useRouter();
+  const { data: session, } = useSession();
   const queryClient = useQueryClient();
   
   const { mutate: registerComuna } = useRegisterComuna();
@@ -62,7 +67,17 @@ const RegisterComunaPage = () => {
       // Para otros tipos de campos
       setFormData({ ...formData, [name]: e.target.value });
     }
-  };   
+  };  
+  
+  if (!session) {
+    router.push("/pages/login");
+    return null;
+  }
+
+  if (session.user.role !== "Admin") {
+    router.push("/");
+    return null;
+  }
 
   // Manejar el envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
@@ -71,9 +86,9 @@ const RegisterComunaPage = () => {
   };
 
   return (
-    <div className="mx-auto my-7 max-w-[95%] p-16 border border-sky-200 rounded-xl bg-[#f8f8f8]">
-      <h1 className="text-2xl font-bold mb-6 text-sky-950">Registrar Nueva Comuna</h1>
-      <form onSubmit={handleSubmit} className=" grid grid-cols-4 gap-4">
+    <div className="animate-fade-in opacity-0 mx-auto my-7 max-w-[95%] p-12 border border-sky-200 rounded-xl bg-[#f8f8f8]">
+      <Tittle title={"Registrar Nueva Comuna"}></Tittle>
+      <form onSubmit={handleSubmit} className="pt-6 px-6 grid grid-cols-4 gap-4">
         <FormInput 
           label={"Código"} 
           id={"codigo"} 
