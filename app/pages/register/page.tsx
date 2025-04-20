@@ -22,7 +22,6 @@ const RegisterPage = () => {
       confirmPassword: formData.get("confirmpassword") as string,
       role: formData.get("role") as string,
     });
-
     if (result.success) {
       router.push("/pages/admin-user");
     }

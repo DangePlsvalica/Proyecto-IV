@@ -23,7 +23,6 @@ const AdminUser: React.FC = () => {
   if (status === "loading") {
     return (<Loading />);
   }
-
   if (!session) {
     router.push("/pages/login");
     return null;
