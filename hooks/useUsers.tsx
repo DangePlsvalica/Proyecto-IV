@@ -15,7 +15,6 @@ export const useUsersQuery = (): UsersQueryResult => {
     gcTime: 1000 * 60 * 10, // 10 minutos en caché
     retry: false,
     refetchOnWindowFocus: false,
-    refetchOnMount: false, // No recargar al montar el componente
   });
 
   // Mutación para eliminar usuario

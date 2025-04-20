@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { post } from "@/lib/request/api";
 import { RegisterOptions, RegisterResponse } from './interfaces/register.interface';
+import { useQueryClient } from "@tanstack/react-query";
 
 export const useRegister = () => {
   const validateInputs = ({ email, password, confirmPassword }: Omit<RegisterOptions, 'role'>) => {
@@ -23,7 +24,7 @@ export const useRegister = () => {
       errors
     };
   };
-
+  const queryClient = useQueryClient();
   const mutation = useMutation<RegisterResponse, Error, RegisterOptions>({
     mutationFn: async (values) => {
       const { isValid, errors } = validateInputs(values);
@@ -42,10 +43,14 @@ export const useRegister = () => {
         }
       });
 
-      return response;
+      return {
+        ...response,
+        success: true, // Asegurar que se incluya este campo siempre
+      };
     },
     onSuccess: () => {
       toast.success("Registro exitoso");
+      queryClient.invalidateQueries({ queryKey: ["users"] });
     },
     onError: (error) => {
       toast.error(error.message);

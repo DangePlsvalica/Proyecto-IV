@@ -82,7 +82,12 @@ const RegisterComunaPage = () => {
   // Manejar el envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    registerComuna(formData);
+    const formDataWithNumbers = {
+      ...formData,
+      cantidadConsejosComunales: Number(formData.cantidadConsejosComunales),
+      poblacionVotante: Number(formData.poblacionVotante),
+    };
+    registerComuna(formDataWithNumbers);
   };
 
   return (

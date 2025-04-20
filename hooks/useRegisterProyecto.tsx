@@ -21,8 +21,8 @@ export const useRegisterProyecto = () => {
     },
     onSuccess: () => {
       // Invalida la caché de proyectos para refrescar los datos
-      queryClient.invalidateQueries({ queryKey: ['proyectos'] });
       toast.success('Proyecto registrado exitosamente');
+      queryClient.invalidateQueries({ queryKey: ["proyectos"] });
       router.push('/pages/gestor-de-proyectos');
     },
     onError: (error: Error) => {

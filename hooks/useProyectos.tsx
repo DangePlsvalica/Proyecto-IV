@@ -17,8 +17,7 @@ const useProyectos = () => {
     staleTime: 1000 * 60 * 5, // 5 minutos de datos frescos
     gcTime: 1000 * 60 * 10, // 10 minutos en caché
     refetchOnWindowFocus: false, // No recargar al cambiar de pestaña
-    refetchOnMount: false, // No recargar al montar el componente
-    retry: false, // No reintenta en caso de fallo, puedes ajustarlo según tus necesidades
+    retry: false,
   });
 };
 

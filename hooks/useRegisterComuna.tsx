@@ -23,8 +23,8 @@ export const useRegisterComuna = () => {
     },
     onSuccess: () => {
       // Invalida la caché de comunas para refrescar los datos
-      queryClient.invalidateQueries({ queryKey: ['comunas'] });
       toast.success('Comuna registrada exitosamente');
+      queryClient.invalidateQueries({ queryKey: ['comunas'] });
       router.push('/pages/comunas');
     },
     onError: (error: Error) => {
