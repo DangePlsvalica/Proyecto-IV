@@ -38,7 +38,7 @@ const GestorProyectos: React.FC = () => {
     "Categoria",
     "Comuna",
   ];
-  const tdClassName = "border-b border-r border-sky-950";
+  const tdClassName = "border-b border-r py-2 border-sky-950";
   // Renderiza cada fila
   const renderRow = (proyecto: Proyecto) => {
     return (
@@ -87,7 +87,7 @@ const GestorProyectos: React.FC = () => {
         headers={headers}
         data={filteredData}
         renderRow={renderRow}
-        thClassName="text-center border-b border-sky-600"
+        thClassName="text-center border-b py-2 border-sky-600"
         tdClassName="text-left border-r border-sky-600"
       />
     </>

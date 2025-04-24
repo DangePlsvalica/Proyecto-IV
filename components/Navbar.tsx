@@ -7,7 +7,7 @@ import { FaBars } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import Image from "next/image";
 import { FaRegUser, FaUsers, FaCar } from 'react-icons/fa';
-import { IoHomeOutline, IoSettingsOutline } from "react-icons/io5";
+import { IoSettingsOutline } from "react-icons/io5";
 import { RiCommunityLine } from "react-icons/ri";
 import Button from './Button'
 
@@ -17,7 +17,6 @@ const Navbar = () => {
 
   // Crear la navegación dependiendo del rol del usuario
   const navigation = [
-    { name: "Inicio", href: "/", icon: <IoHomeOutline /> },
     ...(session?.user?.role === "Admin"
       ? [
           { name: "Administrar usuarios", href: "/pages/admin-user", icon: <FaRegUser /> },

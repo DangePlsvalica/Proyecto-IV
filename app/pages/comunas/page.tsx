@@ -49,7 +49,7 @@ const Comunas: React.FC = () => {
     "C.I",
     "Telefono",
   ];
-const tdClassName = "border-b border-r border-sky-950";
+const tdClassName = "border-b border-r py-2 border-sky-950";
   // Renderiza cada fila
   const renderRow = (comuna: Comuna) => {
     let consejosArray: string[] = []; // Inicializa como array vacío

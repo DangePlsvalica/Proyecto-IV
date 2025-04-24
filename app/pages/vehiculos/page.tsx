@@ -45,7 +45,7 @@ const Vehiculos: React.FC = () => {
     "Fecha de Entrega",
     "Estatus",
   ];
-  const tdClassName = "border-b border-r border-sky-950";
+  const tdClassName = "border-b border-r py-2 border-sky-950";
   // Renderiza cada fila
   const renderRow = (vehiculo: Vehiculo) => {
     return (

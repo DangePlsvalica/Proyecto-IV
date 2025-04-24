@@ -30,18 +30,18 @@ const ConsejosComunales: React.FC = () => {
 
   const headers = [
     "Estado",
-    "MUNICIPIO",
-    "PARROQUIA",
+    "Municipio",
+    "Parrroquia",
     "CC",
     "RIF",
-    "Nro DE CUENTA",
-    "FECHA DE CONSTITUCIÓN",
-    "FECHA DE VENCIMIENTO",
-    "VOCERO",
-    "TELEFONO DEL VOCERO",
-    "POBLACION VOTANTE",
+    "Nro de cuenta",
+    "Fecha de constitucion",
+    "Fecha de vencimiento",
+    "Vocero",
+    "Telefono del vocero",
+    "Poblacion votante",
   ];
-  const tdClassName = "border-b border-r border-sky-950";
+  const tdClassName = "border-b border-r py-2 border-sky-950";
   // Función para renderizar cada fila
   const renderRow = (consejo: ConsejoComunal) => (
     <>
