@@ -116,14 +116,14 @@ const RegisterProyectoPage = () => {
           required={true}>
         </FormInput>
         <div>
-          <label htmlFor="consejoComunal" className="block pb-[11px] text-sm text-sky-950 font-medium">
+          <label htmlFor="consejoComunal" className="block pb-[10px] text-sm text-sky-950 font-medium">
             Comuna
           </label>
           <Select
             id="comuna"
             name="comuna"
             options={consejosOptions} // Opciones formateadas desde el backend
-            placeholder="Selecciona a que comuna pertenece"
+            placeholder="Seleccione una comuna"
             onChange={(selectedOption: SingleValue<OptionType>) =>
               setFormData({
                 ...formData,

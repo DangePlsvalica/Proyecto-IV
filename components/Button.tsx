@@ -5,17 +5,19 @@ interface ButtonProps {
   title: string;
   className?: string;
   onClick?: (e: React.MouseEvent<HTMLButtonElement> | React.FormEvent<HTMLFormElement>) => void;
+  disabled?: any;
 }
 
-const Button: React.FC<ButtonProps> = ({ href, title, className, onClick }) => {
+const Button: React.FC<ButtonProps> = ({ href, title, className, onClick, disabled=false }) => {
   if (onClick) {
     return (
       <button
         onClick={onClick}
+        disabled={disabled}
         className={`rounded-md bg-sky-950 px-3 py-2 border border-gray-500 
                   text-sm font-semibold text-white shadow-sm transition-all duration-200 ease-in-out
                 hover:bg-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 
-                  focus-visible:outline-indigo-600 ${className}`}
+                  focus-visible:outline-indigo-600 onClasses} ${disabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-sky-950 hover:bg-sky-900'} ${className}`}
       >
         {title}
       </button>

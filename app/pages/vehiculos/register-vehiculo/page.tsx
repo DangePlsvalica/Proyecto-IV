@@ -94,14 +94,14 @@ const RegisterVehiculoPage = () => {
           required={true}>
         </FormInput>
         <div>
-          <label htmlFor="consejoComunal" className="block pb-[11px] text-sm text-sky-950 font-medium">
+          <label htmlFor="consejoComunal" className="block pb-[10px] text-sm text-sky-950 font-medium">
             Consejo Comunal
           </label>
           <Select
             id="consejoComunal"
             name="consejoComunal"
             options={consejosOptions} // Opciones formateadas desde el backend
-            placeholder="Selecciona a que cc pertenece"
+            placeholder="Seleccionar"
             onChange={(selectedOption: SingleValue<OptionType>) =>
               setFormData({
                 ...formData,

@@ -9,13 +9,16 @@ import Button from "@/components/Button";
 import { Comuna } from "@/hooks/interfaces/comuna.interface";
 import useComunas from "@/hooks/useComunas";
 import Loading from "@/components/Loading";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import Tittle from '@/components/Tittle'
+import  exportToPDF from "@/utils/exportToPdf";
 
 const Comunas: React.FC = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState<string>("");
-
+  const [selectedRows, setSelectedRows] = useState<Comuna[]>([]);
   const { data: comunasData, isLoading } = useComunas();
 
   // Filtra datos según el término de búsqueda
@@ -101,6 +104,41 @@ const tdClassName = "border-b border-r py-2 border-sky-950";
     );
   };
 
+  const handleExportPDF = () => {
+    const exportData = selectedRows.length > 0 ? selectedRows : filteredData;
+  
+    // Aquí transformamos los datos para que queden planos:
+    const formattedData = exportData.map((comuna) => [
+      comuna.codigo || "",
+      comuna.numComisionPromotora || "",
+      comuna.fechaComisionPromotora ? new Date(comuna.fechaComisionPromotora).toLocaleDateString() : "",
+      comuna.rif || "",
+      comuna.cuentaBancaria || "",
+      comuna.fechaRegistro ? new Date(comuna.fechaRegistro).toLocaleDateString() : "",
+      comuna.nombre || "",
+      comuna.direccion || "",
+      comuna.linderoNorte || "",
+      comuna.linderoSur || "",
+      comuna.linderoEste || "",
+      comuna.linderoOeste || "",
+      // Consejo comunal (array convertido en string separado por comas)
+      comuna.consejoComunal ? JSON.parse(comuna.consejoComunal).join(", ") : "",
+      comuna.fechaUltimaEleccion ? new Date(comuna.fechaUltimaEleccion).toLocaleDateString() : "",
+      comuna.municipio || "",
+      comuna.parroquia || "",
+      comuna.nombreVocero || "",
+      comuna.ciVocero || "",
+      comuna.telefono || "",
+    ]);
+
+    exportToPDF({
+      headers: headers,
+      data: formattedData,
+      filename: "comunas.pdf",
+      title: "Listado de Comunas",
+    });
+  };
+
   if (status === "loading") {
     return ( <Loading /> );
   }
@@ -118,13 +156,20 @@ const tdClassName = "border-b border-r py-2 border-sky-950";
       <Divider />
       <div className="animate-fade-in opacity-0 flex justify-between px-6 py-4">
         <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        {session.user.role === "Admin" && (
+        <div className="flex gap-4">
           <Button
-            onClick={() =>
-              router.push("/pages/comunas/register-comuna")
-            }
-            title={"Registrar nueva comuna"}
-          />)}
+            onClick={handleExportPDF}
+            title={"Exportar a PDF"}
+            disabled={selectedRows.length === 0}
+          />
+          {session.user.role === "Admin" && (
+            <Button
+              onClick={() =>
+                router.push("/pages/comunas/register-comuna")
+              }
+              title={"Registrar nueva comuna"}
+            />)}
+        </div>
       </div>
         <Table
           headers={headers}
@@ -132,6 +177,7 @@ const tdClassName = "border-b border-r py-2 border-sky-950";
           renderRow={renderRow}
           thClassName="text-center border-b border-sky-600"
           tdClassName="text-left border-r border-sky-600"
+          onSelectionChange={(rows) => setSelectedRows(rows)}
         />
     </>
   );

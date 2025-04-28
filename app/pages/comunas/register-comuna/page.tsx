@@ -183,14 +183,14 @@ const RegisterComunaPage = () => {
         </FormInput>
         <div>
           <label htmlFor="consejoComunal" className="block pb-[11px] text-sm text-sky-950 font-medium">
-            Consejo Comunal que integra la Comuna
+            C.C que integra la Comuna
           </label>
           <Select
             id="consejoComunal"
             name="consejoComunal"
             options={consejosOptions} // Opciones formateadas desde el backend
             isMulti
-            placeholder="Selecciona los consejos comunales"
+            placeholder="Selecciona los c.c"
             onChange={(selectedOptions) =>
               setFormData({
                 ...formData,
@@ -283,7 +283,7 @@ const RegisterComunaPage = () => {
         </FormInput>
         <FormInput 
           type={"number"}
-          label={"Cantidad de C.C que Integran la Comuna"} 
+          label={"Nro de C.C que Integran la Comuna"} 
           id={"cantidadConsejosComunales"} 
           value={formData.cantidadConsejosComunales} 
           onChange={handleChange}

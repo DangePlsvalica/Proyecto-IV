@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface TableProps {
   headers: string[]; // Cabeceras de la tabla
-  data: any[]; // Datos de la tabla
+  data: any[];
   renderRow: (item: any, tdClassName: string) => React.ReactNode; // Función para renderizar cada fila
-  thClassName?: string; // Clases adicionales para las cabeceras
-  tdClassName?: string; // Clases adicionales para las celdas
+  thClassName?: string; 
+  tdClassName?: string; 
+  onSelectionChange?: (selectedItems: any[]) => void;
 }
 
 const Table: React.FC<TableProps> = ({
@@ -13,14 +14,49 @@ const Table: React.FC<TableProps> = ({
   data,
   renderRow,
   thClassName = '',
-  tdClassName = ''
+  tdClassName = '',
+  onSelectionChange,
 }) => {
+  const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
+
+  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      const allIndexes = new Set(data.map((_, index) => index));
+      setSelectedRows(allIndexes);
+      onSelectionChange?.(data); // Pasa todos los datos seleccionados
+    } else {
+      setSelectedRows(new Set());
+      onSelectionChange?.([]);
+    }
+  };
+
+  const handleSelectRow = (index: number) => {
+    const newSelectedRows = new Set(selectedRows);
+    if (newSelectedRows.has(index)) {
+      newSelectedRows.delete(index);
+    } else {
+      newSelectedRows.add(index);
+    }
+    setSelectedRows(newSelectedRows);
+    onSelectionChange?.(Array.from(newSelectedRows).map((i) => data[i]));
+  };
+
+  const isAllSelected = selectedRows.size === data.length && data.length > 0;
+
   return (
     <div className="animate-fade-in opacity-0 max-w-[100%] px-6">
       <div className="overflow-x-auto rounded-2xl">
-        <table className="w-full table-auto rounded-2xl border-separate border-spacing-0 border border-sky-950" >
+        <table className="w-full table-auto rounded-2xl border-separate border-spacing-0 border border-sky-950">
           <thead className={`text-[14px] text-center border-b border-white ${thClassName}`}>
             <tr>
+              <th className="leading-snug px-2 py-1 border-r min-w-[50px] border-b bg-sky-950 border-sky-950">
+                <input
+                  type="checkbox"
+                  checked={isAllSelected}
+                  onChange={handleSelectAll}
+                  className="w-3 h-3 cursor-pointer"
+                />
+              </th>
               {headers.map((header, index) => (
                 <th key={index} className={`leading-snug px-4 py-1 text-white border-r min-w-[175px] border-b bg-sky-950 border-sky-950 ${thClassName}`}>
                   {header}
@@ -31,6 +67,14 @@ const Table: React.FC<TableProps> = ({
           <tbody className="text-[14px] text-center">
             {data.map((item, index) => (
               <tr key={index}>
+                <td className="p-0 border-b max-w-[10px] border-sky-950">
+                  <input
+                    type="checkbox"
+                    checked={selectedRows.has(index)}
+                    onChange={() => handleSelectRow(index)}
+                    className="w-3 h-3 cursor-pointer"
+                  />
+                </td>
                 {renderRow(item, tdClassName)}
               </tr>
             ))}
@@ -42,3 +86,4 @@ const Table: React.FC<TableProps> = ({
 };
 
 export default Table;
+
