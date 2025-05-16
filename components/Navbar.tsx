@@ -3,12 +3,12 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { Dialog } from "@headlessui/react";
-import { FaBars } from "react-icons/fa";
-import { FaXmark } from "react-icons/fa6";
+import { FaXmark, FaPerson } from "react-icons/fa6";
 import Image from "next/image";
-import { FaRegUser, FaUsers, FaCar } from 'react-icons/fa';
+import { FaRegUser, FaUsers, FaCar, FaBars } from 'react-icons/fa';
 import { IoSettingsOutline } from "react-icons/io5";
 import { RiCommunityLine } from "react-icons/ri";
+import { PiScrollBold } from "react-icons/pi";
 import Button from './Button'
 
 const Navbar = () => {
@@ -19,13 +19,15 @@ const Navbar = () => {
   const navigation = [
     ...(session?.user?.role === "Admin"
       ? [
-          { name: "Administrar usuarios", href: "/pages/admin-user", icon: <FaRegUser /> },
+          { name: "Administrar usuarios", href: "/admin-user", icon: <FaRegUser /> },
         ]
       : []),
-    { name: "Proyectos", href: "/pages/gestor-de-proyectos", icon: <IoSettingsOutline /> },
-    { name: "Consejos comunales", href: "/pages/consejos-comunales", icon: <FaUsers /> },
-    { name: "Comunas", href: "/pages/comunas", icon: <RiCommunityLine /> },
-    { name: "Vehiculos", href: "/pages/vehiculos", icon: <FaCar /> },
+    { name: "Administrar roles", href: "/consejos-comunales", icon: <PiScrollBold /> },
+    { name: "Personas", href: "/consejos-comunales", icon: <FaPerson /> },
+    { name: "Consejos comunales", href: "/consejos-comunales", icon: <FaUsers /> },
+    { name: "Comunas", href: "/comunas", icon: <RiCommunityLine /> },
+    { name: "Proyectos", href: "/gestor-de-proyectos", icon: <IoSettingsOutline /> },  
+    { name: "Vehiculos", href: "/vehiculos", icon: <FaCar /> },
   ];
 
   return (
@@ -61,13 +63,7 @@ const Navbar = () => {
 
         {/* Sesión y botones */}
         <div className="flex flex-col flex-1 items-center justify-end gap-x-6">
-          {!session ? (
-            <Button href="/pages/login" title="Iniciar Sesion"></Button>
-          ) : (
-            <>
-              <Button onClick={() => signOut()} title="Cerrar sesión"></Button>
-            </>
-          )}
+          <Button onClick={() => signOut()} title="Cerrar sesión"></Button>
         </div>
 
         {/* Menú móvil */}

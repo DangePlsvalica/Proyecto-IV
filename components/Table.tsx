@@ -7,6 +7,7 @@ interface TableProps {
   thClassName?: string; 
   tdClassName?: string; 
   onSelectionChange?: (selectedItems: any[]) => void;
+  onRowClick?: (item: any) => void;
 }
 
 const Table: React.FC<TableProps> = ({
@@ -16,6 +17,7 @@ const Table: React.FC<TableProps> = ({
   thClassName = '',
   tdClassName = '',
   onSelectionChange,
+  onRowClick,
 }) => {
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
 
@@ -43,6 +45,15 @@ const Table: React.FC<TableProps> = ({
 
   const isAllSelected = selectedRows.size === data.length && data.length > 0;
 
+    // Manejador click fila, evitamos click cuando se da en checkbox (e.target es input)
+  const handleRowClick = (e: React.MouseEvent, item: any) => {
+    if ((e.target as HTMLElement).tagName.toLowerCase() === 'input') {
+      // No hacer nada si el click es en checkbox
+      return;
+    }
+    onRowClick?.(item);
+  };
+
   return (
     <div className="animate-fade-in opacity-0 max-w-[100%] px-6">
       <div className="overflow-x-auto rounded-2xl">
@@ -66,13 +77,14 @@ const Table: React.FC<TableProps> = ({
           </thead>
           <tbody className="text-[14px] text-center">
             {data.map((item, index) => (
-              <tr key={index}>
+              <tr key={index} onClick={(e) => handleRowClick(e, item)} className="cursor-pointer hover:bg-sky-100">
                 <td className="p-0 border-b max-w-[10px] border-sky-950">
                   <input
                     type="checkbox"
                     checked={selectedRows.has(index)}
                     onChange={() => handleSelectRow(index)}
                     className="w-3 h-3 cursor-pointer"
+                    onClick={(e) => e.stopPropagation()}
                   />
                 </td>
                 {renderRow(item, tdClassName)}

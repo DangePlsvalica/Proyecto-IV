@@ -1,28 +1,20 @@
 "use client";
-
 import React, { useState } from "react";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-
-import Divider from "../../../components/Divider";
-import SearchForm from "../../../components/SearchForm";
-import Table from "../../../components/Table";
+import Divider from "../../components/Divider";
+import SearchForm from "../../components/SearchForm";
+import Table from "../../components/Table";
 import Button from "@/components/Button";
 import Tittle from "@/components/Tittle";
 import Loading from "@/components/Loading";
-
 import useComunas from "@/hooks/useComunas";
 import { Comuna } from "@/hooks/interfaces/comuna.interface";
-
 import exportToPDF from "@/utils/exportToPdf";
 
 const Comunas: React.FC = () => {
-  const { data: session, status } = useSession();
   const router = useRouter();
-  
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedRows, setSelectedRows] = useState<Comuna[]>([]);
-  
   const { data: comunasData, isLoading } = useComunas();
 
   const headers = [
@@ -59,7 +51,7 @@ const Comunas: React.FC = () => {
   const renderRow = (comuna: Comuna) => {
     return (
       <>
-        <td className={tdClassName} onClick={() => router.push("/pages/comunas/view-comuna")}>{comuna.codigo}</td>
+        <td className={tdClassName} onClick={() => router.push(`/comunas/${comuna.id}`)}>{comuna.codigo}</td>
         <td className={tdClassName}>{comuna.numComisionPromotora}</td>
         <td className={tdClassName}>
           {comuna.fechaComisionPromotora && new Date(comuna.fechaComisionPromotora).toLocaleDateString()}
@@ -95,7 +87,6 @@ const Comunas: React.FC = () => {
 
   const handleExportPDF = () => {
     const exportData = selectedRows.length > 0 ? selectedRows : filteredData;
-
     const formattedData = exportData.map((comuna) => [
       comuna.codigo || "",
       comuna.numComisionPromotora || "",
@@ -128,14 +119,9 @@ const Comunas: React.FC = () => {
     });
   };
 
-  if (status === "loading" || isLoading) {
-    return <Loading />;
-  }
-
-  if (!session) {
-    router.push("/pages/login");
-    return null;
-  }
+    if (isLoading) {
+      return ( <Loading /> );
+    }
 
   return (
     <>
@@ -149,12 +135,10 @@ const Comunas: React.FC = () => {
             title="Exportar a PDF"
             disabled={selectedRows.length === 0}
           />
-          {session.user.role === "Admin" && (
             <Button
-              onClick={() => router.push("/pages/comunas/register-comuna")}
+              onClick={() => router.push("/comunas/register-comuna")}
               title="Registrar nueva comuna"
             />
-          )}
         </div>
       </div>
       <Table
@@ -164,6 +148,7 @@ const Comunas: React.FC = () => {
         thClassName="text-center border-b border-sky-600"
         tdClassName="text-left border-r border-sky-600"
         onSelectionChange={(rows) => setSelectedRows(rows)}
+        onRowClick={(comuna) => router.push(`/comunas/${comuna.id}`)}
       />
     </>
   );

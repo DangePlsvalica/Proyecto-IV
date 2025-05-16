@@ -24,7 +24,7 @@ export const useRegisterComuna = () => {
       // Invalida la caché de comunas para refrescar los datos
       toast.success('Comuna registrada exitosamente');
       queryClient.invalidateQueries({ queryKey: ['comunas'] });
-      router.push('/pages/comunas');
+      router.push('/comunas');
     },
     onError: (error: Error) => {
       console.error('Error al registrar comuna:', error);

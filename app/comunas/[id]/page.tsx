@@ -1,17 +1,37 @@
-"use client";
-import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'next/navigation';
 import { FieldDisplay } from '@/components/FieldDisplay';
-import { Comuna } from '@/hooks/interfaces/comuna.interface';
-import useComunas from "@/hooks/useComunas";
+import { PrismaClient } from '@prisma/client';
+import { notFound } from 'next/navigation';
+import Button  from '@/components/Button'
 
-const ViewComunaPage: React.FC = () => {
-  const  id  = "044ceb0e-cf63-4309-ad2c-311de67eec30";
-  const { data: comunasData, isLoading } = useComunas();
+const prisma = new PrismaClient();
 
-  if (isLoading) return <div>Cargando...</div>;
-  const comuna = comunasData?.find((c: Comuna) => c.id === id);
-  if (!comuna) return <div>Comuna no encontrada</div>;
+interface PageProps {
+  params: {
+    id: string;
+  };
+}
+
+export default async function ViewComunaPage({ params }: PageProps) {
+  const { id } = params;
+  
+const comuna = await prisma.comuna.findUnique({
+    where: { id },
+    include: {
+      consejosComunales: {
+        select: { id: true, cc: true, rif: true },
+      },
+      parroquiaRelation: {
+        select: {
+          nombre: true,
+          municipio: true,
+          estado: true,
+        }
+      }
+    }
+  });
+
+  if (!comuna) return notFound();
+
   return (
     <div className="mx-auto my-7 max-w-[95%] p-16 border border-sky-200 rounded-xl bg-[#f8f8f8]">
       <h1 className="text-2xl font-bold mb-6 text-sky-950">Detalles de la Comuna</h1>
@@ -41,24 +61,24 @@ const ViewComunaPage: React.FC = () => {
             Consejos Comunales Integrantes
           </label>
           <div className="p-2 bg-gray-100 rounded min-h-[38px]">
-            {Array.isArray(JSON.parse(comuna.consejoComunal)) ? (
-                JSON.parse(comuna.consejoComunal).map((cc: string, index: number) => (
-                <div key={index} className="inline-block bg-white rounded px-2 py-1 mr-2 mb-2">
-                    {cc} {/* Muestra el nombre directamente */}
+            {comuna.consejosComunales?.length > 0 ? (
+              comuna.consejosComunales.map((cc: { id: string; cc: string; rif: string }) => (
+                <div key={cc.id} className="inline-block bg-white rounded px-2 py-1 mr-2 mb-2">
+                  {cc.cc}
                 </div>
-                ))
+              ))
             ) : (
-                <p>No hay consejos comunales disponibles.</p>
+              <p>No hay consejos comunales asignados</p>
             )}
-            </div>
+          </div>
         </div>
 
         <FieldDisplay 
           label="Fecha de Última Elección" 
           value={new Date(comuna.fechaUltimaEleccion).toLocaleDateString()} 
         />
-        <FieldDisplay label="Municipio" value={comuna.municipio} />
-        <FieldDisplay label="Parroquia" value={comuna.parroquia} />
+        <FieldDisplay label="Municipio" value={comuna.parroquiaRelation?.municipio} />
+        <FieldDisplay label="Parroquia" value={comuna.parroquiaRelation?.nombre} />
         <FieldDisplay label="Vocero Principal" value={comuna.nombreVocero} />
         <FieldDisplay label="C.I. Vocero" value={comuna.ciVocero} />
         <FieldDisplay label="Teléfono Vocero" value={comuna.telefono} />
@@ -73,14 +93,11 @@ const ViewComunaPage: React.FC = () => {
       </div>
       
       <div className="flex justify-center pt-6 gap-4">
-        <button
-          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-        >
-          Editar
-        </button>
+        <Button title="Editar" href={`/comunas/${id}/edit`}
+        />
+          
+        
       </div>
     </div>
   );
 };
-
-export default ViewComunaPage;

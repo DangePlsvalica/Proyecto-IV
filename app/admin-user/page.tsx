@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Divider from "../../../components/Divider";
+import Divider from "../../components/Divider";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -24,7 +24,7 @@ const AdminUser: React.FC = () => {
     return (<Loading />);
   }
   if (!session) {
-    router.push("/pages/login");
+    router.push("/login");
     return null;
   }
   if (session.user.role !== "Admin") {
@@ -84,7 +84,7 @@ const AdminUser: React.FC = () => {
       </div>
       <div className="flex justify-center pt-6">
         <Link
-          href="/pages/register"
+          href="/register"
           className="rounded-md bg-sky-950 px-3 py-2 border border-gray-500 text-sm font-semibold text-white shadow-sm hover:bg-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
           Registrar nuevo usuario

@@ -1,18 +1,15 @@
 "use client";
 import React, { useState } from "react";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import Divider from "../../../components/Divider";
-import SearchForm from "../../../components/SearchForm";
+import Divider from "../../components/Divider";
+import SearchForm from "../../components/SearchForm";
 import Loading from "@/components/Loading";
 import Tittle from '@/components/Tittle';
 import Button from "@/components/Button";
 import useVehiculos from "@/hooks/useVehiculos";
-import { Vehiculo } from "@/hooks/interfaces/vehiculo.interface";
 import { IoIosCar } from "react-icons/io";
 
 const Vehiculos: React.FC = () => {
-  const { data: session, status } = useSession();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const { data: vehiculosData, isLoading } = useVehiculos();
@@ -26,12 +23,8 @@ const Vehiculos: React.FC = () => {
       )
     : [];
 
-  if (status === "loading" || isLoading) {
-    return (<Loading />);
-  }
-  if (!session) {
-    router.push("/pages/login");
-    return null;
+  if (isLoading) {
+    return ( <Loading /> );
   }
 
   return (
@@ -39,13 +32,11 @@ const Vehiculos: React.FC = () => {
       <Tittle title={"Vehículos"} />
       <Divider />
       <div className="animate-fade-in opacity-0 flex justify-between px-6 py-4">
-        <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        {session.user.role === "Admin" && (
+        <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />    
           <Button
-            onClick={() => router.push("/pages/vehiculos/register-vehiculo")}
+            onClick={() => router.push("/vehiculos/register-vehiculo")}
             title={"Registrar nuevo vehículo"}
           />
-        )}
       </div>
       <div className="animate-fade-in grid grid-cols-3 md:grid-cols-3 2xl:grid-cols-4 gap-6 px-6">
         {filteredData.map((vehiculo) => (

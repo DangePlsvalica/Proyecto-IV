@@ -1,10 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import Divider from "../../../components/Divider";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import Table from "../../../components/Table";
-import SearchForm from "../../../components/SearchForm";
+import Divider from "../../components/Divider";
+import Table from "../../components/Table";
+import SearchForm from "../../components/SearchForm";
 import useConsejos from "@/hooks/useConsejos";
 import { ConsejoComunal } from "@/hooks/interfaces/consejo.comunal.interface";
 import Loading from "@/components/Loading";
@@ -12,8 +10,6 @@ import Tittle from '@/components/Tittle'
 import useParroquias from "@/hooks/useParroquias";
 
 const ConsejosComunales: React.FC = () => {
-  const { data: session, status } = useSession();
-  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const { data: parroquiasData } = useParroquias();
   const { data: consejosData, isLoading } = useConsejos();
@@ -63,13 +59,6 @@ const ConsejosComunales: React.FC = () => {
     </>
   );
 
-  if (status === "loading") {
-    return (<Loading />);
-  }
-  if (!session) {
-    router.push("/pages/login");
-    return null;
-  }
   if (isLoading) {
     return (<Loading />);
   }

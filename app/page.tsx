@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 export default async function Home() {
   const session = await getServerSession();
   if (session) {
-    redirect("/pages/gestor-de-proyectos");
+    redirect("/consejos-comunales");
   }
   return (
     <main className="relative h-screen flex items-center justify-center overflow-hidden">

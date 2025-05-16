@@ -1,7 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import Select, { MultiValue } from "react-select";
 import Button from "@/components/Button";
 import FormInput from '@/components/FormInput'
@@ -12,8 +10,6 @@ import { useRegisterComuna } from '@/hooks/useRegisterComuna';
 import Tittle from "@/components/Tittle";
 
 const RegisterComunaPage = () => {
-  const router = useRouter();
-  const { data: session, } = useSession();
   const queryClient = useQueryClient();
   const { mutate: registerComuna } = useRegisterComuna();
   const [formData, setFormData] = useState({
@@ -55,8 +51,7 @@ const RegisterComunaPage = () => {
   const handleParroquiaChange = (selectedOption: any) => {
     setFormData({
       ...formData,
-      parroquiaId: selectedOption ? Number(selectedOption.value) : 0, // 👈 Guarda solo el ID
-      // municipio: "", // Elimina esta línea
+      parroquiaId: selectedOption ? Number(selectedOption.value) : 0, // Guarda solo el ID
     });
   };
 
@@ -85,16 +80,6 @@ const RegisterComunaPage = () => {
     }
   };  
   
-  if (!session) {
-    router.push("/pages/login");
-    return null;
-  }
-
-  if (session.user.role !== "Admin") {
-    router.push("/");
-    return null;
-  }
-
   // Manejar el envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,7 +87,7 @@ const RegisterComunaPage = () => {
 
     const formDataWithNumbers = {
       ...formData,
-      cantidadConsejosComunales: Number(formData.cantidadConsejosComunales),
+      cantidadConsejosComunales: consejosMapeados.length,
       poblacionVotante: Number(formData.poblacionVotante),
       consejosComunales: consejosMapeados,
     };
@@ -253,14 +238,6 @@ const RegisterComunaPage = () => {
           label={"Teléfono del Vocero"} 
           id={"telefono"} 
           value={formData.telefono} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          type={"number"}
-          label={"Nro de C.C que Integran la Comuna"} 
-          id={"cantidadConsejosComunales"} 
-          value={formData.cantidadConsejosComunales} 
           onChange={handleChange}
           required={true}>
         </FormInput>

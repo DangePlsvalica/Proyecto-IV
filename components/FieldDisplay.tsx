@@ -1,4 +1,3 @@
-// components/FieldDisplay.tsx
 import React from 'react';
 
 interface FieldDisplayProps {

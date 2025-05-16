@@ -1,10 +1,9 @@
 "use client";
 import React, { useState } from "react";
-import Divider from "../../../components/Divider";
-import { useSession } from "next-auth/react";
+import Divider from "../../components/Divider";
 import { useRouter } from "next/navigation";
-import SearchForm from "../../../components/SearchForm";
-import Table from "../../../components/Table";
+import SearchForm from "../../components/SearchForm";
+import Table from "../../components/Table";
 import Button from "@/components/Button";
 import useProyectos from "@/hooks/useProyectos";
 import { Proyecto } from "@/hooks/interfaces/proyecto.interface";
@@ -12,11 +11,9 @@ import Loading from "@/components/Loading";
 import Tittle from '@/components/Tittle'
 
 const GestorProyectos: React.FC = () => {
-  const { data: session, status } = useSession();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState<string>("");
 
-  // Usamos el hook para obtener proyectos
   const { data: proyectosData, isLoading } = useProyectos();
 
   // Filtra datos según el término de búsqueda
@@ -58,13 +55,6 @@ const GestorProyectos: React.FC = () => {
     );
   };
 
-  if (status === "loading") {
-    return ( <Loading /> );
-  }
-  if (!session) {
-    router.push("/pages/login");
-    return null;
-  }
   if (isLoading) {
     return ( <Loading /> );
   }
@@ -75,13 +65,13 @@ const GestorProyectos: React.FC = () => {
       <Divider />
       <div className="animate-fade-in opacity-0 flex justify-between px-6 py-4">
         <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        {session.user.role === "Admin" && (
+        
           <Button
             onClick={() =>
-              router.push("/pages/gestor-de-proyectos/register-proyecto")
+              router.push("/gestor-de-proyectos/register-proyecto")
             }
             title={"Registrar nuevo proyecto"}
-          />)}
+          />
       </div>
       <Table
         headers={headers}
