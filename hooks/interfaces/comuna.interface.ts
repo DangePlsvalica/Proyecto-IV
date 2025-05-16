@@ -12,10 +12,9 @@ export interface Comuna {
   linderoSur: string;
   linderoEste: string;
   linderoOeste: string;
-  consejoComunal: any; 
+  consejosComunales: any; 
   fechaUltimaEleccion: Date;
-  municipio: string;
-  parroquia: string;
+  parroquiaRelation: any;
   nombreVocero: string;
   ciVocero: string;
   telefono: string;
@@ -37,10 +36,9 @@ export interface ComunaFormData {
   linderoSur: string;
   linderoEste: string;
   linderoOeste: string;
-  consejoComunal: Array<{ value: string; label: string }>;
+  consejosComunales: string[];
   fechaUltimaEleccion: string;
-  municipio: string;
-  parroquia: string;
+  parroquiaId: number;
   nombreVocero: string;
   ciVocero: string;
   telefono: string;

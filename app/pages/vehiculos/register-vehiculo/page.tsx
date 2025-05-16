@@ -200,7 +200,7 @@ const RegisterVehiculoPage = () => {
           required={true}>
         </FormInput>
         <FormInput 
-          label={"Vocero asignado"} 
+          label={"Persona asignada"} 
           id={"voceroAsignado"} 
           value={formData.voceroAsignado} 
           onChange={handleChange}
@@ -215,7 +215,7 @@ const RegisterVehiculoPage = () => {
           required={true}>
         </FormInput>
         <FormInput 
-          label={"Estado"} 
+          label={"Estado del vehiculo"} 
           id={"estatus"} 
           value={formData.estatus} 
           onChange={handleChange}

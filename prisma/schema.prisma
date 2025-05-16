@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://Comunas_owner:npg_DaBAd7Tfmu5V@ep-bold-heart-a5vx15un-pooler.us-east-2.aws.neon.tech/Comunas?sslmode=require"
+  url      = env("DATABASE_URL")
 }
 
 enum Role {
@@ -49,6 +49,14 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model Parroquia {
+  id         Int     @id @default(autoincrement())
+  nombre     String
+  municipio  String
+  estado     String  @default("Yaracuy")
+  comunas    Comuna[]
+}
+
 model Proyecto {
   id                String   @id @default(uuid())
   nombre            String   @unique
@@ -72,31 +80,33 @@ model ConsejoComunal {
   vocero            String
   tlfVocero         String
   poblacionVotante  Int
+  comunaId          String?  // Clave foránea
+  comuna            Comuna? @relation(fields: [comunaId], references: [id], onDelete: SetNull)
 }
 
 model Comuna {
-  id                        String @id @default(uuid()) // Código único (Código)
-  codigo                    String // Código de la comuna
-  numComisionPromotora      String // N° comisión promotora
-  fechaComisionPromotora    DateTime // FECHA DE COMISIÓN PROMOTORA
-  rif                       String // RIF
-  cuentaBancaria            String // CUENTA BANCARIA
-  fechaRegistro             DateTime // FECHA DE REGISTRO DE LA COMUNA
-  nombre                    String // NOMBRE DE LA COMUNA
-  direccion                 String // DIRECCIÓN DE LA COMUNA
-  linderoNorte              String // LINDERO NORTE
-  linderoSur                String // LINDERO SUR
-  linderoEste               String // LINDERO ESTE
-  linderoOeste              String // LINDERO OESTE
-  consejoComunal            Json // CONSEJO COMUNAL QUE INTEGRA LA COMUNA
-  fechaUltimaEleccion       DateTime // FECHA DE ÚLTIMA ELECCIÓN
-  municipio                 String // MUNICIPIO
-  parroquia                 String // PARROQUIA
-  nombreVocero              String // NOMBRE Y APELLIDOS DEL VOCERO
-  ciVocero                  String // C.I del vocero
-  telefono                  String // TELEFONO
-  cantidadConsejosComunales Int // CANTIDAD DE C.C QUE INTEGRA LA COMUNA
-  poblacionVotante          Int // POBLACIÓN VOTANTE
+  id                        String @id @default(uuid()) 
+  codigo                    String  
+  numComisionPromotora      String  
+  fechaComisionPromotora    DateTime  
+  rif                       String  
+  cuentaBancaria            String  
+  fechaRegistro             DateTime  
+  nombre                    String  
+  direccion                 String  
+  linderoNorte              String  
+  linderoSur                String  
+  linderoEste               String  
+  linderoOeste              String  
+  fechaUltimaEleccion       DateTime  
+  parroquiaRelation         Parroquia? @relation(fields: [parroquiaId], references: [id])
+  parroquiaId               Int?  
+  nombreVocero              String  
+  ciVocero                  String  
+  telefono                  String  
+  cantidadConsejosComunales Int  
+  poblacionVotante          Int  
+  consejosComunales         ConsejoComunal[] // Relación 1-N
 }
 
 model Vehiculo {

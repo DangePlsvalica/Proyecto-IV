@@ -9,13 +9,13 @@ import useConsejos from "@/hooks/useConsejos";
 import { ConsejoComunal } from "@/hooks/interfaces/consejo.comunal.interface";
 import Loading from "@/components/Loading";
 import Tittle from '@/components/Tittle'
+import useParroquias from "@/hooks/useParroquias";
 
 const ConsejosComunales: React.FC = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState<string>("");
-
-  // Usamos el hook para obtener proyectos
+  const { data: parroquiasData } = useParroquias();
   const { data: consejosData, isLoading } = useConsejos();
 
   // Filtra datos según el término de búsqueda

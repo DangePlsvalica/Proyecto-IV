@@ -15,7 +15,6 @@ const Vehiculos: React.FC = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState<string>("");
-
   const { data: vehiculosData, isLoading } = useVehiculos();
 
   const filteredData = vehiculosData
@@ -54,9 +53,9 @@ const Vehiculos: React.FC = () => {
             key={vehiculo.id}
             className="bg-white rounded-2xl max-w-[400px] shadow-md overflow-hidden border border-sky-900 hover:shadow-2xl transition-all duration-300 p-4 flex flex-col justify-between"
           >
-            <div className="text-sky-950">
+            <div className="text-sky-950 text-[14px]">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold">{vehiculo.placa}</h2>
+                <h2 className="text-lg font-bold">{vehiculo.placa}</h2>
                 <IoIosCar size={30} className="text-sky-800" />
                 </div>
               <p><span className="font-semibold">Clase:</span> {vehiculo.clase}</p>

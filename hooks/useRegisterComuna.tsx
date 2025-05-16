@@ -17,7 +17,6 @@ export const useRegisterComuna = () => {
           fechaComisionPromotora: new Date(formData.fechaComisionPromotora).toISOString(),
           fechaRegistro: new Date(formData.fechaRegistro).toISOString(),
           fechaUltimaEleccion: new Date(formData.fechaUltimaEleccion).toISOString(),
-          consejoComunal: formData.consejoComunal.map((option) => option.value),
         }
       });
     },

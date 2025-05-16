@@ -2,23 +2,19 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import Select from "react-select";
+import Select, { MultiValue } from "react-select";
 import Button from "@/components/Button";
 import FormInput from '@/components/FormInput'
 import { useQueryClient } from '@tanstack/react-query';
 import { ConsejoComunal } from '@/hooks/interfaces/consejo.comunal.interface';
+import { Parroquia } from '@/hooks/interfaces/parroquia.interface';
 import { useRegisterComuna } from '@/hooks/useRegisterComuna';
 import Tittle from "@/components/Tittle";
 
 const RegisterComunaPage = () => {
-  type OptionType = {
-    value: string;
-    label: string;
-  };
   const router = useRouter();
   const { data: session, } = useSession();
   const queryClient = useQueryClient();
-  
   const { mutate: registerComuna } = useRegisterComuna();
   const [formData, setFormData] = useState({
     codigo: "",
@@ -33,10 +29,9 @@ const RegisterComunaPage = () => {
     linderoSur: "",
     linderoEste: "",
     linderoOeste: "",
-    consejoComunal: [] as OptionType[],
+    consejosComunales: [] as { value: string; label: string }[],
     fechaUltimaEleccion: "",
-    municipio: "",
-    parroquia: "",
+    parroquiaId: 0,
     nombreVocero: "",
     ciVocero: "",
     telefono: "",
@@ -44,12 +39,33 @@ const RegisterComunaPage = () => {
     poblacionVotante: 0,
   });
 
-  // Obtener datos de la cache y transformar a formato para react-select
-  const consejosData = queryClient.getQueryData<ConsejoComunal[]>(["consejoscomunal"]);
-  const consejosOptions = consejosData?.map(consejo => ({
-    value: consejo.cc,
-    label: consejo.cc, 
+  const parroquiasData = queryClient.getQueryData<Parroquia[]>(["parroquias"]);
+  const parroquiasOptions = parroquiasData?.map((parroquia) => ({
+    value: Number(parroquia.id),
+    label: parroquia.nombre,
   })) || [];
+
+  const consejosComunalesData = queryClient.getQueryData<ConsejoComunal[]>(["consejoscomunal"]);
+  const consejosComunalesOptions = consejosComunalesData?.map((cc) => ({
+    value: cc.id,
+    label: cc.cc,
+  })) || [];
+
+    // Manejar el cambio de la parroquia seleccionada
+  const handleParroquiaChange = (selectedOption: any) => {
+    setFormData({
+      ...formData,
+      parroquiaId: selectedOption ? Number(selectedOption.value) : 0, // 👈 Guarda solo el ID
+      // municipio: "", // Elimina esta línea
+    });
+  };
+
+    const handleConsejosChange = (newValue: MultiValue<{ value: string; label: string }>) => {
+      setFormData({
+        ...formData,
+        consejosComunales: [...newValue],
+      });
+    };
 
   // Manejar el cambio en los campos del formulario
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
@@ -82,10 +98,13 @@ const RegisterComunaPage = () => {
   // Manejar el envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const consejosMapeados = formData.consejosComunales.map((cc) => cc.value);
+
     const formDataWithNumbers = {
       ...formData,
       cantidadConsejosComunales: Number(formData.cantidadConsejosComunales),
       poblacionVotante: Number(formData.poblacionVotante),
+      consejosComunales: consejosMapeados,
     };
     registerComuna(formDataWithNumbers);
   };
@@ -181,61 +200,18 @@ const RegisterComunaPage = () => {
           onChange={handleChange}
           required={true}>
         </FormInput>
-        <div>
-          <label htmlFor="consejoComunal" className="block pb-[11px] text-sm text-sky-950 font-medium">
-            C.C que integra la Comuna
+        <div >
+          <label htmlFor="consejosComunales" className="block pb-[11px] text-sm text-sky-950 font-medium">
+            C.C que integran la comuna
           </label>
           <Select
-            id="consejoComunal"
-            name="consejoComunal"
-            options={consejosOptions} // Opciones formateadas desde el backend
+            id="consejosComunales"
+            name="consejosComunales"
+            options={consejosComunalesOptions}
             isMulti
             placeholder="Selecciona los c.c"
-            onChange={(selectedOptions) =>
-              setFormData({
-                ...formData,
-                consejoComunal: [...selectedOptions], // Convierte a un array mutable
-              })
-            }
-            value={formData.consejoComunal} // Mantener la selección
-            styles={{
-              control: (provided) => ({
-                ...provided,
-                border: "1px solid black", // Similar al input
-                borderRadius: "0.375rem", // rounded-md
-                fontSize: "0.875rem",
-              }),
-              menu: (provided) => ({
-                ...provided,
-                border: "1px solid #d1d5db",
-                borderRadius: "0.375rem",
-                fontSize: "0.875rem",
-              }),
-              multiValue: (provided) => ({
-                ...provided,
-                backgroundColor: "white", // bg-blue-600
-                color: "white",
-                borderRadius: "0.375rem",
-              }),
-              multiValueRemove: (provided) => ({
-                ...provided,
-                color: "#0c4a6e",
-                ":hover": {
-                  backgroundColor: "#ef4444", // bg-red-500
-                  color: "white",
-                },
-              }),
-              option: (provided, state) => ({
-                ...provided,
-                backgroundColor: state.isSelected
-                  ? "#2563eb" // bg-blue-600
-                  : state.isFocused
-                  ? "#e0f2fe" // bg-blue-100
-                  : "white",
-                color: state.isSelected ? "white" : "#1f2937", // text-gray-800
-                padding: "0.5rem", // Similar a px-4 py-2
-              }),
-            }}
+            onChange={handleConsejosChange}
+            value={formData.consejosComunales}
           />
         </div>
         <FormInput 
@@ -246,20 +222,19 @@ const RegisterComunaPage = () => {
           onChange={handleChange}
           required={true}>
         </FormInput>
-        <FormInput 
-          label={"Municipio"} 
-          id={"municipio"} 
-          value={formData.municipio} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          label={"Parroquia"} 
-          id={"parroquia"} 
-          value={formData.parroquia} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
+        <div>
+          <label htmlFor="parroquia" className="block pb-[11px] text-sm text-sky-950 font-medium">
+            Parroquia
+          </label>
+          <Select
+            id="parroquia"
+            name="parroquiaId"
+            options={parroquiasOptions} // Opciones formateadas desde el cache
+            placeholder="Selecciona la parroquia"
+            onChange={handleParroquiaChange} // Actualiza parroquia y municipio
+            value={parroquiasOptions.find(option => option.value === formData.parroquiaId) || null} // Mantener la selección
+          />
+        </div>
         <FormInput 
           label={"Nombres y Apellidos del Vocero"} 
           id={"nombreVocero"} 

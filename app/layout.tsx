@@ -27,7 +27,7 @@ export default async function RootLayout({
         <QueryClientProviderWrapper>
           <div className="flex">
             <Providers>
-            <main className={`flex-1 ${session ? "pl-[250px] py-6 max-w-[1422px] 2xl:max-w-[2120px]" : "w-full max-w-none"} `}>
+            <main className={`flex-1 ${session ? "pl-[250px] py-6 max-w-[1280px] 2xl:max-w-[1920px]" : "w-full max-w-none"} `}>
               {session && <Navbar />}
               {children}
             </main>
