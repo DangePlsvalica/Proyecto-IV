@@ -17,13 +17,9 @@ const Navbar = () => {
 
   // Crear la navegación dependiendo del rol del usuario
   const navigation = [
-    ...(session?.user?.role === "Admin"
-      ? [
-          { name: "Administrar usuarios", href: "/admin-user", icon: <FaRegUser /> },
-        ]
-      : []),
-    { name: "Administrar roles", href: "/consejos-comunales", icon: <PiScrollBold /> },
-    { name: "Personas", href: "/consejos-comunales", icon: <FaPerson /> },
+    { name: "Administrar usuarios", href: "/admin-user", icon: <FaRegUser /> },
+    { name: "Administrar roles", href: "/admin-role", icon: <PiScrollBold /> },
+    { name: "Personas", href: "/personas", icon: <FaPerson /> },
     { name: "Consejos comunales", href: "/consejos-comunales", icon: <FaUsers /> },
     { name: "Comunas", href: "/comunas", icon: <RiCommunityLine /> },
     { name: "Proyectos", href: "/gestor-de-proyectos", icon: <IoSettingsOutline /> },  

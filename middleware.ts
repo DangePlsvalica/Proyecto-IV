@@ -7,6 +7,8 @@ export async function middleware(req: any) {
   // Definir las rutas que requieren autenticación
   const protectedRoutes = [
     "/admin-user", 
+    "/admin-role",
+    "/personas", 
     "/comunas", 
     "/consejos-comunales", 
     "/gestor-de-proyectos", 
@@ -25,6 +27,8 @@ export async function middleware(req: any) {
 export const config = {
   matcher: [
     "/admin-user/:path*",
+    "/admin-role/:path*",
+    "/personas/:path*",
     "/comunas/:path*", 
     "/consejos-comunales/:path*",
     "/gestor-de-proyectos/:path*", 

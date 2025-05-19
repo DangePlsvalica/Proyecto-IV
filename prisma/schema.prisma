@@ -8,18 +8,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  user
-  Admin
+model Role {
+  id      String  @id @default(uuid())
+  name    String  @unique
+  routes  String[]
+  users   User[]  
 }
 
 model User {
   id             String    @id @default(uuid())
-  name           String?
   email          String    @unique
   emailVerified  DateTime?
-  role           Role      @default(user) // Enum con valores `user` y `Admin`
-  image          String?
+  roleId         String?
+  role           Role?      @relation(fields: [roleId], references: [id])
   hashedPassword String?
   accounts       Account[]
   sessions       Session[]
@@ -55,6 +56,18 @@ model Parroquia {
   municipio  String
   estado     String  @default("Yaracuy")
   comunas    Comuna[]
+  cc         ConsejoComunal[]
+}
+
+model Persona {
+  id         Int     @id @default(autoincrement())
+  nombres    String
+  apellidos  String
+  juridica   Boolean
+  ci         Int?
+  rif        String? 
+  telefono   Int
+  cc        ConsejoComunal? @relation("VoceroRelation")
 }
 
 model Proyecto {
@@ -64,21 +77,20 @@ model Proyecto {
   fechaCreacion     DateTime
   ultimaActividad   DateTime
   categoria         String
-  comuna             String
+  comuna            String
 }
 
 model ConsejoComunal {
   id                String @id @default(uuid())
-  estado            String
-  municipio         String
-  parroquia         String
+  parroquiaRelation Parroquia? @relation(fields: [parroquiaId], references: [id])
+  parroquiaId       Int?  
   cc                String
   rif               String @unique
   numeroCuenta      String
   fechaConstitucion DateTime
   fechaVencimiento  DateTime
-  vocero            String
-  tlfVocero         String
+  voceroId          Int? @unique
+  vocero            Persona? @relation("VoceroRelation", fields: [voceroId], references: [id])
   poblacionVotante  Int
   comunaId          String?  // Clave foránea
   comuna            Comuna? @relation(fields: [comunaId], references: [id], onDelete: SetNull)
