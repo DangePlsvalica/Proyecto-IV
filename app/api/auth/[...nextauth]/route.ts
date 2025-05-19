@@ -49,7 +49,7 @@ const authOptions: AuthOptions = {
           if (isValid) {
             return {
               ...user,
-              role: user.role,
+              role: user.roleId ?? undefined,
             };
           } else {
             return null;
