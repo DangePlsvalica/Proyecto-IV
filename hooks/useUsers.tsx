@@ -33,11 +33,11 @@ export const useUsersQuery = (): UsersQueryResult => {
 
   // Mutación para actualizar rol
   const updateRoleMutation = useMutation({
-    mutationFn: ({ id, role }: { id: string; role: string }) => 
-      put({ path: "/api/users", body: { id, role } }),
+    mutationFn: ({ id, roleId }: { id: string; roleId: string }) => 
+      put({ path: "/api/users", body: { id, roleId } }),
     onSuccess: (_, variables) => {
       queryClient.setQueryData<AdminUser[]>(["users"], (old) =>
-        old?.map(user => user.id === variables.id ? { ...user, role: variables.role } : user) || []
+        old?.map(user => user.id === variables.id ? { ...user, roleId: variables.roleId } : user) || []
       );
       toast.success("Rol actualizado exitosamente");
     },
@@ -51,7 +51,7 @@ export const useUsersQuery = (): UsersQueryResult => {
     isLoading,
     error: error?.message || null,
     deleteUser: deleteMutation.mutate,
-    updateUserRole: (id: string, newRole: string) => updateRoleMutation.mutate({ id, role: newRole }),
+    updateUserRole: (id: string, newRoleId: string) => updateRoleMutation.mutate({ id, roleId: newRoleId }),
     refetch,
   };
 };

@@ -4,12 +4,14 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRegister } from "@/hooks/useRegister";
+import { useRolesQuery } from "@/hooks/useRoles";
 import Loading from "@/components/Loading";
 
 const RegisterPage = () => {
   const router = useRouter();
-  const { data: session, status: sessionStatus } = useSession();
+  const { status: sessionStatus } = useSession();
   const { registerUser, error, isLoading, resetError } = useRegister();
+  const { roles, loading: rolesLoading } = useRolesQuery();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,21 +25,12 @@ const RegisterPage = () => {
       role: formData.get("role") as string,
     });
     if (result.success) {
-      router.push("/pages/admin-user");
+      router.push("/admin-user");
     }
   };
 
   if (sessionStatus === "loading") {
     return ( <Loading /> );
-  }
-  if (!session) {
-    router.push("/pages/login");
-    return null;
-  }
-
-  if (session.user.role !== "Admin") {
-    router.push("/");
-    return null;
   }
 
   return (
@@ -123,8 +116,12 @@ const RegisterPage = () => {
                   required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 >
-                  <option value="user">Usuario</option>
-                  <option value="Admin">Administrador</option>
+                  <option value="">Seleccione un rol</option>
+                  {roles.map((role) => (
+                    <option key={role.id} value={role.id}>
+                      {role.name}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -149,4 +146,3 @@ const RegisterPage = () => {
 };
 
 export default RegisterPage;
-

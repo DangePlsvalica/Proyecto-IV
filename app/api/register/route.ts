@@ -37,7 +37,9 @@ export async function POST(req: Request) {
       data: {
         email,
         hashedPassword,
-        role,
+        role: {
+          connect: { id: role }, // Aquí se conecta con el ID del rol
+        },
       },
     });
 

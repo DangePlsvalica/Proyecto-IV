@@ -8,16 +8,12 @@ import { ConsejoComunal } from '@/hooks/interfaces/consejo.comunal.interface';
 import { useRegisterProyecto } from '@/hooks/useRegisterProyecto';
 import toast from "react-hot-toast";
 import Tittle from "@/components/Tittle";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 
 const RegisterProyectoPage = () => {
   type OptionType = {
     value: string;
     label: string;
   };
-  const router = useRouter();
-  const { data: session, } = useSession();
   const queryClient = useQueryClient();
   
   const { mutate: registerProyecto } = useRegisterProyecto();
@@ -57,15 +53,6 @@ const RegisterProyectoPage = () => {
   registerProyecto(formData);
   };
 
-  if (!session) {
-    router.push("/pages/login");
-    return null;
-  }
-
-  if (session.user.role !== "Admin") {
-    router.push("/");
-    return null;
-  }
 
   return (
     <div className="animate-fade-in opacity-0 mx-auto my-7 max-w-[95%] p-12 border border-sky-200 rounded-xl bg-[#f8f8f8]">

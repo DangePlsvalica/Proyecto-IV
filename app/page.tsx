@@ -30,7 +30,7 @@ export default async function Home() {
             Poder Popular de las comunas del estado Yaracuy
           </h1>
           <div className="pt-10 px-80">
-            <Button className="w-64 px-6 py-3 text-[18px] font-bold" href="/pages/login" title="Iniciar Sesion"></Button>
+            <Button className="w-64 px-6 py-3 text-[18px] font-bold" href="/login" title="Iniciar Sesion"></Button>
           </div>
         </div>
       </div>

@@ -16,15 +16,21 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Crear la navegación dependiendo del rol del usuario
-  const navigation = [
+  const allNavigation = [
     { name: "Administrar usuarios", href: "/admin-user", icon: <FaRegUser /> },
     { name: "Administrar roles", href: "/admin-role", icon: <PiScrollBold /> },
     { name: "Personas", href: "/personas", icon: <FaPerson /> },
     { name: "Consejos comunales", href: "/consejos-comunales", icon: <FaUsers /> },
     { name: "Comunas", href: "/comunas", icon: <RiCommunityLine /> },
-    { name: "Proyectos", href: "/gestor-de-proyectos", icon: <IoSettingsOutline /> },  
+    { name: "Proyectos", href: "/gestor-de-proyectos", icon: <IoSettingsOutline /> },
     { name: "Vehiculos", href: "/vehiculos", icon: <FaCar /> },
   ];
+
+    // Filtrar según las rutas del rol del usuario
+  const roleRoutes = session?.user?.role?.routes ?? [];
+  const filteredNavigation = allNavigation.filter(item =>
+    roleRoutes.includes(item.href)
+  );
 
   return (
     <header className="bg-sky-950 fixed top-0 left-0 w-[250px] h-full p-3 z-50">
@@ -43,9 +49,9 @@ const Navbar = () => {
           <span className="text-xs text-white">{session?.user?.email}</span>
         </div>
 
-        {/* Navegación en desktop */}
+        {/* Navegación segun el rol */}
         <div className="flex flex-col gap-6 px-3 py-6">
-          {navigation.map((item) => (
+          {filteredNavigation.map((item) => (
             <Link
               key={item.name}
               href={item.href}
@@ -109,7 +115,7 @@ const Navbar = () => {
           </div>
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500/10">
-              <div className="space-y-2 py-6">
+              {/* <div className="space-y-2 py-6">
                 {navigation.map((item) => (
                   <Link
                     key={item.name}
@@ -119,7 +125,7 @@ const Navbar = () => {
                     {item.name}
                   </Link>
                 ))}
-              </div>
+              </div> */}
             </div>
           </div>
         </Dialog.Panel>
@@ -129,6 +135,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-
-

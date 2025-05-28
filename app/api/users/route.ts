@@ -44,11 +44,11 @@ export async function DELETE(request: NextRequest) {
 // Manejo del método PUT (actualizar rol de usuario)
 export async function PUT(request: NextRequest) {
   const body = await request.json(); // Obtiene el cuerpo de la solicitud
-  const { id, role } = body;
+  const { id, roleId } = body;
 
-  console.log("Intentando actualizar el rol del usuario con ID:", id, "a rol:", role); // Log inicial
+  console.log("Intentando actualizar el rol del usuario con ID:", id, "a rol:", roleId); // Log inicial
 
-  if (!id || !role) {
+  if (!id || !roleId) {
     console.error("ID o rol no proporcionados"); // Log de error si faltan valores
     return NextResponse.json(
       { error: "User ID and role are required" },
@@ -59,7 +59,7 @@ export async function PUT(request: NextRequest) {
   try {
     const updatedUser = await prisma.user.update({
       where: { id },
-      data: { role },
+      data: { roleId },
     });
     return NextResponse.json(updatedUser);
   } catch (error: unknown) {

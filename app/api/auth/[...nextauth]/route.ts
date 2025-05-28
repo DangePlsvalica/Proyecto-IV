@@ -15,6 +15,7 @@ if (process.env.NODE_ENV === "production") {
   }
   prisma = (global as any).prisma;
 }
+
 const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -32,15 +33,12 @@ const authOptions: AuthOptions = {
         try {
           if (!credentials?.email || !credentials?.password) return null;
 
-          // Buscar el usuario en la base de datos
           const user = await prisma.user.findUnique({
             where: { email: credentials.email },
           });
 
-          // Verificar si el usuario existe y tiene la contraseña cifrada
           if (!user || !user.hashedPassword) return null;
 
-          // Comparar la contraseña ingresada con la almacenada en la base de datos
           const isValid = await bcrypt.compare(
             credentials.password,
             user.hashedPassword
@@ -48,8 +46,9 @@ const authOptions: AuthOptions = {
 
           if (isValid) {
             return {
-              ...user,
-              role: user.roleId ?? undefined,
+              id: user.id,
+              email: user.email,
+              name: user.email, // opcional
             };
           } else {
             return null;
@@ -61,27 +60,45 @@ const authOptions: AuthOptions = {
       },
     }),
   ],
-  callbacks: {
+    callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = user.role; // Asigna el campo `role` al token
+        const dbUser = await prisma.user.findUnique({
+          where: { id: user.id },
+          include: { role: true },
+        });
+
+        if (dbUser?.role) {
+          token.role = {
+            id: dbUser.role.id,
+            name: dbUser.role.name,
+            routes: dbUser.role.routes,
+          };
+        } else {
+          token.role = null;
+        }
+
+        token.id = dbUser?.id;
+        token.email = dbUser?.email;
       }
+
       return token;
     },
+
     async session({ session, token }) {
-      if (token?.role) {
-        session.user.role = token.role; // Asigna el campo `role` al objeto `session.user`
-      }
+      session.user.id = token.id!;
+      session.user.email = token.email!;
+      session.user.role = token.role ?? null;
+
       return session;
     },
   },
+
   session: {
-    strategy: "jwt", // Usar JWT para la gestión de sesiones
+    strategy: "jwt",
   },
-  secret: process.env.NEXTAUTH_SECRET, // Clave secreta para firmar el JWT
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth(authOptions);
-
-// Exportar el handler para manejar GET y POST
 export { handler as GET, handler as POST };

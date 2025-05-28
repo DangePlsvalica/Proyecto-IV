@@ -16,7 +16,7 @@ const NextLoginPage = () => {
 
   useEffect(() => {
     if (sessionStatus === "authenticated") {
-      window.location.href = "/pages/consejos-comunales";
+      window.location.href = "/consejos-comunales";
     }
   }, [sessionStatus, router]);
 

@@ -41,14 +41,7 @@ const Personas: React.FC = () => {
                     {user.email}
                   </td>
                   <td className="text-center text-sm border-b border-sky-950 py-2">
-                    <select
-                      value={user.role}
-                      onChange={(e) => updateUserRole(user.id, e.target.value)}
-                      className="border text-sm appearance-none pr-8 border-gray-300 rounded-lg text-gray-700 bg-white shadow-sm focus:outline-none transition duration-150 ease-in-out hover:bg-gray-100"
-                    >
-                      <option value="user" className="text-gray-700 text-sm">Usuario</option>
-                      <option value="Admin" className="text-gray-700 text-sm">Administrador</option>
-                    </select>
+                    
                   </td>
                   <td className="text-center border-b border-sky-950">
                     <div className="flex justify-center items-center">

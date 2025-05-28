@@ -1,7 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import Select, { SingleValue } from "react-select";
 import Button from "@/components/Button";
 import FormInput from '@/components/FormInput'
@@ -16,8 +14,6 @@ const RegisterVehiculoPage = () => {
     value: string;
     label: string;
   };
-  const router = useRouter();
-  const { data: session, } = useSession();
   const queryClient = useQueryClient();
   
   const { mutate: registerVehiculo } = useRegisterVehiculo();
@@ -64,16 +60,6 @@ const RegisterVehiculoPage = () => {
   }
   registerVehiculo(formData);
   };
-
-  if (!session) {
-    router.push("/pages/login");
-    return null;
-  }
-
-  if (session.user.role !== "Admin") {
-    router.push("/");
-    return null;
-  }
 
   return (
     <div className="animate-fade-in opacity-0 mx-auto my-7 max-w-[95%] p-12 border border-sky-200 rounded-xl bg-[#f8f8f8]">

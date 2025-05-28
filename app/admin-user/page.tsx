@@ -1,17 +1,14 @@
 "use client";
 import React from "react";
 import Divider from "../../components/Divider";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { useUsersQuery } from '@/hooks/useUsers'
+import { useRolesQuery } from "@/hooks/useRoles";
 import Loading from "@/components/Loading";
 import Tittle from '@/components/Tittle'
 
 const AdminUser: React.FC = () => {
-  const { data: session, status } = useSession();
-  const router = useRouter();
   const {
     users,
     isLoading,
@@ -19,18 +16,8 @@ const AdminUser: React.FC = () => {
     updateUserRole
   } = useUsersQuery();
 
+  const { roles, loading: loadingRoles } = useRolesQuery();
 
-  if (status === "loading") {
-    return (<Loading />);
-  }
-  if (!session) {
-    router.push("/login");
-    return null;
-  }
-  if (session.user.role !== "Admin") {
-    router.push("/");
-    return null;
-  }
   if (isLoading) {
     return (<Loading />);
   }
@@ -45,24 +32,25 @@ const AdminUser: React.FC = () => {
             <thead>
               <tr className="text-base text-white">
                 <th className="py-1 text-center border-b bg-sky-950 border-sky-950">Email</th>
-                <th className="text-center border-b bg-sky-950 border-sky-950">Permisos</th>
+                <th className="text-center border-b bg-sky-950 border-sky-950">Rol</th>
                 <th className="text-center border-b bg-sky-950 border-sky-950">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {users.map((user) => (
-                <tr key={user.id}>
-                  <td className="text-center text-base border-b border-sky-950">
-                    {user.email}
-                  </td>
+                <tr key={user.roleId}>
+                  <td className="text-center text-base border-b border-sky-950">{user.email}</td>
                   <td className="text-center text-sm border-b border-sky-950 py-2">
                     <select
-                      value={user.role}
+                      value={user.roleId}
                       onChange={(e) => updateUserRole(user.id, e.target.value)}
                       className="border text-sm appearance-none pr-8 border-gray-300 rounded-lg text-gray-700 bg-white shadow-sm focus:outline-none transition duration-150 ease-in-out hover:bg-gray-100"
                     >
-                      <option value="user" className="text-gray-700 text-sm">Usuario</option>
-                      <option value="Admin" className="text-gray-700 text-sm">Administrador</option>
+                      {roles.map((role) => (
+                        <option key={role.id} value={role.id}>
+                          {role.name}
+                        </option>
+                      ))}
                     </select>
                   </td>
                   <td className="text-center border-b border-sky-950">

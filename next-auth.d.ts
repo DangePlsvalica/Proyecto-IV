@@ -1,21 +1,37 @@
-import NextAuth, { DefaultSession } from "next-auth";
-import { JWT } from "next-auth/jwt";
+import NextAuth from "next-auth";
 
 declare module "next-auth" {
   interface Session {
     user: {
-      role?: string; // Añadir el campo `role` al usuario de la sesión
-    } & DefaultSession["user"];
+      id: string;
+      email: string;
+      role: {
+        id: string;
+        name: string;
+        routes: string[];
+      } | null;
+    };
   }
 
   interface User {
-    role?: string; // Añadir el campo `role` al usuario
+    id: string;
+    email: string;
+    role?: {
+      id: string;
+      name: string;
+      routes: string[];
+    } | null;
   }
 }
 
 declare module "next-auth/jwt" {
   interface JWT {
-    role?: string; // Añadir el campo `role` al token JWT
+    id?: string;
+    email?: string;
+    role?: {
+      id: string;
+      name: string;
+      routes: string[];
+    } | null;
   }
 }
-
