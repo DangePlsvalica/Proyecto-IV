@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { NextResponse, NextRequest } from 'next/server'; 
 
 const prisma = new PrismaClient();
 
@@ -37,11 +38,33 @@ export async function GET() {
       select: {
         id: true,
         name: true,
+        routes: true,
       },
     });
     return new Response(JSON.stringify(roles), { status: 200 });
   } catch (error) {
     console.error("Error al obtener roles:", error);
     return new Response("Error al obtener roles", { status: 500 });
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  const body = await request.json(); // Extrae el cuerpo de la solicitud
+  const { id } = body; // Obtiene el ID del cuerpo
+
+  console.log("Intentando eliminar el rol con ID:", id);
+
+  if (!id) {
+    console.error("ID del rol no proporcionado");
+    return NextResponse.json({ error: "Rol ID is required" }, { status: 400 });
+  }
+
+  try {
+    const deletedRole = await prisma.role.delete({
+      where: { id },
+    });
+    return NextResponse.json({ message: "Role deleted successfully", deletedRole });
+  } catch (error) {
+    return NextResponse.json({ error: "Error deleting role" }, { status: 500 });
   }
 }

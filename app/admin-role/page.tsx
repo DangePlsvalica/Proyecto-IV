@@ -3,22 +3,16 @@ import React from "react";
 import Divider from "../../components/Divider";
 import Link from "next/link";
 import { FaRegTrashAlt } from "react-icons/fa";
-import { useUsersQuery } from '@/hooks/useUsers'
+import { useRolesQuery, useDeleteRoleMutation } from "@/hooks/useRoles";
 import Loading from "@/components/Loading";
 import Tittle from '@/components/Tittle'
 
 const AdminRole: React.FC = () => {
-  const {
-    users,
-    isLoading,
-    deleteUser,
-    updateUserRole
-  } = useUsersQuery();
 
+  const { data: roles = [], isLoading } = useRolesQuery();
+  const { mutate: deleteRole, isPending } = useDeleteRoleMutation();
 
-  if (isLoading) {
-    return (<Loading />);
-  }
+  if (isLoading) return <Loading />;
 
   return (
     <>
@@ -26,7 +20,7 @@ const AdminRole: React.FC = () => {
       <Divider />
       <div className="animate-fade-in opacity-0">
         <div className="overflow-x-auto pt-5">
-          <table className="table-auto w-[50%] m-auto border-separate border-spacing-0 border border-sky-950 rounded-lg overflow-hidden">
+          <table className="table-auto w-[45%] m-auto border-separate border-spacing-0 border border-sky-950 rounded-lg overflow-hidden">
             <thead>
               <tr className="text-base text-white">
                 <th className="py-1 text-center border-b bg-sky-950 border-sky-950">Nombre</th>
@@ -35,29 +29,27 @@ const AdminRole: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
-                <tr key={user.id}>
+              {roles.map((role) => (
+                <tr key={role.id}>
                   <td className="text-center text-base border-b border-sky-950">
-                    {user.email}
+                    {role.name}
                   </td>
                   <td className="text-center text-sm border-b border-sky-950 py-2">
-                    <select
-                      value={user.roleId}
-                      onChange={(e) => updateUserRole(user.id, e.target.value)}
-                      className="border text-sm appearance-none pr-8 border-gray-300 rounded-lg text-gray-700 bg-white shadow-sm focus:outline-none transition duration-150 ease-in-out hover:bg-gray-100"
-                    >
-                      <option value="user" className="text-gray-700 text-sm">Usuario</option>
-                      <option value="Admin" className="text-gray-700 text-sm">Administrador</option>
-                    </select>
+                    <ul className="list-none">
+                      {role.routes.map((route) => (
+                        <li key={route}>{route}</li>
+                      ))}
+                    </ul>
                   </td>
                   <td className="text-center border-b border-sky-950">
                     <div className="flex justify-center items-center">
                       <button
-                        onClick={() => deleteUser(user.id)}
+                        onClick={() => deleteRole(role.id)}
+                        disabled={isPending}
                         className="bg-red-700 flex gap-2 items-center text-white text-sm px-3 py-2 rounded-lg hover:bg-red-800"
                       >
                         <FaRegTrashAlt />
-                        Eliminar
+                        {isPending ? "Eliminando..." : "Eliminar"}
                       </button>
                     </div>
                   </td>
@@ -80,4 +72,3 @@ const AdminRole: React.FC = () => {
 };
 
 export default AdminRole;
-

@@ -11,7 +11,7 @@ const RegisterPage = () => {
   const router = useRouter();
   const { status: sessionStatus } = useSession();
   const { registerUser, error, isLoading, resetError } = useRegister();
-  const { roles, loading: rolesLoading } = useRolesQuery();
+  const { data: roles = []} = useRolesQuery();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

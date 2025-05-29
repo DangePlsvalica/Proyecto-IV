@@ -20,7 +20,6 @@ export async function middleware(req: NextRequest) {
   // Solo actuar si la ruta está protegida
   if (protectedRoutes.some((route) => pathname.startsWith(route))) {
     if (!token) {
-      // No autenticado: redirigir al login
       return NextResponse.redirect(new URL("/login", req.url));
     }
 

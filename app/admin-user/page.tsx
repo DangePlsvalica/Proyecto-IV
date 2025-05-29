@@ -16,7 +16,7 @@ const AdminUser: React.FC = () => {
     updateUserRole
   } = useUsersQuery();
 
-  const { roles, loading: loadingRoles } = useRolesQuery();
+  const { data: roles = [], isLoading: loadingRoles } = useRolesQuery();
 
   if (isLoading) {
     return (<Loading />);
