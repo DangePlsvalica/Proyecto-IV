@@ -1,17 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
-import { Proyecto } from "./interfaces/proyecto.interface";
+import { Persona } from "./interfaces/persona.interface";
 import { get } from '@/lib/request/api'
 
 // Función que obtiene los proyectos desde la API
-const fetchProyectos = async (): Promise<Proyecto[]> => {
-    return get<Proyecto[]>({
-      path: '/api/proyectos',
+const fetchProyectos = async (): Promise<Persona[]> => {
+    return get<Persona[]>({
+      path: '/api/personas',
     });
   };
 
-const useProyectos = () => {
-  return useQuery<Proyecto[], Error>({
-    queryKey: ["proyectos"],
+const usePersonas = () => {
+  return useQuery<Persona[], Error>({
+    queryKey: ["personas"],
     queryFn: fetchProyectos, 
     staleTime: 1000 * 60 * 5, // 5 minutos de datos frescos
     gcTime: 1000 * 60 * 10, // 10 minutos en caché
@@ -20,4 +20,4 @@ const useProyectos = () => {
   });
 };
 
-export default useProyectos;
+export default usePersonas;

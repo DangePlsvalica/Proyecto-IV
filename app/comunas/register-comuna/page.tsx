@@ -95,7 +95,7 @@ const RegisterComunaPage = () => {
   };
 
   return (
-    <div className="animate-fade-in opacity-0 mx-auto my-7 max-w-[95%] p-12 border border-sky-200 rounded-xl bg-[#f8f8f8]">
+    <div className="animate-fade-in opacity-0 mx-auto my-1 max-w-[95%] px-6 py-8 border border-sky-200 rounded-xl bg-[#f8f8f8]">
       <Tittle title={"Registrar Nueva Comuna"}></Tittle>
       <form onSubmit={handleSubmit} className="pt-6 px-6 grid grid-cols-4 gap-4">
         <FormInput 
@@ -208,14 +208,14 @@ const RegisterComunaPage = () => {
           required={true}>
         </FormInput>
         <div>
-          <label htmlFor="parroquia" className="block pb-[11px] text-sm text-sky-950 font-medium">
+          <label htmlFor="parroquia" className="block pb-[9px] text-sm text-sky-950 font-medium">
             Parroquia
           </label>
           <Select
             id="parroquia"
             name="parroquiaId"
             options={parroquiasOptions} // Opciones formateadas desde el cache
-            placeholder="Selecciona la parroquia"
+            placeholder="Parroquia"
             onChange={handleParroquiaChange} // Actualiza parroquia y municipio
             value={parroquiasOptions.find(option => option.value === formData.parroquiaId) || null} // Mantener la selección
           />

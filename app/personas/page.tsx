@@ -1,72 +1,101 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Divider from "../../components/Divider";
-import Link from "next/link";
-import { FaRegTrashAlt } from "react-icons/fa";
-import { useUsersQuery } from '@/hooks/useUsers'
+import { useRouter } from "next/navigation";
+import SearchForm from "../../components/SearchForm";
 import Loading from "@/components/Loading";
+import usePersonas from "@/hooks/usePersonas";
 import Tittle from '@/components/Tittle'
+import Button from "@/components/Button";
+import { Persona } from "@/hooks/interfaces/persona.interface";
+import Table from "@/components/Table";
 
 const Personas: React.FC = () => {
-  const {
-    users,
-    isLoading,
-    deleteUser,
-    updateUserRole
-  } = useUsersQuery();
+  const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const { data: personasData, isLoading } = usePersonas();
 
+    // Filtra datos según el término de búsqueda
+  const filteredData = personasData
+    ? personasData.filter((persona) =>
+      Object.values(persona)
+        .join(" ")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    )
+    : [];
 
-  if (isLoading) {
-    return (<Loading />);
-  }
+  const juridicas = filteredData.filter(persona => persona.juridica === true);
+  const noJuridicas = filteredData.filter(persona => persona.juridica === false);
+
+  const headers1 = [
+    "Nombres",
+    "Apellidos",
+    "Rif",
+    "Nro de telefono",
+  ];
+
+  const headers2 = [
+    "Nombres",
+    "Apellidos",
+    "C.I",
+    "Nro de telefono",
+  ];
+
+  const tdClassName = "border-b border-r py-2 border-sky-950";
+  const renderRow1 = (persona: Persona) => {
+    return (
+      <>
+        <td className={tdClassName}>{persona.nombres}</td>
+        <td className={tdClassName}>{persona.apellidos}</td>
+        <td className={tdClassName}>{persona.rif}</td>
+        <td className={tdClassName}>{persona.telefono}</td>
+      </>
+    );
+  };
+    const renderRow2 = (persona: Persona) => {
+    return (
+      <>
+        <td className={tdClassName}>{persona.nombres}</td>
+        <td className={tdClassName}>{persona.apellidos}</td>
+        <td className={tdClassName}>{persona.ci}</td>
+        <td className={tdClassName}>{persona.telefono}</td>
+      </>
+    );
+  };
 
   return (
     <>
       <Tittle title={"Personas"} />
       <Divider />
-      <div className="animate-fade-in opacity-0">
-        <div className="overflow-x-auto pt-5">
-          <table className="table-auto w-[50%] m-auto border-separate border-spacing-0 border border-sky-950 rounded-lg overflow-hidden">
-            <thead>
-              <tr className="text-base text-white">
-                <th className="py-1 text-center border-b bg-sky-950 border-sky-950">Nombre</th>
-                <th className="text-center border-b bg-sky-950 border-sky-950">Permisos</th>
-                <th className="text-center border-b bg-sky-950 border-sky-950">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user) => (
-                <tr key={user.id}>
-                  <td className="text-center text-base border-b border-sky-950">
-                    {user.email}
-                  </td>
-                  <td className="text-center text-sm border-b border-sky-950 py-2">
-                    
-                  </td>
-                  <td className="text-center border-b border-sky-950">
-                    <div className="flex justify-center items-center">
-                      <button
-                        onClick={() => deleteUser(user.id)}
-                        className="bg-red-700 flex gap-2 items-center text-white text-sm px-3 py-2 rounded-lg hover:bg-red-800"
-                      >
-                        <FaRegTrashAlt />
-                        Eliminar
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      <div className="animate-fade-in opacity-0 flex justify-between px-6 py-4">
+        <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        <Button
+            onClick={() =>
+              router.push("/personas/register-persona")
+            }
+            title={"Registrar una nueva persona"}
+          />
       </div>
-      <div className="flex justify-center pt-6">
-        <Link
-          href="/register"
-          className="rounded-md bg-sky-950 px-3 py-2 border border-gray-500 text-sm font-semibold text-white shadow-sm hover:bg-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >
-          Crear nuevo role
-        </Link>
+      <div className="flex flex-col items-center">
+        <Tittle title={"Juridicas"} />
+        <Table
+          headers={headers1}
+          data={juridicas}
+          renderRow={renderRow1}
+          thClassName="text-center border-b py-2 border-sky-600"
+          tdClassName="text-left border-r border-sky-600"
+        />
+      </div>
+      <div className="flex flex-col items-center mt-5">
+        <Tittle title={"No Juridicas"} />
+        <Table
+          headers={headers2}
+          data={noJuridicas}
+          renderRow={renderRow2}
+          thClassName="text-center border-b py-2 border-sky-600"
+          tdClassName="text-left border-r border-sky-600"
+        />
       </div>
     </>
   );

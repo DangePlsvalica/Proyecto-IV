@@ -64,9 +64,9 @@ model Persona {
   nombres    String
   apellidos  String
   juridica   Boolean
-  ci         Int?
+  ci         String?
   rif        String? 
-  telefono   Int
+  telefono   String
   cc        ConsejoComunal? @relation("VoceroRelation")
 }
 

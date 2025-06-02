@@ -60,7 +60,7 @@ const Vehiculos: React.FC = () => {
             <div className="flex justify-end mt-4">
               <Button
                 title="Ver más detalles"
-                onClick={() => router.push(`/pages/vehiculos/${vehiculo.id}`)}
+                onClick={() => router.push(`/vehiculos/${vehiculo.id}`)}
               />
             </div>
           </div>
@@ -71,4 +71,3 @@ const Vehiculos: React.FC = () => {
 };
 
 export default Vehiculos;
-

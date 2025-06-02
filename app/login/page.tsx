@@ -63,9 +63,9 @@ const NextLoginPage = () => {
     }
   return (
     sessionStatus !== "authenticated" && (
-      <><div className="absolute w-full h-screen inset-0 bg-[url('/comuna2.png')] blur-lg opacity-1 bg-cover bg-center "></div><div className="animate-fade-in opacity-0 flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <><div className="absolute w-full h-screen inset-0 bg-[url('/comuna2.png')] blur-lg opacity-1 bg-cover bg-center "></div><div className="animate-fade-in opacity-0 flex min-h-full flex-1 flex-col justify-center py-4 sm:px-6 lg:px-8">
         <div className="flex justify-center">
-          <Link href={"/"} className="absolute left-[480px] 2xl:left-[830px] top-40">
+          <Link href={"/"} className="absolute left-[410px] 2xl:left-[830px] top-32">
           <IoArrowBack className="text-white" size={28} />
           </Link>
           <div className="flex flex-col justify-center  items-center">

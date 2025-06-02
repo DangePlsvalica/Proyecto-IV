@@ -62,7 +62,7 @@ const RegisterVehiculoPage = () => {
   };
 
   return (
-    <div className="animate-fade-in opacity-0 mx-auto my-7 max-w-[95%] p-12 border border-sky-200 rounded-xl bg-[#f8f8f8]">
+    <div className="animate-fade-in opacity-0 mx-auto my-1 max-w-[95%] px-10 py-6 border border-sky-200 rounded-xl bg-[#f8f8f8]">
       <Tittle title={"Registrar Nuevo Vehiculo"}></Tittle>
       <form onSubmit={handleSubmit} className="pt-6 px-6 grid grid-cols-4 gap-4">
         <FormInput 

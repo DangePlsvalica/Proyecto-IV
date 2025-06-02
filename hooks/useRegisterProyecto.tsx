@@ -23,7 +23,7 @@ export const useRegisterProyecto = () => {
       // Invalida la caché de proyectos para refrescar los datos
       toast.success('Proyecto registrado exitosamente');
       queryClient.invalidateQueries({ queryKey: ["proyectos"] });
-      router.push('/pages/gestor-de-proyectos');
+      router.push('/gestor-de-proyectos');
     },
     onError: (error: Error) => {
       console.error('Error al registrar Proyecto:', error);

@@ -7,11 +7,14 @@ import useConsejos from "@/hooks/useConsejos";
 import { ConsejoComunal } from "@/hooks/interfaces/consejo.comunal.interface";
 import Loading from "@/components/Loading";
 import Tittle from '@/components/Tittle'
-import useParroquias from "@/hooks/useParroquias";
+import { useRouter } from "next/navigation";
+import exportToPDF from "@/utils/exportToPdf";
+import Button from "@/components/Button";
 
 const ConsejosComunales: React.FC = () => {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const { data: parroquiasData } = useParroquias();
+  const [selectedRows, setSelectedRows] = useState<ConsejoComunal[]>([]);
   const { data: consejosData, isLoading } = useConsejos();
 
   // Filtra datos según el término de búsqueda
@@ -28,7 +31,7 @@ const ConsejosComunales: React.FC = () => {
     "Estado",
     "Municipio",
     "Parrroquia",
-    "CC",
+    "Nombre",
     "RIF",
     "Nro de cuenta",
     "Fecha de constitucion",
@@ -59,6 +62,30 @@ const ConsejosComunales: React.FC = () => {
     </>
   );
 
+    const handleExportPDF = () => {
+    const exportData = selectedRows.length > 0 ? selectedRows : filteredData;
+    const formattedData = exportData.map((consejo) => [
+      consejo.estado || "",
+      consejo.municipio || "",
+      consejo.parroquia || "",
+      consejo.cc || "",
+      consejo.rif || "",
+      consejo.numeroCuenta || "",
+      consejo.fechaConstitucion ? new Date(consejo.fechaConstitucion).toLocaleDateString() : "",
+      consejo.fechaVencimiento ? new Date(consejo.fechaVencimiento).toLocaleDateString() : "",  
+      consejo.vocero || "",
+      consejo.tlfVocero || "",
+      consejo.poblacionVotante || "",
+    ]);
+
+    exportToPDF({
+      headers,
+      data: formattedData,
+      filename: "consejos.pdf",
+      title: "Listado de Consejos comunales",
+    });
+  };
+
   if (isLoading) {
     return (<Loading />);
   }
@@ -69,6 +96,18 @@ const ConsejosComunales: React.FC = () => {
       <Divider />
       <div className="animate-fade-in opacity-0 flex justify-between px-6 py-4">
         <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        <div className="flex gap-4">
+          <Button
+            onClick={handleExportPDF}
+            title="Exportar a PDF"
+            disabled={selectedRows.length === 0}
+          />
+            <Button
+              onClick={() => router.push("/comunas/register-comuna")}
+              title="Registrar nuevo consejo comunal"
+              disabled={true}
+            />
+        </div>
       </div>
       <Table
         headers={headers}
@@ -76,6 +115,8 @@ const ConsejosComunales: React.FC = () => {
         renderRow={renderRow}
         thClassName="text-center border-b border-sky-600"
         tdClassName="text-left border-r border-sky-600"
+        onSelectionChange={(rows) => setSelectedRows(rows)}
+        onRowClick={(consejo) => router.push(`/consejos-comunales/${consejo.id}`)}
       />
     </>
   );

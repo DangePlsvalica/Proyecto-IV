@@ -34,17 +34,17 @@ const RegisterPage = () => {
   }
 
   return (
-    <div className="animate-fade-in opacity-0 flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="animate-fade-in opacity-0 flex min-h-full flex-1 flex-col justify-center py-0 sm:px-6 lg:px-8">
       <div className="flex justify-center flex-col items-center">
         <Image src="/inces.jpg" alt="star logo" width={60} height={60} />
-        <h2 className="mt-6 text-center text-2xl leading-9 tracking-tight text-gray-900">
+        <h2 className="mt-2 text-center text-2xl leading-9 tracking-tight text-gray-900">
           Regístrar nuevo usuario
         </h2>
       </div>
 
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-        <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+      <div className="mt-3 sm:mx-auto sm:w-full sm:max-w-[480px]">
+        <div className="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-12">
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label
                 htmlFor="email"

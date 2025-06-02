@@ -18,7 +18,7 @@ const Button: React.FC<ButtonProps> = ({ href, title, className, onClick, disabl
                   transition-all duration-200 ease-in-out focus-visible:outline focus-visible:outline-2 
                   focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${
                     disabled 
-                      ? 'bg-gray-400 cursor-not-allowed hover:bg-gray-500' 
+                      ? 'bg-white text-sky-950 cursor-not-allowed hover:bg-gray-500' 
                       : 'bg-sky-950 text-white hover:bg-sky-900'
                   } ${className}`}
       >

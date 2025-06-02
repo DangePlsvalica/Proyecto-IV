@@ -19,7 +19,7 @@ const Navbar = () => {
   const allNavigation = [
     { name: "Administrar usuarios", href: "/admin-user", icon: <FaRegUser /> },
     { name: "Administrar roles", href: "/admin-role", icon: <PiScrollBold /> },
-    { name: "Personas", href: "/consejos-comunales", icon: <FaPerson /> },
+    { name: "Personas", href: "/personas", icon: <FaPerson /> },
     { name: "Consejos comunales", href: "/consejos-comunales", icon: <FaUsers /> },
     { name: "Comunas", href: "/comunas", icon: <RiCommunityLine /> },
     { name: "Proyectos", href: "/gestor-de-proyectos", icon: <IoSettingsOutline /> },

@@ -51,7 +51,7 @@ const Comunas: React.FC = () => {
   const renderRow = (comuna: Comuna) => {
     return (
       <>
-        <td className={tdClassName} onClick={() => router.push(`/comunas/${comuna.id}`)}>{comuna.codigo}</td>
+        <td className={tdClassName}>{comuna.codigo}</td>
         <td className={tdClassName}>{comuna.numComisionPromotora}</td>
         <td className={tdClassName}>
           {comuna.fechaComisionPromotora && new Date(comuna.fechaComisionPromotora).toLocaleDateString()}
@@ -155,4 +155,3 @@ const Comunas: React.FC = () => {
 };
 
 export default Comunas;
-
