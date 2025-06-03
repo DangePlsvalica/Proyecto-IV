@@ -5,6 +5,7 @@ import { FieldDisplay } from "@/components/FieldDisplay";
 import Button from "@/components/Button";
 import Loading from "@/components/Loading";
 import { notFound } from "next/navigation";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 const ViewVehiculosPage = () => {
   const { id } = useParams();
@@ -20,43 +21,56 @@ const ViewVehiculosPage = () => {
     notFound(); // Muestra la página 404 si no existe en la caché
   }
 
-  return (
-    <div className="mx-auto my-1 max-w-[95%] px-14 py-8 border border-sky-200 rounded-xl bg-[#f8f8f8]">
-      <h1 className="text-2xl font-bold mb-6 text-sky-950">
+ return (
+    <div className="mx-auto max-w-[95%] px-8 py-6 border border-sky-200 rounded-xl bg-[#f8f8f8]">
+      <h1 className="text-3xl font-bold mb-4 text-sky-950 text-center">
         Detalles del Vehículo
       </h1>
-      <div className="grid grid-cols-4 gap-4">
-        <FieldDisplay label="Placa" value={vehiculo.placa} />
-        <FieldDisplay label="Clase" value={vehiculo.clase} />
-        <FieldDisplay label="CC" value={vehiculo.cc} />
-        <FieldDisplay label="Comuna" value={vehiculo.comuna} />
-        <FieldDisplay label="Marca" value={vehiculo.marca} />
-        <FieldDisplay label="Modelo" value={vehiculo.modelo} />
-        <FieldDisplay label="Color" value={vehiculo.color} />
-        <FieldDisplay label="Año" value={vehiculo.ano.toString()} />
-        <FieldDisplay label="Municipio" value={vehiculo.municipio} />
-        <FieldDisplay
-          label="Serial Carrocería"
-          value={vehiculo.serialCarroceria}
-        />
-        <FieldDisplay label="Vocero Asignado" value={vehiculo.voceroAsignado} />
-        <FieldDisplay
-          label="Fecha de Entrega"
-          value={new Date(vehiculo.fechaDeEntrega).toLocaleDateString()}
-        />
-        <FieldDisplay label="Estatus" value={vehiculo.estatus} />
-        <FieldDisplay
-          label="Observación Archivo"
-          value={vehiculo.observacionArchivo || "N/A"}
-        />
-        <FieldDisplay
-          label="Observación"
-          value={vehiculo.observacion || "N/A"}
-        />
-      </div>
-
+      <section className="mb-6">
+        <h2 className="text-xl font-semibold text-sky-800 mb-2 border-b border-sky-200 pb-1">
+          Información General
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          <FieldDisplay label="Clase" value={vehiculo.clase} />
+          <FieldDisplay label="Marca" value={vehiculo.marca} />
+          <FieldDisplay label="Modelo" value={vehiculo.modelo} />
+          <FieldDisplay label="Color" value={vehiculo.color} />
+          <FieldDisplay label="Año" value={vehiculo.ano.toString()} />
+          <FieldDisplay label="Serial de la Carrocería" value={vehiculo.serialCarroceria} />
+          <FieldDisplay label="Placa" value={vehiculo.placa} />
+        </div>
+      </section>
+      <section className="mb-6">
+        <h2 className="text-xl font-semibold text-sky-800 mb-2 border-b border-sky-200 pb-1">
+          Ubicación
+        </h2>
+        <div className="grid grid-cols-4 gap-4">
+          <FieldDisplay label="Municipio" value={vehiculo.municipio} />
+          <FieldDisplay label="Comuna" value={vehiculo.comuna} />
+          <FieldDisplay label="Consejo comunal" value={vehiculo.cc} />
+          <FieldDisplay label="Persona responsable" value={vehiculo.voceroAsignado} />
+          <FieldDisplay label="Fecha de Entrega" value={new Date(vehiculo.fechaDeEntrega).toLocaleDateString()} />
+        </div>
+      </section>
+      <section className="mb-6">
+        <h2 className="text-xl font-semibold text-sky-800 mb-2 border-b border-sky-200 pb-1">
+          Estado del vehiculo
+        </h2>
+        <div className="grid grid-cols-3 gap-4">
+          <FieldDisplay label="Estatus" value={vehiculo.estatus} />
+          <FieldDisplay label="Observación Archivo" value={vehiculo.observacionArchivo || "N/A"} />
+          <FieldDisplay label="Observación" value={vehiculo.observacion || "N/A"} />
+        </div>
+      </section>
       <div className="flex justify-center pt-6 gap-4">
-        <Button title="Editar" href={`/vehiculos/${vehiculo.id}/edit`} />
+        <Button title="Editar vehiculo" href={`/vehiculos/${vehiculo.id}/edit`} />
+        <Button title="Reasignar vehiculo" href={`/vehiculos/${vehiculo.id}/edit`} />
+        <button                         
+          className="bg-red-700 flex gap-2 items-center text-white text-sm px-3 py-2 rounded-lg hover:bg-red-800"
+        >
+          <FaRegTrashAlt />
+          Eliminar vehiculo
+        </button>
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
 import Divider from "../../components/Divider";
+import DeleteButton from '@/components/DeleteButton'
 import Link from "next/link";
-import { FaRegTrashAlt } from "react-icons/fa";
 import { useRolesQuery, useDeleteRoleMutation } from "@/hooks/useRoles";
 import Loading from "@/components/Loading";
 import Tittle from '@/components/Tittle'
@@ -58,14 +58,10 @@ const AdminRole: React.FC = () => {
                     </td>
                     <td className="text-center border-b border-sky-950">
                       <div className="flex justify-center items-center">
-                        <button
+                        <DeleteButton 
                           onClick={() => deleteRole(role.id)}
-                          disabled={isPending}
-                          className="bg-red-700 flex gap-2 items-center text-white text-sm px-3 py-2 rounded-lg hover:bg-red-800"
-                        >
-                          <FaRegTrashAlt />
-                          {isPending ? "Eliminando..." : "Eliminar"}
-                        </button>
+                          isPending={isPending}
+                        />
                       </div>
                     </td>
                   </tr>

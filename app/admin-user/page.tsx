@@ -2,11 +2,11 @@
 import React from "react";
 import Divider from "../../components/Divider";
 import Link from "next/link";
-import { FaRegTrashAlt } from "react-icons/fa";
 import { useUsersQuery } from '@/hooks/useUsers'
 import { useRolesQuery } from "@/hooks/useRoles";
 import Loading from "@/components/Loading";
 import Tittle from '@/components/Tittle'
+import DeleteButton from '@/components/DeleteButton'
 
 const AdminUser: React.FC = () => {
   const {
@@ -55,13 +55,10 @@ const AdminUser: React.FC = () => {
                   </td>
                   <td className="text-center border-b border-sky-950">
                     <div className="flex justify-center items-center">
-                      <button
+                      <DeleteButton
                         onClick={() => deleteUser(user.id)}
-                        className="bg-red-700 flex gap-2 items-center text-white text-sm px-3 py-2 rounded-lg hover:bg-red-800"
-                      >
-                        <FaRegTrashAlt />
-                        Eliminar
-                      </button>
+                        isPending={isLoading}
+                      />                     
                     </div>
                   </td>
                 </tr>
