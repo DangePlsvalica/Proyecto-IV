@@ -7,6 +7,19 @@ import { useRolesQuery, useDeleteRoleMutation } from "@/hooks/useRoles";
 import Loading from "@/components/Loading";
 import Tittle from '@/components/Tittle'
 
+const ROUTE_LABELS: Record<string, string> = {
+  "/admin-user": "Usuarios",
+  "/admin-role": "Roles",
+  "/personas": "Personas",
+  "/comunas": "Comunas",
+  "/consejos-comunales": "Consejos Comunales",
+  "/gestor-de-proyectos": "Gestor de Proyectos",
+  "/register": "Registro",
+  "/vehiculos": "Vehículos",
+};
+
+const ADMIN_ROLE_ID = "de3d5894-af53-4061-8dbf-97dcfcbaed9e";
+
 const AdminRole: React.FC = () => {
 
   const { data: roles = [], isLoading } = useRolesQuery();
@@ -29,31 +42,33 @@ const AdminRole: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {roles.map((role) => (
-                <tr key={role.id}>
-                  <td className="text-center text-base border-b border-sky-950">
-                    {role.name}
-                  </td>
-                  <td className="text-center text-sm border-b border-sky-950 py-2">
-                    <ul className="list-none">
-                      {role.routes.map((route) => (
-                        <li key={route}>{route}</li>
-                      ))}
-                    </ul>
-                  </td>
-                  <td className="text-center border-b border-sky-950">
-                    <div className="flex justify-center items-center">
-                      <button
-                        onClick={() => deleteRole(role.id)}
-                        disabled={isPending}
-                        className="bg-red-700 flex gap-2 items-center text-white text-sm px-3 py-2 rounded-lg hover:bg-red-800"
-                      >
-                        <FaRegTrashAlt />
-                        {isPending ? "Eliminando..." : "Eliminar"}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+              {roles
+                .filter((role) => role.id !== ADMIN_ROLE_ID)
+                .map((role) => (
+                  <tr key={role.id}>
+                    <td className="text-center text-base border-b border-sky-950">
+                      {role.name}
+                    </td>
+                    <td className="text-center text-md border-b border-sky-950 py-2">
+                      <ul className="list-none">
+                        {role.routes.map((route) => (
+                          <li key={route}>{ROUTE_LABELS[route] || route}</li>
+                        ))}
+                      </ul>
+                    </td>
+                    <td className="text-center border-b border-sky-950">
+                      <div className="flex justify-center items-center">
+                        <button
+                          onClick={() => deleteRole(role.id)}
+                          disabled={isPending}
+                          className="bg-red-700 flex gap-2 items-center text-white text-sm px-3 py-2 rounded-lg hover:bg-red-800"
+                        >
+                          <FaRegTrashAlt />
+                          {isPending ? "Eliminando..." : "Eliminar"}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
               ))}
             </tbody>
           </table>

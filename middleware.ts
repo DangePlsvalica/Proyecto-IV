@@ -30,7 +30,7 @@ export async function middleware(req: NextRequest) {
     const isAllowed = userRoutes.some((route: string) => pathname.startsWith(route));
 
     if (!isAllowed) {
-      return NextResponse.redirect(new URL("/admin-user", req.url));
+      return NextResponse.redirect(new URL("/consejos-comunales", req.url));
     }
   }
 

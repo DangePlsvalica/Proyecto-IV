@@ -71,7 +71,7 @@ const ViewComunaPage = () => {
                 </div>
               ))
             ) : (
-              <p>No hay consejos comunales asignados</p>
+              <p>No hay</p>
             )}
           </div>
         </div>
@@ -103,6 +103,7 @@ const ViewComunaPage = () => {
 
       <div className="flex justify-center pt-6 gap-4">
         <Button title="Editar" href={`/comunas/${id}/edit`} />
+        <Button title="Imprimir acta de nacimiento" href={`/comunas/${id}/edit`}/>
       </div>
     </div>
   );

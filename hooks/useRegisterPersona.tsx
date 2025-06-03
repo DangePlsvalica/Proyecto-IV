@@ -19,7 +19,6 @@ export const useRegisterPersona = () => {
     },
     onSuccess: () => {
       // Invalida la caché de proyectos para refrescar los datos
-      toast.success('Persona registrada exitosamente');
       queryClient.invalidateQueries({ queryKey: ["personas"] });
       router.push('/personas');
     },

@@ -5,14 +5,14 @@ import { useCreateRole } from "@/hooks/useCreateRole";
 import Loading from "@/components/Loading";
 
 const ALL_ROUTES = [
-  "/admin-user",
-  "/admin-role",
-  "/personas",
-  "/comunas",
-  "/consejos-comunales",
-  "/gestor-de-proyectos",
-  "/register",
-  "/vehiculos"
+  { path: "/admin-user", label: "Administrar usuarios" },
+  { path: "/admin-role", label: "Administrar roles" },
+  { path: "/personas", label: "Personas" },
+  { path: "/comunas", label: " Comunas" },
+  { path: "/consejos-comunales", label: "Consejos Comunales" },
+  { path: "/gestor-de-proyectos", label: "Proyectos" },
+  { path: "/register", label: "Registro" },
+  { path: "/vehiculos", label: "Vehículos" }
 ];
 
 const NewRole = () => {
@@ -56,16 +56,16 @@ const NewRole = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">Rutas Permitidas</label>
+          <label className="block text-sm font-medium mb-2">Modulos Permitidos</label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {ALL_ROUTES.map(route => (
-              <label key={route} className="flex items-center space-x-2">
+            {ALL_ROUTES.map(({ path, label }) => (
+              <label key={path} className="flex items-center space-x-2">
                 <input
                   type="checkbox"
-                  checked={selectedRoutes.includes(route)}
-                  onChange={() => handleCheckboxChange(route)}
+                  checked={selectedRoutes.includes(path)}
+                  onChange={() => handleCheckboxChange(path)}
                 />
-                <span>{route}</span>
+                <span>{label}</span>
               </label>
             ))}
           </div>
