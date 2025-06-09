@@ -80,7 +80,7 @@ const RegisterVehiculoPage = () => {
       fileData.append("upload_preset", "comunas_default"); // 👈 tu upload_preset de Cloudinary
 
       try {
-        const response = await fetch("https://api.cloudinary.com/v1_1/ddsygfjzv/raw/upload", {
+        const response = await fetch("https://api.cloudinary.com/v1_1/ddsygfjzv/auto/upload", {
           method: "POST",
           body: fileData,
         });

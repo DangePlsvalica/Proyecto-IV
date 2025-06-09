@@ -41,6 +41,39 @@ export async function POST(req: Request) {
   }
 }
 
+// DELETE: Eliminar un vehículo por ID
+export async function DELETE(req: Request) {
+  try {
+    const { id } = await req.json();
+
+    if (!id) {
+      return NextResponse.json({ error: "ID del vehículo no proporcionado." }, { status: 400 });
+    }
+
+    const vehiculo = await prisma.vehiculo.findUnique({
+      where: { id: Number(id) },
+    });
+
+    if (!vehiculo) {
+      return NextResponse.json({ error: "Vehículo no encontrado." }, { status: 404 });
+    }
+
+    await prisma.vehiculo.delete({
+      where: { id: Number(id) },
+    });
+
+    return NextResponse.json({ message: "Vehículo eliminado correctamente." }, { status: 200 });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error eliminando vehiculo:", error.message);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    } else {
+      console.error("Error eliminando vehiculo:", error);
+      return NextResponse.json({ error: "Error eliminando vehiculo" }, { status: 500 });
+    }
+  }
+}
+
 
 
 

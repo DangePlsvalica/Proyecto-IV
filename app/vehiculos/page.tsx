@@ -6,7 +6,7 @@ import SearchForm from "../../components/SearchForm";
 import Loading from "@/components/Loading";
 import Tittle from '@/components/Tittle';
 import Button from "@/components/Button";
-import useVehiculos from "@/hooks/useVehiculos";
+import {useVehiculos} from "@/hooks/useVehiculos";
 import { IoIosCar } from "react-icons/io";
 
 const Vehiculos: React.FC = () => {

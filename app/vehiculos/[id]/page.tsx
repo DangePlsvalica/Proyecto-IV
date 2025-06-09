@@ -1,15 +1,17 @@
 "use client";
 import { useParams } from "next/navigation";
-import useVehiculos from "@/hooks/useVehiculos";
+import { useVehiculos, useDeleteVehiculo } from '@/hooks/useVehiculos';
 import { FieldDisplay } from "@/components/FieldDisplay";
 import Button from "@/components/Button";
 import Loading from "@/components/Loading";
-import { notFound } from "next/navigation";
-import { FaRegTrashAlt } from "react-icons/fa";
+import DeleteButton from "@/components/DeleteButton";
+import { useRouter } from 'next/navigation';
 
 const ViewVehiculosPage = () => {
+  const router = useRouter();
   const { id } = useParams();
   const { data: vehiculosData, isLoading } = useVehiculos();
+  const deleteVehiculoMutation = useDeleteVehiculo();
 
   if (isLoading) {
     return <Loading />;
@@ -18,8 +20,17 @@ const ViewVehiculosPage = () => {
   const vehiculo = vehiculosData?.find((v) => v.id === parseInt(id as string));
 
   if (!vehiculo) {
-    notFound(); // Muestra la página 404 si no existe en la caché
+    // redirige si no existe el vehículo (evita que quede en 404 "estático")
+    router.replace('/vehiculos');
+    return null; // o Loading o algo mientras redirige
   }
+
+    const handleDelete = () => {
+    if (!vehiculo) return;
+    if (confirm(`¿Estás seguro que quieres eliminar el vehículo con placa ${vehiculo.placa}?`)) {
+      deleteVehiculoMutation.mutate(vehiculo.id);
+    }
+  };
 
  return (
     <div className="mx-auto max-w-[95%] px-8 py-6 border border-sky-200 rounded-xl bg-[#f8f8f8]">
@@ -60,17 +71,12 @@ const ViewVehiculosPage = () => {
           <FieldDisplay label="Estatus" value={vehiculo.estatus} />
           <FieldDisplay label="Observación" value={vehiculo.observacion || "N/A"} />
           <div>
-            <label className="block font-medium text-sky-950 mb-1">Observación Archivo</label>
+            <label className="block font-medium text-sky-950 mb-3">Observación Archivo</label>
             {vehiculo.observacionArchivo ? (
-              <a
+              <Button
                 href={vehiculo.observacionArchivo}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 underline hover:text-blue-800"
-                download
-              >
-                Descargar archivo
-              </a>
+                title="Descargar archivo"
+              />
             ) : (
               <span>N/A</span>
             )}
@@ -80,12 +86,11 @@ const ViewVehiculosPage = () => {
       <div className="flex justify-center pt-6 gap-4">
         <Button title="Editar vehiculo" href={`/vehiculos/${vehiculo.id}/edit`} />
         <Button title="Reasignar vehiculo" href={`/vehiculos/${vehiculo.id}/edit`} />
-        <button                         
-          className="bg-red-700 flex gap-2 items-center text-white text-sm px-3 py-2 rounded-lg hover:bg-red-800"
-        >
-          <FaRegTrashAlt />
-          Eliminar vehiculo
-        </button>
+        <DeleteButton
+          onClick={handleDelete}
+          isPending={deleteVehiculoMutation.isPending}
+          label="Eliminar vehiculo"
+        />
       </div>
     </div>
   );
