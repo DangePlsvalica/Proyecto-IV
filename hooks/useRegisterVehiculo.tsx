@@ -22,7 +22,7 @@ export const useRegisterVehiculo = () => {
       // Invalida la caché de vehiculos para refrescar los datos
       toast.success('Vehiculo registrado exitosamente');
       queryClient.invalidateQueries({ queryKey: ["vehiculos"] });
-      router.push('/pages/vehiculos');
+      router.push('/vehiculos');
     },
     onError: (error: Error) => {
       console.error('Error al registrar vehiculo:', error);

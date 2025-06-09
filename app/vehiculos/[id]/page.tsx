@@ -56,10 +56,25 @@ const ViewVehiculosPage = () => {
         <h2 className="text-xl font-semibold text-sky-800 mb-2 border-b border-sky-200 pb-1">
           Estado del vehiculo
         </h2>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-4 gap-4">
           <FieldDisplay label="Estatus" value={vehiculo.estatus} />
-          <FieldDisplay label="Observación Archivo" value={vehiculo.observacionArchivo || "N/A"} />
           <FieldDisplay label="Observación" value={vehiculo.observacion || "N/A"} />
+          <div>
+            <label className="block font-medium text-sky-950 mb-1">Observación Archivo</label>
+            {vehiculo.observacionArchivo ? (
+              <a
+                href={vehiculo.observacionArchivo}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 underline hover:text-blue-800"
+                download
+              >
+                Descargar archivo
+              </a>
+            ) : (
+              <span>N/A</span>
+            )}
+          </div>
         </div>
       </section>
       <div className="flex justify-center pt-6 gap-4">

@@ -8,6 +8,7 @@ import { ConsejoComunal } from '@/hooks/interfaces/consejo.comunal.interface';
 import { useRegisterVehiculo } from '@/hooks/useRegisterVehiculo';
 import toast from "react-hot-toast";
 import Tittle from "@/components/Tittle";
+import { VehiculoFormData } from "@/hooks/interfaces/vehiculo.interface";
 
 const RegisterVehiculoPage = () => {
   type OptionType = {
@@ -31,7 +32,7 @@ const RegisterVehiculoPage = () => {
     voceroAsignado: "",
     fechaDeEntrega: "",
     estatus: "",
-    observacionArchivo: "",
+    observacionArchivo: "" as string | File,
     observacion: "",
   });
 
@@ -43,23 +44,65 @@ const RegisterVehiculoPage = () => {
   })) || [];
 
   // Manejar el cambio en los campos del formulario
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value, type } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "number" ? Number(value) : value, // Convierte a número si el campo es tipo "number"
-    });
-  };  
 
+    if (type === "file" && e.target instanceof HTMLInputElement) {
+      if (e.target.files && e.target.files[0]) {
+        const file = e.target.files[0];
+        setFormData({
+          ...formData,
+          observacionArchivo: file,
+        });
+      }
+    } else {
+      setFormData({
+        ...formData,
+        [name]: type === "number" ? Number(value) : value,
+      });
+    }
+  };
   // Manejar el envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  if (!formData.placa || !formData.clase || !formData.cc) {
-    toast.error("Por favor completa todos los campos antes de registrar el vehículo.");
-    return;
-  }
-  registerVehiculo(formData);
+
+    if (!formData.placa || !formData.clase || !formData.cc) {
+      toast.error("Por favor completa todos los campos antes de registrar el vehículo.");
+      return;
+    }
+
+    let uploadedFileUrl = "";
+    if (formData.observacionArchivo && formData.observacionArchivo instanceof File) {
+      const fileData = new FormData();
+      fileData.append("file", formData.observacionArchivo);
+      fileData.append("upload_preset", "comunas_default"); // 👈 tu upload_preset de Cloudinary
+
+      try {
+        const response = await fetch("https://api.cloudinary.com/v1_1/ddsygfjzv/raw/upload", {
+          method: "POST",
+          body: fileData,
+        });
+
+        const data = await response.json();
+        uploadedFileUrl = data.secure_url;
+      } catch (error) {
+        console.error("Error subiendo archivo:", error);
+        toast.error("Error al subir el archivo.");
+        return;
+      }
+    }
+
+    // Construir el objeto final para la API
+    const vehiculoData: VehiculoFormData = {
+      ...formData,
+      observacionArchivo: uploadedFileUrl || "", // 👈 solo string aquí
+    };
+
+    registerVehiculo(vehiculoData);
   };
+
 
   return (
     <div className="animate-fade-in opacity-0 mx-auto my-1 max-w-[95%] px-10 py-6 border border-sky-200 rounded-xl bg-[#f8f8f8]">
@@ -215,10 +258,14 @@ const RegisterVehiculoPage = () => {
           onChange={handleChange}
           required={true}>
         </FormInput>
-        <div className="pt-8">
-          <Button href="" title={"Subir archivo"}></Button>   
-        </div>
-          </form>
+        <FormInput 
+          type="file"
+          label="Subir archivo (PDF o Word)" 
+          id="observacionArchivo" 
+          onChange={handleChange}
+          accept=".pdf,.doc,.docx"
+        />
+      </form>
           <div className="flex justify-center pt-6">
             <Button onClick={handleSubmit} title="Registrar Vehiculo"></Button>
           </div>
