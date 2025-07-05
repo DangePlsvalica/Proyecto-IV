@@ -3,6 +3,7 @@ import { useParams } from "next/navigation";
 import useConsejos from "@/hooks/useConsejos";
 import { FieldDisplay } from "@/components/FieldDisplay";
 import Button from "@/components/Button";
+import DeleteButton from "@/components/DeleteButton";
 import Loading from "@/components/Loading";
 import { notFound } from "next/navigation";
 
@@ -26,15 +27,9 @@ const ViewConsejoPage = () => {
         Detalles del Consejo Comunal
       </h1>
       <div className="grid grid-cols-4 gap-4">
-        <FieldDisplay label="Estado" value={consejo.estado} />
-        <FieldDisplay
-          label="Municipio"
-          value={consejo.municipio}
-        />
-        <FieldDisplay
-          label="Parroquia"
-          value={consejo.parroquia}
-        />
+        <FieldDisplay label="Estado" value={consejo.parroquiaRelation?.estado} />
+        <FieldDisplay label="Municipio" value={consejo.parroquiaRelation?.municipio} />
+        <FieldDisplay label="Parroquia" value={consejo.parroquiaRelation?.nombre} />
         <FieldDisplay label="Nombre" value={consejo.cc} />
         <FieldDisplay label="RIF" value={consejo.rif} />
         <FieldDisplay label="Nro de cuenta" value={consejo.numeroCuenta} />
@@ -54,12 +49,17 @@ const ViewConsejoPage = () => {
               : ""
           }
         />
-        <FieldDisplay label="Vocero" value={consejo.vocero} />
-        <FieldDisplay label="Teléfono Vocero" value={consejo.tlfVocero} />
+        <FieldDisplay label="Vocero" value={consejo.vocero ? `${consejo.vocero.nombres} ${consejo.vocero.apellidos}` : "—"} />
+        <FieldDisplay label="Teléfono del Vocero" value={consejo.vocero?.telefono} />
                 <FieldDisplay label="Poblacion votante" value={consejo.poblacionVotante} />
       </div>
       <div className="flex justify-center pt-6 gap-4">
         <Button title="Editar" href={`/consejos/${id}/edit`} />
+        <DeleteButton
+          onClick={()=>{}}
+          isPending={false}
+          label="Eliminar consejo comunal"
+        />
       </div>
     </div>
   );

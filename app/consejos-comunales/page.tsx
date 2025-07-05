@@ -39,14 +39,15 @@ const ConsejosComunales: React.FC = () => {
     "Vocero",
     "Telefono del vocero",
     "Poblacion votante",
+    "Comuna",
   ];
   const tdClassName = "border-b border-r py-2 border-sky-950";
   // Función para renderizar cada fila
   const renderRow = (consejo: ConsejoComunal) => (
-    <>
-      <td className={tdClassName}>{consejo.estado}</td>
-      <td className={tdClassName}>{consejo.municipio}</td>
-      <td className={tdClassName}>{consejo.parroquia}</td>
+    <>  
+      <td className={tdClassName}>{consejo.parroquiaRelation?.estado || "—"}</td>
+      <td className={tdClassName}>{consejo.parroquiaRelation?.municipio || "—"}</td>
+      <td className={tdClassName}>{consejo.parroquiaRelation?.nombre || "—"}</td>
       <td className={tdClassName}>{consejo.cc}</td>
       <td className={tdClassName}>{consejo.rif}</td>
       <td className={tdClassName}>{consejo.numeroCuenta}</td>
@@ -56,26 +57,30 @@ const ConsejosComunales: React.FC = () => {
       <td className={tdClassName}>
         {new Date(consejo.fechaVencimiento).toLocaleDateString()}
       </td>
-      <td className={tdClassName}>{consejo.vocero}</td>
-      <td className={tdClassName}>{consejo.tlfVocero}</td>
+      <td className={tdClassName}>
+        {consejo.vocero ? `${consejo.vocero.nombres} ${consejo.vocero.apellidos}` : "—"}
+      </td>
+      <td className={tdClassName}>{consejo.vocero?.telefono || "—"}</td>
       <td className={tdClassName}>{consejo.poblacionVotante}</td>
+      <td className={tdClassName}>{consejo.comuna?.nombre || "—"}</td>
     </>
   );
 
     const handleExportPDF = () => {
     const exportData = selectedRows.length > 0 ? selectedRows : filteredData;
     const formattedData = exportData.map((consejo) => [
-      consejo.estado || "",
-      consejo.municipio || "",
-      consejo.parroquia || "",
+      consejo.parroquiaRelation?.estado || "",
+      consejo.parroquiaRelation?.municipio || "",
+      consejo.parroquiaRelation?.nombre || "",
       consejo.cc || "",
       consejo.rif || "",
       consejo.numeroCuenta || "",
       consejo.fechaConstitucion ? new Date(consejo.fechaConstitucion).toLocaleDateString() : "",
       consejo.fechaVencimiento ? new Date(consejo.fechaVencimiento).toLocaleDateString() : "",  
-      consejo.vocero || "",
-      consejo.tlfVocero || "",
+      consejo.vocero? `${consejo.vocero.nombres} ${consejo.vocero.apellidos}`: "",
+      consejo.vocero?.telefono || "",
       consejo.poblacionVotante || "",
+      consejo.comuna?.nombre || "",
     ]);
 
     exportToPDF({
@@ -103,9 +108,8 @@ const ConsejosComunales: React.FC = () => {
             disabled={selectedRows.length === 0}
           />
             <Button
-              onClick={() => router.push("/comunas/register-comuna")}
+              onClick={() => router.push("/consejos-comunales/register-consejo")}
               title="Registrar nuevo consejo comunal"
-              disabled={true}
             />
         </div>
       </div>

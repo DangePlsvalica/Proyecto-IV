@@ -1,3 +1,5 @@
+import type { Persona } from "./persona.interface";
+
 export interface Vehiculo {
   id: number;
   placa: string;
@@ -29,7 +31,7 @@ export interface VehiculoFormData {
   ano: number;
   municipio: string;
   serialCarroceria: string;
-  voceroAsignado: string;
+  voceroAsignado?: Persona | null;
   fechaDeEntrega: string;
   estatus: string;
   observacionArchivo: string;

@@ -5,7 +5,13 @@ const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    const personas = await prisma.persona.findMany();
+    const personas = await prisma.persona.findMany({
+      include: {
+        cc: true,         // Consejo Comunal relacionado
+        vehiculo: true,   // Vehículo asignado
+      },
+    });
+
     return NextResponse.json(personas);
   } catch (error: unknown) {
     if (error instanceof Error) {

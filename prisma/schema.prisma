@@ -63,11 +63,10 @@ model Persona {
   id         Int     @id @default(autoincrement())
   nombres    String
   apellidos  String
-  juridica   Boolean
-  ci         String?
-  rif        String? 
+  ci         String
   telefono   String
-  cc        ConsejoComunal? @relation("VoceroRelation")
+  vehiculo   Vehiculo?
+  cc         ConsejoComunal? @relation("VoceroRelation")
 }
 
 model Proyecto {
@@ -123,20 +122,21 @@ model Comuna {
 
 model Vehiculo {
   id                Int      @id @default(autoincrement()) // ID único
-  placa             String   // Placa del ítem
-  clase             String   // Clase del ítem
-  cc                String   // CC (Cilindrada u otra información)
-  comuna            String   // Comuna asociada
-  marca             String   // Marca del ítem
-  modelo            String   // Modelo del ítem
-  color             String   // Color del ítem
-  ano               Int      // Año de fabricación
-  municipio         String   // Municipio asociado
-  serialCarroceria  String   // Serial de la carrocería
-  voceroAsignado    String   // Nombre del vocero asignado
-  fechaDeEntrega    DateTime // Fecha de entrega
-  estatus           String   // Estatus del ítem
-  observacionArchivo String?   // URL o referencia del archivo PDF/Word relacionado con la observación
-  observacion       String?  // Observación textual (opcional)
+  placa             String   
+  clase             String   
+  cc                String   
+  comuna            String   
+  marca             String   
+  modelo            String   
+  color             String   
+  ano               Int      
+  municipio         String   
+  serialCarroceria  String   
+  voceroAsignado   Persona?   @relation(fields: [voceroAsignadoId], references: [id])
+  voceroAsignadoId Int?       @unique
+  fechaDeEntrega    DateTime 
+  estatus           String   
+  observacionArchivo String?   
+  observacion       String?  
 }
 

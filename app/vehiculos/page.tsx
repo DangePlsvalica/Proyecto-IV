@@ -55,7 +55,7 @@ const Vehiculos: React.FC = () => {
               <p><span className="font-semibold">Marca:</span> {vehiculo.marca}</p>
               <p><span className="font-semibold">Modelo:</span> {vehiculo.modelo}</p>
               <p><span className="font-semibold">Estatus:</span> {vehiculo.estatus}</p>
-              <p><span className="font-semibold">Vocero Asignado:</span> {vehiculo.voceroAsignado}</p>
+              <p><span className="font-semibold">Persona asignada:</span> {vehiculo.voceroAsignado}</p>
             </div>
             <div className="flex justify-end mt-4">
               <Button
