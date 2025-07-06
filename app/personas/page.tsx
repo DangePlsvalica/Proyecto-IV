@@ -9,11 +9,14 @@ import Tittle from "@/components/Tittle";
 import Button from "@/components/Button";
 import { Persona } from "@/hooks/interfaces/persona.interface";
 import Table from "@/components/Table";
+import Modal from "@/components/Modal";
+import RegisterPersonaForm from "@/components/RegisterPersonaForm";
 
 const Personas: React.FC = () => {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const { data: personasData, isLoading } = usePersonas();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Filtra datos según el término de búsqueda
   const filteredData = personasData
@@ -52,7 +55,7 @@ const renderRow = (persona: Persona) => (
       <div className="animate-fade-in opacity-0 flex justify-between px-6 py-4">
         <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         <Button
-          onClick={() => router.push("/personas/register-persona")}
+          onClick={() => setIsModalOpen(true)}
           title={"Registrar una nueva persona"}
         />
       </div>
@@ -65,6 +68,9 @@ const renderRow = (persona: Persona) => (
           tdClassName="text-left border-r border-sky-600"
         />
       </div>
+      <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)} title="Registrar Persona">
+        <RegisterPersonaForm onSuccess={() => setIsModalOpen(false)} />
+      </Modal>
     </>
   );
 };

@@ -6,12 +6,14 @@ interface ButtonProps {
   className?: string;
   onClick?: (e: React.MouseEvent<HTMLButtonElement> | React.FormEvent<HTMLFormElement>) => void;
   disabled?: any;
+  type?: "button" | "submit" | "reset";
 }
 
-const Button: React.FC<ButtonProps> = ({ href, title, className, onClick, disabled=false }) => {
+const Button: React.FC<ButtonProps> = ({ href, title, className, onClick, disabled=false, type = "submit"  }) => {
   if (onClick) {
     return (
       <button
+        type={type}
         onClick={onClick}
         disabled={disabled}
         className={`rounded-md px-3 py-2 border border-gray-500 text-sm font-semibold shadow-sm 

@@ -20,9 +20,10 @@ export const useRegisterConsejoComunal = () => {
         },
       });
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success('Consejo Comunal registrado exitosamente');
-      queryClient.invalidateQueries({ queryKey: ['consejoscomunal'] });
+      await queryClient.invalidateQueries({ queryKey: ['consejoscomunal'] });
+      await queryClient.refetchQueries({ queryKey: ['consejoscomunal'] });
       router.push('/consejos-comunales');
     },
     onError: (error: Error) => {
