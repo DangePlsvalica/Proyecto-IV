@@ -56,10 +56,10 @@ const ViewVehiculosPage = () => {
           Ubicación
         </h2>
         <div className="grid grid-cols-4 gap-4">
-          <FieldDisplay label="Municipio" value={vehiculo.municipio} />
-          <FieldDisplay label="Comuna" value={vehiculo.comuna} />
+          <FieldDisplay label="Municipio" value={vehiculo.consejoComunal?.parroquiaRelation?.municipio || "No disponible"} />
+          <FieldDisplay label="Comuna" value={vehiculo.consejoComunal?.comuna?.nombre || "No asignada"} />
           <FieldDisplay label="Consejo comunal" value={vehiculo.cc} />
-          <FieldDisplay label="Persona responsable" value={vehiculo.voceroAsignado} />
+          <FieldDisplay label="Persona responsable" value={vehiculo.voceroAsignado ? `${vehiculo.voceroAsignado.nombres} ${vehiculo.voceroAsignado.apellidos}` : "No asignada"} />
           <FieldDisplay label="Fecha de Entrega" value={new Date(vehiculo.fechaDeEntrega).toLocaleDateString()} />
         </div>
       </section>

@@ -1,276 +1,275 @@
 "use client";
+
 import React, { useState } from "react";
 import Select, { SingleValue } from "react-select";
+import { useQueryClient } from "@tanstack/react-query";
 import Button from "@/components/Button";
-import FormInput from '@/components/FormInput'
-import { useQueryClient } from '@tanstack/react-query';
-import { ConsejoComunal } from '@/hooks/interfaces/consejo.comunal.interface';
-import { useRegisterVehiculo } from '@/hooks/useRegisterVehiculo';
-import toast from "react-hot-toast";
+import FormInput from "@/components/FormInput";
 import Tittle from "@/components/Tittle";
+import toast from "react-hot-toast";
+import { useRegisterVehiculo } from "@/hooks/useRegisterVehiculo";
 import { VehiculoFormData } from "@/hooks/interfaces/vehiculo.interface";
 
+type OptionType = { value: string | number; label: string };
+type Vocero = { id: number; nombres: string; apellidos: string };
+type ConsejoComunal = { cc: string; rif?: string };
+
+const VEHICULO_STATUS_OPTIONS: OptionType[] = [
+  { value: "asignado", label: "Asignado" },
+  { value: "reasignado", label: "Reasignado" },
+  { value: "extraviado", label: "Extraviado" },
+  { value: "devuelto_a_caracas", label: "Devuelto a Caracas" },
+  { value: "inactivo", label: "Inactivo" },
+];
+
 const RegisterVehiculoPage = () => {
-  type OptionType = {
-    value: string;
-    label: string;
-  };
   const queryClient = useQueryClient();
-  
   const { mutate: registerVehiculo } = useRegisterVehiculo();
-  const [formData, setFormData] = useState({
+
+  // Obtener consejos comunales cacheados
+  const consejosData = queryClient.getQueryData<ConsejoComunal[]>(["consejoscomunal"]) || [];
+  const consejosOptions: OptionType[] = consejosData.map((c) => ({
+    value: c.cc,
+    label: c.rif ? `${c.cc} - ${c.rif}` : c.cc,
+  }));
+
+  // Obtener voceros cacheados (personas)
+  const vocerosData = queryClient.getQueryData<Vocero[]>(["personas"]) || [];
+  const vocerosOptions: OptionType[] = vocerosData.map((v) => ({
+    value: v.id,
+    label: `${v.nombres} ${v.apellidos}`,
+  }));
+
+  const [formData, setFormData] = useState<VehiculoFormData>({
     placa: "",
     clase: "",
     cc: "",
-    comuna: "",
     marca: "",
     modelo: "",
     color: "",
     ano: 0,
-    municipio: "",
+    voceroId: null,
     serialCarroceria: "",
-    voceroAsignado: "",
     fechaDeEntrega: "",
-    estatus: "",
+    estatus: "asignado",
     observacionArchivo: "" as string | File,
     observacion: "",
   });
 
-  // Obtener datos de la cache y transformar a formato para react-select
-  const consejosData = queryClient.getQueryData<ConsejoComunal[]>(["consejoscomunal"]);
-  const consejosOptions = consejosData?.map(consejo => ({
-    value: consejo.cc,
-    label: consejo.cc, 
-  })) || [];
-
-  // Manejar el cambio en los campos del formulario
+  // Manejo cambios en inputs
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value, type } = e.target;
+    const { id, value, type } = e.target;
 
     if (type === "file" && e.target instanceof HTMLInputElement) {
-      if (e.target.files && e.target.files[0]) {
-        const file = e.target.files[0];
-        setFormData({
-          ...formData,
-          observacionArchivo: file,
-        });
+      const file = e.target.files?.[0];
+      if (file) {
+        setFormData(prev => ({ ...prev, observacionArchivo: file }));
       }
-    } else {
-      setFormData({
-        ...formData,
-        [name]: type === "number" ? Number(value) : value,
-      });
+      return; // Importante para no continuar con el setFormData normal
     }
+
+    setFormData(prev => ({
+      ...prev,
+      [id]: type === "number" ? Number(value) : value,
+    }));
   };
-  // Manejar el envío del formulario
+
+  // Manejo cambios en selects
+  const handleSelectChange = (
+    field: keyof VehiculoFormData,
+    selectedOption: SingleValue<OptionType>
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: selectedOption ? selectedOption.value : "",
+    }));
+  };
+
+  // Submit del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.placa || !formData.clase || !formData.cc) {
-      toast.error("Por favor completa todos los campos antes de registrar el vehículo.");
+    // Validaciones básicas
+    if (
+      !formData.placa ||
+      !formData.clase ||
+      !formData.cc ||
+      !formData.marca ||
+      !formData.modelo ||
+      !formData.color ||
+      !formData.ano ||
+      !formData.serialCarroceria ||
+      !formData.fechaDeEntrega ||
+      !formData.estatus
+    ) {
+      toast.error("Por favor completa todos los campos obligatorios.");
       return;
     }
 
+    // Subir archivo si hay
     let uploadedFileUrl = "";
     if (formData.observacionArchivo && formData.observacionArchivo instanceof File) {
-      const fileData = new FormData();
-      fileData.append("file", formData.observacionArchivo);
-      fileData.append("upload_preset", "comunas_default"); // 👈 tu upload_preset de Cloudinary
+      const formDataArchivo = new FormData();
+      formDataArchivo.append("file", formData.observacionArchivo);
+      formDataArchivo.append("upload_preset", "comunas_default");
 
       try {
-        const response = await fetch("https://api.cloudinary.com/v1_1/ddsygfjzv/auto/upload", {
-          method: "POST",
-          body: fileData,
-        });
-
-        const data = await response.json();
+        const res = await fetch(
+          "https://api.cloudinary.com/v1_1/ddsygfjzv/auto/upload",
+          {
+            method: "POST",
+            body: formDataArchivo,
+          }
+        );
+        const data = await res.json();
         uploadedFileUrl = data.secure_url;
       } catch (error) {
-        console.error("Error subiendo archivo:", error);
-        toast.error("Error al subir el archivo.");
+        toast.error("Error subiendo el archivo.");
         return;
       }
     }
 
-    // Construir el objeto final para la API
-    const vehiculoData: VehiculoFormData = {
+    // Construir objeto final a enviar
+    const vehiculoParaRegistrar: VehiculoFormData = {
       ...formData,
-      observacionArchivo: uploadedFileUrl || "", // 👈 solo string aquí
+      observacionArchivo: uploadedFileUrl,
     };
 
-    registerVehiculo(vehiculoData);
+    registerVehiculo(vehiculoParaRegistrar);
   };
-
 
   return (
     <div className="animate-fade-in opacity-0 mx-auto my-1 max-w-[95%] px-10 py-6 border border-sky-200 rounded-xl bg-[#f8f8f8]">
-      <Tittle title={"Registrar Nuevo Vehiculo"}></Tittle>
+      <Tittle title={"Registrar Nuevo Vehiculo"} />
       <form onSubmit={handleSubmit} className="pt-6 px-6 grid grid-cols-4 gap-4">
-        <FormInput 
-          label={"Placa"} 
-          id={"placa"} 
-          value={formData.placa} 
+        <FormInput
+          label="Placa"
+          id="placa"
+          value={formData.placa}
           onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          label={"Clase"} 
-          id={"clase"} 
-          value={formData.clase} 
+          required
+        />
+        <FormInput
+          label="Clase"
+          id="clase"
+          value={formData.clase}
           onChange={handleChange}
-          required={true}>
-        </FormInput>
+          required
+        />
         <div>
-          <label htmlFor="consejoComunal" className="block pb-[10px] text-sm text-sky-950 font-medium">
+          <label htmlFor="cc" className="block pb-[10px] text-sm text-sky-950 font-medium">
             Consejo Comunal
           </label>
           <Select
-            id="consejoComunal"
-            name="consejoComunal"
-            options={consejosOptions} // Opciones formateadas desde el backend
+            id="cc"
+            options={consejosOptions}
             placeholder="Seleccionar"
-            onChange={(selectedOption: SingleValue<OptionType>) =>
-              setFormData({
-                ...formData,
-                cc: selectedOption?.value || "",
-              })
-            }
-            value={consejosOptions.find(option => option.value === formData.cc)}// Mantener la selección
+            onChange={(opt) => handleSelectChange("cc", opt)}
+            value={consejosOptions.find((o) => o.value === formData.cc) || null}
             styles={{
-              control: (provided) => ({
-                ...provided,
-                border: "1px solid black", // Similar al input
-                borderRadius: "0.375rem",
-                fontSize: "0.875rem",
-              }),
-              menu: (provided) => ({
-                ...provided,
-                border: "1px solid #d1d5db",
-                borderRadius: "0.375rem",
-                fontSize: "0.875rem",
-              }),
-              multiValue: (provided) => ({
-                ...provided,
-                backgroundColor: "white",
-                color: "white",
-                borderRadius: "0.375rem",
-              }),
-              multiValueRemove: (provided) => ({
-                ...provided,
-                color: "#0c4a6e",
-                ":hover": {
-                  backgroundColor: "#ef4444",
-                  color: "white",
-                },
-              }),
-              option: (provided, state) => ({
-                ...provided,
-                backgroundColor: state.isSelected
-                  ? "#2563eb"
-                  : state.isFocused
-                  ? "#e0f2fe"
-                  : "white",
-                color: state.isSelected ? "white" : "#1f2937", 
-                padding: "0.5rem",
-              }),
+              control: (base) => ({ ...base, borderColor: "black", borderRadius: 6 }),
+              menu: (base) => ({ ...base, borderRadius: 6 }),
             }}
           />
         </div>
-        <FormInput 
-          label={"Comuna"} 
-          id={"comuna"} 
-          value={formData.comuna} 
+        <FormInput
+          label="Marca"
+          id="marca"
+          value={formData.marca}
           onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          label={"Marca"} 
-          id={"marca"} 
-          value={formData.marca} 
+          required
+        />
+        <FormInput
+          label="Modelo"
+          id="modelo"
+          value={formData.modelo}
           onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          label={"Modelo"} 
-          id={"modelo"} 
-          value={formData.modelo} 
+          required
+        />
+        <FormInput
+          label="Color"
+          id="color"
+          value={formData.color}
           onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          label={"Color"} 
-          id={"color"} 
-          value={formData.color} 
+          required
+        />
+        <FormInput
+          type="number"
+          label="Año"
+          id="ano"
+          value={formData.ano}
           onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          type={"number"}
-          label={"Anio"} 
-          id={"ano"} 
-          value={formData.ano} 
+          required
+        />
+        <FormInput
+          label="Serial de carrocería"
+          id="serialCarroceria"
+          value={formData.serialCarroceria}
           onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          label={"Municipio"} 
-          id={"municipio"} 
-          value={formData.municipio} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          label={"Serial de carroceria"} 
-          id={"serialCarroceria"} 
-          value={formData.serialCarroceria} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          label={"Persona asignada"} 
-          id={"voceroAsignado"} 
-          value={formData.voceroAsignado} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
+          required
+        />
+        <div>
+          <label htmlFor="voceroAsignadoId" className="block pb-[10px] text-sm text-sky-950 font-medium">
+            Persona asignada
+          </label>
+          <Select
+            id="voceroAsignadoId"
+            options={vocerosOptions}
+            placeholder="Seleccionar"
+            onChange={(opt) => handleSelectChange("voceroId", opt)}
+            value={vocerosOptions.find((o) => o.value === formData.voceroId) || null}
+            styles={{
+              control: (base) => ({ ...base, borderColor: "black", borderRadius: 6 }),
+              menu: (base) => ({ ...base, borderRadius: 6 }),
+            }}
+          />
+        </div>
+        <FormInput
           type="date"
-          label={"Fecha de entrega"} 
-          id={"fechaDeEntrega"} 
-          value={formData.fechaDeEntrega} 
+          label="Fecha de entrega"
+          id="fechaDeEntrega"
+          value={formData.fechaDeEntrega}
           onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          label={"Estado del vehiculo"} 
-          id={"estatus"} 
-          value={formData.estatus} 
+          required
+        />
+        <div className="col-span-1">
+          <label htmlFor="estatus" className="block pb-[10px] text-sm text-sky-950 font-medium">
+            Estado del vehículo
+          </label>
+          <Select
+            id="estatus"
+            options={VEHICULO_STATUS_OPTIONS}
+            placeholder="Seleccionar"
+            onChange={(opt) => handleSelectChange("estatus", opt)}
+            value={VEHICULO_STATUS_OPTIONS.find((o) => o.value === formData.estatus) || null}
+            styles={{
+              control: (base) => ({ ...base, borderColor: "black", borderRadius: 6 }),
+              menu: (base) => ({ ...base, borderRadius: 6 }),
+            }}
+          />
+        </div>
+        <FormInput
+          textarea
+          label="Observación"
+          id="observacion"
+          value={formData.observacion}
           onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          textarea={true}
-          label={"Observacion"} 
-          id={"observacion"} 
-          value={formData.observacion} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
+        />
+        <FormInput
           type="file"
-          label="Subir archivo (PDF o Word)" 
-          id="observacionArchivo" 
+          label="Subir archivo (PDF o Word)"
+          id="observacionArchivo"
           onChange={handleChange}
           accept=".pdf,.doc,.docx"
         />
-      </form>
-          <div className="flex justify-center pt-6">
-            <Button onClick={handleSubmit} title="Registrar Vehiculo"></Button>
-          </div>
+        <div className="col-span-4 flex justify-center pt-6">
+          <Button type="submit" title="Registrar Vehiculo" />
         </div>
-      );
-    };
-    
-    export default RegisterVehiculoPage;
+      </form>
+    </div>
+  );
+};
+
+export default RegisterVehiculoPage;

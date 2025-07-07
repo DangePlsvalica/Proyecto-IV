@@ -83,7 +83,7 @@ model ConsejoComunal {
   id                String @id @default(uuid())
   parroquiaRelation Parroquia? @relation(fields: [parroquiaId], references: [id])
   parroquiaId       Int?  
-  cc                String
+  cc                String @unique
   rif               String @unique
   numeroCuenta      String
   fechaConstitucion DateTime
@@ -93,6 +93,7 @@ model ConsejoComunal {
   poblacionVotante  Int
   comunaId          String?  // Clave foránea
   comuna            Comuna? @relation(fields: [comunaId], references: [id], onDelete: SetNull)
+  vehiculos         Vehiculo[] // 1:N
 }
 
 model Comuna {
@@ -120,23 +121,30 @@ model Comuna {
   consejosComunales         ConsejoComunal[] // Relación 1-N
 }
 
+enum VehiculoStatus {
+  asignado
+  reasignado
+  extraviado
+  devuelto_a_caracas
+  inactivo
+}
+
 model Vehiculo {
-  id                Int      @id @default(autoincrement()) // ID único
+  id                Int      @id @default(autoincrement()) 
   placa             String   
   clase             String   
-  cc                String   
-  comuna            String   
+  cc                String?    
   marca             String   
   modelo            String   
   color             String   
   ano               Int      
-  municipio         String   
   serialCarroceria  String   
-  voceroAsignado   Persona?   @relation(fields: [voceroAsignadoId], references: [id])
-  voceroAsignadoId Int?       @unique
+  voceroAsignado    Persona?   @relation(fields: [voceroAsignadoId], references: [id])
+  voceroAsignadoId  Int?       @unique
   fechaDeEntrega    DateTime 
-  estatus           String   
+  estatus           VehiculoStatus  @default(asignado)
   observacionArchivo String?   
   observacion       String?  
+  consejoComunal    ConsejoComunal? @relation(fields: [cc], references: [cc])
 }
 

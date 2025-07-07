@@ -28,7 +28,6 @@ const ConsejosComunales: React.FC = () => {
     : [];
 
   const headers = [
-    "Estado",
     "Municipio",
     "Parrroquia",
     "Nombre",
@@ -44,8 +43,7 @@ const ConsejosComunales: React.FC = () => {
   const tdClassName = "border-b border-r py-2 border-sky-950";
   // Función para renderizar cada fila
   const renderRow = (consejo: ConsejoComunal) => (
-    <>  
-      <td className={tdClassName}>{consejo.parroquiaRelation?.estado || "—"}</td>
+    <>
       <td className={tdClassName}>{consejo.parroquiaRelation?.municipio || "—"}</td>
       <td className={tdClassName}>{consejo.parroquiaRelation?.nombre || "—"}</td>
       <td className={tdClassName}>{consejo.cc}</td>

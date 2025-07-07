@@ -51,11 +51,13 @@ const Vehiculos: React.FC = () => {
                 </div>
               <p><span className="font-semibold">Clase:</span> {vehiculo.clase}</p>
               <p><span className="font-semibold">Consejo Comunal:</span> {vehiculo.cc}</p>
-              <p><span className="font-semibold">Comuna:</span> {vehiculo.comuna}</p>
+              <p><span className="font-semibold">Comuna:</span> {vehiculo.consejoComunal?.comuna?.nombre || "No asignada"}</p>
+              <p><span className="font-semibold">Municipio:</span> {vehiculo.consejoComunal?.parroquiaRelation?.municipio || "No disponible"}</p>
+              <p><span className="font-semibold">Persona asignada:</span> {vehiculo.voceroAsignado ? `${vehiculo.voceroAsignado.nombres} ${vehiculo.voceroAsignado.apellidos}` : "No asignada"}</p>
               <p><span className="font-semibold">Marca:</span> {vehiculo.marca}</p>
               <p><span className="font-semibold">Modelo:</span> {vehiculo.modelo}</p>
               <p><span className="font-semibold">Estatus:</span> {vehiculo.estatus}</p>
-              <p><span className="font-semibold">Persona asignada:</span> {vehiculo.voceroAsignado}</p>
+              
             </div>
             <div className="flex justify-end mt-4">
               <Button

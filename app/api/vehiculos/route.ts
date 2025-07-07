@@ -5,7 +5,17 @@ const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    const vehiculos = await prisma.vehiculo.findMany();
+    const vehiculos = await prisma.vehiculo.findMany({
+      include: {
+        voceroAsignado: true,
+        consejoComunal: {
+          include: {
+            comuna: true,
+            parroquiaRelation: true,  // <-- solo esto, sin incluir municipio
+          }
+        }
+      }
+    });
     return NextResponse.json(vehiculos);
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -23,10 +33,23 @@ export async function POST(req: Request) {
     const data = await req.json(); // Captura los datos enviados en el cuerpo de la solicitud
     const nuevoVehiculo = await prisma.vehiculo.create({
       data: {
-        ...data,
+        placa: data.placa,
+        clase: data.clase,
+        marca: data.marca,
+        modelo: data.modelo,
+        color: data.color,
+        ano: data.ano,
+        serialCarroceria: data.serialCarroceria,
+        fechaDeEntrega: new Date(data.fechaDeEntrega),
+        estatus: data.estatus,
         observacionArchivo: data.observacionArchivo || null,
         observacion: data.observacion || null,
-      },
+
+        // Relaciones
+        voceroAsignado: data.voceroId ? { connect: { id: data.voceroId } } : undefined,
+
+        consejoComunal: data.cc ? { connect: { cc: data.cc } } : undefined,
+      }
     });
     console.log("Nuevo vehiculo creado:", nuevoVehiculo);
     return NextResponse.json(nuevoVehiculo, { status: 201 });
