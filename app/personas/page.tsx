@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import Divider from "../../components/Divider";
-import { useRouter } from "next/navigation";
 import SearchForm from "../../components/SearchForm";
 import Loading from "@/components/Loading";
 import usePersonas from "@/hooks/usePersonas";
@@ -13,7 +12,6 @@ import Modal from "@/components/Modal";
 import RegisterPersonaForm from "@/components/RegisterPersonaForm";
 
 const Personas: React.FC = () => {
-  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const { data: personasData, isLoading } = usePersonas();
   const [isModalOpen, setIsModalOpen] = useState(false);

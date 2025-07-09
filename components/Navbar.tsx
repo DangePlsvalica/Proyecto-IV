@@ -6,14 +6,18 @@ import { Dialog } from "@headlessui/react";
 import { FaXmark, FaPerson } from "react-icons/fa6";
 import Image from "next/image";
 import { FaRegUser, FaUsers, FaCar, FaBars } from 'react-icons/fa';
+import { FaChevronDown, FaKey, FaArrowRightFromBracket } from "react-icons/fa6";
 import { IoSettingsOutline } from "react-icons/io5";
 import { RiCommunityLine } from "react-icons/ri";
 import { PiScrollBold } from "react-icons/pi";
 import Button from './Button'
+import { Menu } from "@headlessui/react";
+import ChangePasswordModal from "./ChangePasswordModal";
 
 const Navbar = () => {
   const { data: session }: any = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
   // Crear la navegación dependiendo del rol del usuario
   const allNavigation = [
@@ -36,17 +40,42 @@ const Navbar = () => {
     <header className="bg-sky-950 fixed top-0 left-0 w-[250px] h-full p-3 z-50">
       <nav className="nav-link animate-link-fade opacity-0  items-center py-3" aria-label="Global">
         {/* Logo */}
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center relative">
           <Link href="/" className="-m-1.5 p-1.5">
             <Image
               src="/inces.jpg"
               width={45}
               height={45}
-              alt="star logo"
+              alt="logo"
               className="rounded-3xl"
             />
           </Link>
-          <span className="text-xs text-white">{session?.user?.email}</span>
+
+          {/* Menú del usuario */}
+          <Menu as="div" className="relative inline-block text-left">
+            <Menu.Button className="flex items-center text-white text-xs font-medium hover:underline">
+              {session?.user?.email}
+              <FaChevronDown className="ml-1 h-3 w-3" />
+            </Menu.Button>
+
+            <Menu.Items className="absolute z-50 mt-2 w-52 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <div className="py-1">
+                <Menu.Item>
+                  {({ active }) => (
+                    <button
+                      onClick={() => setIsPasswordModalOpen(true)}
+                      className={`${
+                        active ? "bg-gray-100" : ""
+                      } flex items-center w-full px-3 py-2 text-sm text-gray-700`}
+                    >
+                      <FaKey className="mr-2" />
+                      Cambiar contraseña
+                    </button>
+                  )}
+                </Menu.Item>
+              </div>
+            </Menu.Items>
+          </Menu>
         </div>
 
         {/* Navegación segun el rol */}
@@ -99,11 +128,8 @@ const Navbar = () => {
                 alt="star logo mobile"
               />
             </Link>
-            {session ? (
-              <Button onClick={() => signOut()} title="Cerrar sesión"></Button>
-            ) : (
-              <Button href="/pages/login" title="Iniciar Sesion"></Button>
-            )}
+
+            <Button onClick={() => signOut()} title="Cerrar sesión"></Button>
             <button
               type="button"
               className="-m-2.5 rounded-md p-2.5 text-gray-700"
@@ -130,6 +156,10 @@ const Navbar = () => {
           </div>
         </Dialog.Panel>
       </Dialog>
+      <ChangePasswordModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
+      />
     </header>
   );
 };

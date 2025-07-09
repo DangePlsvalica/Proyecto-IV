@@ -21,8 +21,7 @@ const Button: React.FC<ButtonProps> = ({
   disabled = false,
   type = "button",            // ← por defecto "button"
 }) => {
-  const base =
-    "rounded-md px-3 py-2 border border-gray-500 text-sm font-semibold shadow-sm transition-all duration-200 ease-in-out";
+  const base ="rounded-md px-3 py-2 border border-gray-500 text-sm font-semibold shadow-sm transition-all duration-200 ease-in-out";
   const enabled = "bg-sky-950 text-white hover:bg-sky-900";
   const disabledCls = "bg-white text-sky-950 cursor-not-allowed hover:bg-gray-500";
   const classes = `${base} ${disabled ? disabledCls : enabled} ${className}`;

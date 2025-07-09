@@ -6,6 +6,7 @@ import SessionProvider from "@/utils/SessionProvider";
 import Navbar from "@/components/Navbar";
 import Providers from "@/Providers";
 import QueryClientProviderWrapper from '@/components/QueryClientProviderWrapper'
+import InactivityHandler from "@/components/InactivityHandler";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,10 +28,11 @@ export default async function RootLayout({
         <QueryClientProviderWrapper>
           <div className="flex">
             <Providers>
-            <main className={`flex-1 ${session ? "pl-[250px] py-6 max-w-[1280px] 2xl:max-w-[1920px]" : "w-full max-w-none"} `}>
-              {session && <Navbar />}
-              {children}
-            </main>
+              {session && <InactivityHandler />}
+              <main className={`flex-1 ${session ? "pl-[250px] py-6 max-w-[1280px] 2xl:max-w-[1920px]" : "w-full max-w-none"} `}>
+                {session && <Navbar />}
+                {children}
+              </main>
             </Providers>
           </div>
           </QueryClientProviderWrapper>
@@ -39,4 +41,3 @@ export default async function RootLayout({
     </html>
   );
 }
-
