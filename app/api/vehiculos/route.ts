@@ -97,8 +97,63 @@ export async function DELETE(req: Request) {
   }
 }
 
+// PATCH: Actualizar un vehículo parcialmente (reasignar)
+export async function PATCH(req: Request) {
+  try {
+    const data = await req.json();
 
+    const { id, cc, voceroAsignadoId } = data;
 
+    if (!id || !cc || !voceroAsignadoId) {
+      return NextResponse.json(
+        { error: "Faltan datos necesarios: id, cc, voceroAsignadoId" },
+        { status: 400 }
+      );
+    }
 
+    const vehiculo = await prisma.vehiculo.findUnique({
+      where: { id: Number(id) },
+    });
 
+    if (!vehiculo) {
+      return NextResponse.json(
+        { error: "Vehículo no encontrado." },
+        { status: 404 }
+      );
+    }
+
+    const vehiculoExistente = await prisma.vehiculo.findFirst({
+      where: {
+        voceroAsignadoId: Number(voceroAsignadoId),
+        NOT: { id: Number(id) },
+      },
+    });
+
+    if (vehiculoExistente) {
+      return NextResponse.json(
+        { error: "El vocero asignado ya tiene otro vehículo asignado." },
+        { status: 400 }
+      );
+    }
+
+    const actualizado = await prisma.vehiculo.update({
+      where: { id: Number(id) },
+      data: {
+        cc,
+        voceroAsignadoId: Number(voceroAsignadoId),
+        estatus: "reasignado",
+      },
+    });
+
+    return NextResponse.json(actualizado, { status: 200 });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error reasignando vehículo:", error.message);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    } else {
+      console.error("Error reasignando vehículo:", error);
+      return NextResponse.json({ error: "Error reasignando vehículo" }, { status: 500 });
+    }
+  }
+}
 

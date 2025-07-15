@@ -4,6 +4,7 @@ import { get } from '@/lib/request/api';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 
+// Obtener todos los vehículos
 const fetchVehiculos = async (): Promise<Vehiculo[]> => {
     return get<Vehiculo[]>({ path: '/api/vehiculos' });
 };
@@ -19,6 +20,7 @@ export const useVehiculos = () => {
   });
 };
 
+// Eliminar un vehículo
 export const useDeleteVehiculo = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -43,6 +45,42 @@ export const useDeleteVehiculo = () => {
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Error al eliminar vehículo');
+    },
+  });
+};
+
+// Reasignar vehículo
+export const useUpdateVehiculo = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: {
+      id: number;
+      cc: string;
+      voceroAsignadoId: number;
+      estatus?: string;
+    }) => {
+      const res = await fetch('/api/vehiculos', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error?.error || 'Error actualizando vehículo');
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      toast.success('Vehículo reasignado correctamente');
+      queryClient.invalidateQueries({ queryKey: ['vehiculos'] });
+    },
+    onError: (error: Error) => {
+      if (error.message.includes('ya tiene otro vehículo asignado')) {
+        toast.error('Esa persona ya tiene un vehículo asignado.');
+      } else {
+        toast.error(error.message || 'Error al reasignar vehículo');
+      }
     },
   });
 };

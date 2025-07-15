@@ -6,12 +6,15 @@ import Button from "@/components/Button";
 import Loading from "@/components/Loading";
 import DeleteButton from "@/components/DeleteButton";
 import { useRouter } from 'next/navigation';
+import ReasignarVehiculoModal from "@/components/ReasignarVehiculoModal";
+import { useState } from "react";
 
 const ViewVehiculosPage = () => {
   const router = useRouter();
   const { id } = useParams();
   const { data: vehiculosData, isLoading } = useVehiculos();
   const deleteVehiculoMutation = useDeleteVehiculo();
+  const [showModal, setShowModal] = useState(false);
 
   if (isLoading) {
     return <Loading />;
@@ -22,7 +25,7 @@ const ViewVehiculosPage = () => {
   if (!vehiculo) {
     // redirige si no existe el vehículo (evita que quede en 404 "estático")
     router.replace('/vehiculos');
-    return null; // o Loading o algo mientras redirige
+    return null; 
   }
 
     const handleDelete = () => {
@@ -85,7 +88,12 @@ const ViewVehiculosPage = () => {
       </section>
       <div className="flex justify-center pt-6 gap-4">
         <Button title="Editar vehiculo" href={`/vehiculos/${vehiculo.id}/edit`} />
-        <Button title="Reasignar vehiculo" href={`/vehiculos/${vehiculo.id}/edit`} />
+        <Button title="Reasignar vehiculo" onClick={() => setShowModal(true)} />
+          <ReasignarVehiculoModal
+            open={showModal}
+            onClose={() => setShowModal(false)}
+            vehiculo={vehiculo}
+          />
         <DeleteButton
           onClick={handleDelete}
           isPending={deleteVehiculoMutation.isPending}
