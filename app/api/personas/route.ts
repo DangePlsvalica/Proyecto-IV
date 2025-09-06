@@ -7,7 +7,6 @@ export async function GET() {
   try {
     const personas = await prisma.persona.findMany({
       include: {
-        cc: true,         // Consejo Comunal relacionado
         vehiculo: true,   // Vehículo asignado
       },
     });

@@ -14,156 +14,127 @@ const RegisterProyectoPage = () => {
     value: string;
     label: string;
   };
+
   const queryClient = useQueryClient();
-  
   const { mutate: registerProyecto } = useRegisterProyecto();
+
   const [formData, setFormData] = useState({
-    id: "",
-    nombre: "",
-    status: "",
-    fechaCreacion: "",
-    ultimaActividad: "",
+    nombreProyecto: "",
+    codigoProyecto: "",
+    consulta: 1,
+    estatusProyecto: "",
+    circuito: "",
     categoria: "",
-    comuna: "",
+    observacion: "",
+    consejoComunalId: "",
   });
 
-  // Obtener datos de la cache y transformar a formato para react-select
+  // Datos en caché (consejos comunales)
   const consejosData = queryClient.getQueryData<ConsejoComunal[]>(["consejoscomunal"]);
   const consejosOptions = consejosData?.map(consejo => ({
-    value: consejo.cc,
+    value: consejo.id,  // 👈 importante: guardamos el ID
     label: consejo.cc, 
   })) || [];
 
-  // Manejar el cambio en los campos del formulario
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "number" ? Number(value) : value, // Convierte a número si el campo es tipo "number"
+      [name]: type === "number" ? Number(value) : value,
     });
-  };  
-
-  // Manejar el envío del formulario
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-  if (!formData.categoria || !formData.comuna || !formData.status) {
-    toast.error("Por favor completa todos los campos antes de registrar el Proyecto.");
-    return;
-  }
-  registerProyecto(formData);
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.nombreProyecto || !formData.codigoProyecto || !formData.estatusProyecto || !formData.consejoComunalId) {
+      toast.error("Por favor completa todos los campos obligatorios.");
+      return;
+    }
+    registerProyecto(formData);
+  };
 
   return (
     <div className="animate-fade-in opacity-0 mx-auto my-7 max-w-[95%] p-12 border border-sky-200 rounded-xl bg-[#f8f8f8]">
-      <Tittle title={"Registrar nuevo Proyecto"}></Tittle>
-      <form onSubmit={handleSubmit} className="pt-6 px-6 grid grid-cols-4 gap-4">
-        <FormInput 
-          label={"Id"} 
-          id={"id"} 
-          value={formData.id} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          label={"Nombre"} 
-          id={"nombre"} 
-          value={formData.nombre} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          label={"Estado"} 
-          id={"status"} 
-          value={formData.status} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          type="date"
-          label={"Fecha de creacion"} 
-          id={"fechaCreacion"} 
-          value={formData.fechaCreacion} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          type="date"
-          label={"Ultima actividad"} 
-          id={"ultimaActividad"} 
-          value={formData.ultimaActividad} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
-        <FormInput 
-          label={"Categoria"} 
-          id={"categoria"} 
-          value={formData.categoria} 
-          onChange={handleChange}
-          required={true}>
-        </FormInput>
+      <Tittle title={"Registrar nuevo Proyecto"} />
+      <form onSubmit={handleSubmit} className="pt-6 px-6">
         <div>
-          <label htmlFor="consejoComunal" className="block pb-[10px] text-sm text-sky-950 font-medium">
-            Comuna
+          <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">Información Básica</h3>
+          <div className="grid grid-cols-4 gap-4">
+            <FormInput 
+              label="Nombre del Proyecto" 
+              id="nombreProyecto" 
+              value={formData.nombreProyecto} 
+              onChange={handleChange}
+              required
+            />
+            <FormInput 
+              label="Código del Proyecto" 
+              id="codigoProyecto" 
+              value={formData.codigoProyecto} 
+              onChange={handleChange}
+              required
+            />
+            <FormInput 
+              label="Consulta" 
+              id="consulta" 
+              type="number"
+              value={formData.consulta} 
+              onChange={handleChange}
+              required
+            />
+            <FormInput 
+              label="Estatus del Proyecto" 
+              id="estatusProyecto" 
+              value={formData.estatusProyecto} 
+              onChange={handleChange}
+              required
+            />
+            <FormInput 
+              label="Circuito" 
+              id="circuito" 
+              value={formData.circuito} 
+              onChange={handleChange}
+            />
+            <FormInput 
+              label="Categoría" 
+              id="categoria" 
+              value={formData.categoria} 
+              onChange={handleChange}
+              required
+            />
+            <FormInput 
+              label="Observación" 
+              id="observacion" 
+              value={formData.observacion} 
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+        <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pt-4 pb-2">Consejo Comunal</h3>
+        <div>
+          <label htmlFor="consejoComunalId" className="block pb-[10px] text-sm text-sky-950 font-medium">
+            Consejo Comunal
           </label>
           <Select
-            id="comuna"
-            name="comuna"
-            options={consejosOptions} // Opciones formateadas desde el backend
-            placeholder="Seleccione una comuna"
+            id="consejoComunalId"
+            name="consejoComunalId"
+            options={consejosOptions}
+            placeholder="Seleccione un consejo comunal"
             onChange={(selectedOption: SingleValue<OptionType>) =>
               setFormData({
                 ...formData,
-                comuna: selectedOption?.value || "",
+                consejoComunalId: selectedOption?.value || "",
               })
             }
-            value={consejosOptions.find(option => option.value === formData.comuna)}// Mantener la selección
-            styles={{
-              control: (provided) => ({
-                ...provided,
-                border: "1px solid black", // Similar al input
-                borderRadius: "0.375rem",
-                fontSize: "0.875rem",
-              }),
-              menu: (provided) => ({
-                ...provided,
-                border: "1px solid #d1d5db",
-                borderRadius: "0.375rem",
-                fontSize: "0.875rem",
-              }),
-              multiValue: (provided) => ({
-                ...provided,
-                backgroundColor: "white",
-                color: "white",
-                borderRadius: "0.375rem",
-              }),
-              multiValueRemove: (provided) => ({
-                ...provided,
-                color: "#0c4a6e",
-                ":hover": {
-                  backgroundColor: "#ef4444",
-                  color: "white",
-                },
-              }),
-              option: (provided, state) => ({
-                ...provided,
-                backgroundColor: state.isSelected
-                  ? "#2563eb"
-                  : state.isFocused
-                  ? "#e0f2fe"
-                  : "white",
-                color: state.isSelected ? "white" : "#1f2937", 
-                padding: "0.5rem",
-              }),
-            }}
+            value={consejosOptions.find(option => option.value === formData.consejoComunalId)}
           />
         </div>
-          </form>
-          <div className="flex justify-center pt-6">
-            <Button onClick={handleSubmit} title="Registrar Proyecto"></Button>
-          </div>
-        </div>
-      );
-    };
-    
-    export default RegisterProyectoPage;
+      </form>
+      <div className="flex justify-center pt-6">
+        <Button onClick={handleSubmit} title="Registrar Proyecto" />
+      </div>
+    </div>
+  );
+};
+
+export default RegisterProyectoPage;

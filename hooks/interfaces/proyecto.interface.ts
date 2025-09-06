@@ -1,20 +1,39 @@
 export interface Proyecto {
-    id?: number;
-    nombre: string;
-    status: string;
-    fechaCreacion: Date;
-    ultimaActividad: Date;
-    categoria: string;
-    comuna: string;
-  }
+  id: string;
+  nombreProyecto: string;
+  codigoProyecto: string;
+  consulta: number;
+  estatusProyecto: string;
+  circuito: string;
+  categoria: string;
+  observacion?: string;
 
-  export interface ProyectoFormData {
-    id?: string;
-    nombre: string;
-    status: string;
-    fechaCreacion: string;
-    ultimaActividad: string;
-    categoria: string;
-    comuna: string;
-  }
-  
+  consejoComunalId: string;
+  consejoComunal?: {
+    id: string;
+    cc: string; // Nombre del Consejo Comunal
+    situr?: string;
+    parroquiaRelation?: {
+      id: number;
+      nombre: string;
+      municipio: string;
+      estado: string;
+    };
+    comuna?: {
+      id: string;
+      nombre: string;
+      codigo: string;
+    };
+  };
+}
+
+export interface ProyectoFormData {
+  nombreProyecto: string;
+  codigoProyecto: string;
+  consulta: number;
+  estatusProyecto: string;
+  circuito: string;
+  categoria: string;
+  observacion?: string;
+  consejoComunalId: string;
+}

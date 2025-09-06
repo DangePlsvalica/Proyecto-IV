@@ -9,10 +9,10 @@ datasource db {
 }
 
 model Role {
-  id      String  @id @default(uuid())
-  name    String  @unique
-  routes  String[]
-  users   User[]  
+  id     String   @id @default(uuid())
+  name   String   @unique
+  routes String[]
+  users  User[]
 }
 
 model User {
@@ -20,7 +20,7 @@ model User {
   email          String    @unique
   emailVerified  DateTime?
   roleId         String?
-  role           Role?      @relation(fields: [roleId], references: [id])
+  role           Role?     @relation(fields: [roleId], references: [id])
   hashedPassword String?
   accounts       Account[]
   sessions       Session[]
@@ -51,73 +51,139 @@ model Session {
 }
 
 model Parroquia {
-  id         Int     @id @default(autoincrement())
-  nombre     String
-  municipio  String
-  estado     String  @default("Yaracuy")
-  comunas    Comuna[]
-  cc         ConsejoComunal[]
-}
-
-model Persona {
-  id         Int     @id @default(autoincrement())
-  nombres    String
-  apellidos  String
-  ci         String
-  telefono   String
-  vehiculo   Vehiculo?
-  cc         ConsejoComunal? @relation("VoceroRelation")
-}
-
-model Proyecto {
-  id                String   @id @default(uuid())
-  nombre            String   @unique
-  status            String
-  fechaCreacion     DateTime
-  ultimaActividad   DateTime
-  categoria         String
-  comuna            String
+  id        Int              @id @default(autoincrement())
+  nombre    String
+  municipio String
+  estado    String           @default("Yaracuy")
+  comunas   Comuna[]
+  cc        ConsejoComunal[]
 }
 
 model ConsejoComunal {
-  id                String @id @default(uuid())
+  id                String     @id @default(uuid())
   parroquiaRelation Parroquia? @relation(fields: [parroquiaId], references: [id])
-  parroquiaId       Int?  
-  cc                String @unique
-  rif               String @unique
+  parroquiaId       Int?
+  cc                String     @unique
+  rif               String     @unique
+  situr             String?     @unique
   numeroCuenta      String
   fechaConstitucion DateTime
   fechaVencimiento  DateTime
-  voceroId          Int? @unique
-  vocero            Persona? @relation("VoceroRelation", fields: [voceroId], references: [id])
   poblacionVotante  Int
-  comunaId          String?  // Clave foránea
-  comuna            Comuna? @relation(fields: [comunaId], references: [id], onDelete: SetNull)
+  comunaId          String? // Clave foránea
+  comuna            Comuna?    @relation(fields: [comunaId], references: [id], onDelete: SetNull)
   vehiculos         Vehiculo[] // 1:N
+
+  // Vocerías principales (estructura fija)
+  comisionElectoralId Int?     @unique
+  comisionElectoral   Persona? @relation("ComisionElectoral", fields: [comisionElectoralId], references: [id])
+
+  suplenteComisionElectoralId Int?     @unique
+  suplenteComisionElectoral   Persona? @relation("SuplenteComisionElectoral", fields: [suplenteComisionElectoralId], references: [id])
+
+  contraloriaId Int?     @unique
+  contraloria   Persona? @relation("Contraloria", fields: [contraloriaId], references: [id])
+
+  suplenteContraloriaId Int?     @unique
+  suplenteContraloria   Persona? @relation("SuplenteContraloria", fields: [suplenteContraloriaId], references: [id])
+
+  finanzasId Int?     @unique
+  finanzas   Persona? @relation("Finanzas", fields: [finanzasId], references: [id])
+
+  suplenteFinanzasId Int?     @unique
+  suplenteFinanzas   Persona? @relation("SuplenteFinanzas", fields: [suplenteFinanzasId], references: [id])
+
+  // Vocerías ejecutivas (flexibles)
+  vocerias Voceria[] // Relación con vocerías adicionales
+  proyectos  Proyecto[]
 }
 
+model CategoriaVoceria {
+  id       Int           @id @default(autoincrement())
+  nombre   String        @unique // Ej: "Economía"
+  vocerias TipoVoceria[]
+}
+
+model TipoVoceria {
+  id            Int              @id @default(autoincrement())
+  nombre        String           @unique
+  esObligatoria Boolean // Solo true en las 2 ejecutivas obligatorias
+  categoriaId   Int
+  categoria     CategoriaVoceria @relation(fields: [categoriaId], references: [id])
+  vocerias      Voceria[]
+}
+
+model Voceria {
+  id            Int            @id @default(autoincrement())
+  ccId          String
+  cc            ConsejoComunal @relation(fields: [ccId], references: [id])
+  tipoVoceriaId Int
+  tipoVoceria   TipoVoceria    @relation(fields: [tipoVoceriaId], references: [id])
+
+  titularId Int     @unique
+  titular   Persona @relation("TitularRelation", fields: [titularId], references: [id])
+
+  suplenteId Int?     @unique
+  suplente   Persona? @relation("SuplenteRelation", fields: [suplenteId], references: [id])
+
+  @@unique([ccId, tipoVoceriaId]) // vocería única por cc
+}
+
+model Persona {
+  id        Int       @id @default(autoincrement())
+  nombres   String
+  apellidos String
+  ci        String
+  telefono  String
+  vehiculo  Vehiculo?
+
+  voceriaTitular  Voceria? @relation("TitularRelation")
+  voceriaSuplente Voceria? @relation("SuplenteRelation")
+
+  consejoComElectoral ConsejoComunal? @relation("ComisionElectoral")
+  consejoSuplenteCom  ConsejoComunal? @relation("SuplenteComisionElectoral")
+  consejoContraloria  ConsejoComunal? @relation("Contraloria")
+  consejoSuplContral  ConsejoComunal? @relation("SuplenteContraloria")
+  consejoFinanzas     ConsejoComunal? @relation("Finanzas")
+  consejoSuplFinanzas ConsejoComunal? @relation("SuplenteFinanzas")
+}
+
+model Proyecto {
+  id                  String          @id @default(uuid())
+  nombreProyecto      String
+  codigoProyecto      String          @unique
+  estatusProyecto     String
+  circuito            String
+  consulta            Int  
+  categoria           String
+  observacion         String?
+  consejoComunalId    String
+  consejoComunal      ConsejoComunal  @relation(fields: [consejoComunalId], references: [id])
+}
+
+
 model Comuna {
-  id                        String @id @default(uuid()) 
-  codigo                    String  
-  numComisionPromotora      String  
-  fechaComisionPromotora    DateTime  
-  rif                       String  
-  cuentaBancaria            String  
-  fechaRegistro             DateTime  
-  nombre                    String  
-  direccion                 String  
-  linderoNorte              String  
-  linderoSur                String  
-  linderoEste               String  
-  linderoOeste              String  
-  fechaUltimaEleccion       DateTime  
-  parroquiaRelation         Parroquia? @relation(fields: [parroquiaId], references: [id])
-  parroquiaId               Int?  
-  nombreVocero              String  
-  ciVocero                  String  
-  telefono                  String  
-  cantidadConsejosComunales Int  
-  poblacionVotante          Int  
+  id                        String           @id @default(uuid())
+  codigo                    String
+  numComisionPromotora      String
+  fechaComisionPromotora    DateTime
+  rif                       String
+  cuentaBancaria            String
+  fechaRegistro             DateTime
+  nombre                    String
+  direccion                 String
+  linderoNorte              String
+  linderoSur                String
+  linderoEste               String
+  linderoOeste              String
+  fechaUltimaEleccion       DateTime
+  parroquiaRelation         Parroquia?       @relation(fields: [parroquiaId], references: [id])
+  parroquiaId               Int?
+  nombreVocero              String
+  ciVocero                  String
+  telefono                  String
+  cantidadConsejosComunales Int
+  poblacionVotante          Int
   consejosComunales         ConsejoComunal[] // Relación 1-N
 }
 
@@ -130,21 +196,20 @@ enum VehiculoStatus {
 }
 
 model Vehiculo {
-  id                Int      @id @default(autoincrement()) 
-  placa             String   
-  clase             String   
-  cc                String?    
-  marca             String   
-  modelo            String   
-  color             String   
-  ano               Int      
-  serialCarroceria  String   
-  voceroAsignado    Persona?   @relation(fields: [voceroAsignadoId], references: [id])
-  voceroAsignadoId  Int?       @unique
-  fechaDeEntrega    DateTime 
-  estatus           VehiculoStatus  @default(asignado)
-  observacionArchivo String?   
-  observacion       String?  
-  consejoComunal    ConsejoComunal? @relation(fields: [cc], references: [cc])
+  id                 Int             @id @default(autoincrement())
+  placa              String
+  clase              String
+  cc                 String?
+  marca              String
+  modelo             String
+  color              String
+  ano                Int
+  serialCarroceria   String
+  voceroAsignado     Persona?        @relation(fields: [voceroAsignadoId], references: [id])
+  voceroAsignadoId   Int?            @unique
+  fechaDeEntrega     DateTime
+  estatus            VehiculoStatus  @default(asignado)
+  observacionArchivo String?
+  observacion        String?
+  consejoComunal     ConsejoComunal? @relation(fields: [cc], references: [cc])
 }
-

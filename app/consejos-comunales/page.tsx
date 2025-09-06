@@ -16,7 +16,6 @@ const ConsejosComunales: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedRows, setSelectedRows] = useState<ConsejoComunal[]>([]);
   const { data: consejosData, isLoading } = useConsejos();
-
   // Filtra datos según el término de búsqueda
   const filteredData = consejosData
     ? consejosData.filter((consejo) =>
@@ -35,8 +34,6 @@ const ConsejosComunales: React.FC = () => {
     "Nro de cuenta",
     "Fecha de constitucion",
     "Fecha de vencimiento",
-    "Vocero",
-    "Telefono del vocero",
     "Poblacion votante",
     "Comuna",
   ];
@@ -55,10 +52,6 @@ const ConsejosComunales: React.FC = () => {
       <td className={tdClassName}>
         {new Date(consejo.fechaVencimiento).toLocaleDateString()}
       </td>
-      <td className={tdClassName}>
-        {consejo.vocero ? `${consejo.vocero.nombres} ${consejo.vocero.apellidos}` : "—"}
-      </td>
-      <td className={tdClassName}>{consejo.vocero?.telefono || "—"}</td>
       <td className={tdClassName}>{consejo.poblacionVotante}</td>
       <td className={tdClassName}>{consejo.comuna?.nombre || "—"}</td>
     </>
@@ -75,8 +68,6 @@ const ConsejosComunales: React.FC = () => {
       consejo.numeroCuenta || "",
       consejo.fechaConstitucion ? new Date(consejo.fechaConstitucion).toLocaleDateString() : "",
       consejo.fechaVencimiento ? new Date(consejo.fechaVencimiento).toLocaleDateString() : "",  
-      consejo.vocero? `${consejo.vocero.nombres} ${consejo.vocero.apellidos}`: "",
-      consejo.vocero?.telefono || "",
       consejo.poblacionVotante || "",
       consejo.comuna?.nombre || "",
     ]);

@@ -10,17 +10,14 @@ export const useRegisterProyecto = () => {
 
   const mutation = useMutation({
     mutationFn: async (formData: ProyectoFormData) => {
-      return post<{ message: string }>({
+      return post({
         path: '/api/proyectos',
         body: {
           ...formData,
-          fechaCreacion: new Date(formData.fechaCreacion).toISOString(),
-          ultimaActividad: new Date(formData.ultimaActividad).toISOString(),
-        }
+        },
       });
     },
     onSuccess: () => {
-      // Invalida la caché de proyectos para refrescar los datos
       toast.success('Proyecto registrado exitosamente');
       queryClient.invalidateQueries({ queryKey: ["proyectos"] });
       router.push('/gestor-de-proyectos');

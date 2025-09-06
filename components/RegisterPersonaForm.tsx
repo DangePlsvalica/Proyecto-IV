@@ -43,7 +43,7 @@ const RegisterPersonaForm: React.FC<Props> = ({ onSuccess }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 p-6">
+    <form onSubmit={handleSubmit} className="space-y-3 px-6 py-4 max-w-[450px]">
       <FormInput label="Nombres" id="nombres" value={formData.nombres} onChange={handleChange} required />
       <FormInput label="Apellidos" id="apellidos" value={formData.apellidos} onChange={handleChange} required />
       <FormInput label="Cédula" id="ci" value={formData.ci ?? ""} onChange={handleChange} required />

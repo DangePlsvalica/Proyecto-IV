@@ -13,18 +13,21 @@ import { PiScrollBold } from "react-icons/pi";
 import Button from './Button'
 import { Menu } from "@headlessui/react";
 import ChangePasswordModal from "./ChangePasswordModal";
+import Modal from "./Modal";
+import RegisterVoceriaForm from "./RegisterVoceriaForm";
 
 const Navbar = () => {
   const { data: session }: any = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [consejosOpen, setConsejosOpen] = useState(false);
+  const [isVoceriaModalOpen, setIsVoceriaModalOpen] = useState(false);
 
   // Crear la navegación dependiendo del rol del usuario
   const allNavigation = [
     { name: "Administrar usuarios", href: "/admin-user", icon: <FaRegUser /> },
     { name: "Administrar roles", href: "/admin-role", icon: <PiScrollBold /> },
     { name: "Personas", href: "/personas", icon: <FaPerson /> },
-    { name: "Consejos comunales", href: "/consejos-comunales", icon: <FaUsers /> },
     { name: "Comunas", href: "/comunas", icon: <RiCommunityLine /> },
     { name: "Proyectos", href: "/gestor-de-proyectos", icon: <IoSettingsOutline /> },
     { name: "Vehiculos", href: "/vehiculos", icon: <FaCar /> },
@@ -80,6 +83,55 @@ const Navbar = () => {
 
         {/* Navegación segun el rol */}
         <div className="flex flex-col gap-6 px-3 py-6">
+          {/* Submenú Consejos Comunales */}
+        <div className="flex flex-col relative">
+          <button
+            onClick={() => setConsejosOpen(!consejosOpen)}
+            className="flex gap-2 items-center text-base font-semibold text-white hover:text-gray-300 rounded justify-between w-full"
+          >
+            <span className="flex gap-2 items-center">
+              <FaUsers />
+              Consejos Comunales
+            </span>
+            <FaChevronDown
+              className={`h-3 w-3 transition-transform duration-300 ${
+                consejosOpen ? "rotate-180" : "rotate-0"
+              }`}
+            />
+          </button>
+
+          <div
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+              consejosOpen ? "max-h-40 opacity-100 mt-1" : "max-h-0 opacity-0 mt-0"
+            } flex flex-col pl-9 gap-1 font-semibold`}
+          >
+            <Link
+              href="/consejos-comunales"
+              className="text-sm text-gray-200 hover:text-white py-1"
+            >
+              Ver Consejos
+            </Link>
+            <Link
+              href="/consejos-comunales/register-consejo"
+              className="text-sm text-gray-200 hover:text-white py-1"
+            >
+              Registrar Consejo
+            </Link>
+            <Link
+              href="/vocerias"
+              className="text-sm text-gray-200 hover:text-white py-1"
+            >
+              Ver Comités
+            </Link>
+            <button
+              onClick={() => setIsVoceriaModalOpen(true)}
+              className="text-sm text-gray-200 hover:text-white py-1 text-left"
+            >
+              Registrar Comité
+            </button>
+          </div>
+        </div>
+
           {filteredNavigation.map((item) => (
             <Link
               key={item.name}
@@ -160,6 +212,13 @@ const Navbar = () => {
         isOpen={isPasswordModalOpen}
         onClose={() => setIsPasswordModalOpen(false)}
       />
+      <Modal
+        open={isVoceriaModalOpen}
+        onClose={() => setIsVoceriaModalOpen(false)}
+        title="Registrar Comité"
+      >
+        <RegisterVoceriaForm onSuccess={() => setIsVoceriaModalOpen(false)} />
+      </Modal>
     </header>
   );
 };

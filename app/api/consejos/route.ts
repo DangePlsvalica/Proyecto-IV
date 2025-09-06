@@ -8,19 +8,27 @@ export async function GET() {
     const consejos = await prisma.consejoComunal.findMany({
       include: {
         parroquiaRelation: true,
-        vocero: true,
         comuna: true,
+        vocerias: {
+          include: {
+            tipoVoceria: true,
+            titular: true,
+            suplente: true,
+          },
+        },
+        comisionElectoral: true,
+        suplenteComisionElectoral: true,
+        contraloria: true,
+        suplenteContraloria: true,
+        finanzas: true,
+        suplenteFinanzas: true,
       },
     });
+
     return NextResponse.json(consejos);
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Error fetching consejos comunales:", error.message);
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    } else {
-      console.error("Error fetching consejos comunales:", error);
-      return NextResponse.json({ error: "Error fetching consejos comunales" }, { status: 500 });
-    }
+    console.error("Error fetching consejos comunales:", error);
+    return NextResponse.json({ error: (error instanceof Error ? error.message : "Error fetching") }, { status: 500 });
   }
 }
 
@@ -36,8 +44,14 @@ export async function POST(request: Request) {
       fechaVencimiento,
       poblacionVotante,
       parroquiaId,
-      voceroId,
       comunaId,
+      comisionElectoralId,
+      suplenteComisionElectoralId,
+      contraloriaId,
+      suplenteContraloriaId,
+      finanzasId,
+      suplenteFinanzasId,
+      voceriasEjecutivas,
     } = body;
 
     /* Validaciones básicas */
@@ -65,15 +79,29 @@ export async function POST(request: Request) {
         fechaVencimiento: new Date(fechaVencimiento),
         poblacionVotante: Number(poblacionVotante),
         parroquiaId,
-        voceroId,
         comunaId,
-      },
-      include: {
-        parroquiaRelation: true,
-        vocero: true,
-        comuna: true,
+        comisionElectoralId,
+        suplenteComisionElectoralId,
+        contraloriaId,
+        suplenteContraloriaId,
+        finanzasId,
+        suplenteFinanzasId,
       },
     });
+
+        // Crear vocerías asociadas
+    if (Array.isArray(voceriasEjecutivas)) {
+      for (const voc of voceriasEjecutivas) {
+        await prisma.voceria.create({
+          data: {
+            ccId: nuevoConsejo.id,
+            tipoVoceriaId: voc.tipoVoceriaId,
+            titularId: voc.titularId,
+            suplenteId: voc.suplenteId || null,
+          },
+        });
+      }
+    }
 
     return NextResponse.json(nuevoConsejo, { status: 201 });
   } catch (error: any) {

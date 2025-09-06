@@ -7,9 +7,10 @@ interface ModalProps {
   onClose: () => void;
   title?: string;
   children: React.ReactNode;
+  width?: string;
 }
 
-const Modal: React.FC<ModalProps> = ({ open, onClose, title, children }) => (
+const Modal: React.FC<ModalProps> = ({ open, onClose, title, children, width }) => (
   <Transition appear show={open} as={Fragment}>
     <Dialog as="div" className="relative z-50" onClose={onClose}>
       <Transition.Child
@@ -35,7 +36,9 @@ const Modal: React.FC<ModalProps> = ({ open, onClose, title, children }) => (
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-xl bg-white text-left align-middle shadow-xl transition-all">
+            <Dialog.Panel
+              className={`transform overflow-hidden rounded-xl bg-white text-left align-middle shadow-xl transition-all ${width || "w-[400px] max-w-lg"}`}
+            >
               {title && (
                 <Dialog.Title as="h3" className="text-lg font-medium px-6 py-5 border-b">
                   {title}
@@ -51,3 +54,4 @@ const Modal: React.FC<ModalProps> = ({ open, onClose, title, children }) => (
 );
 
 export default Modal;
+
