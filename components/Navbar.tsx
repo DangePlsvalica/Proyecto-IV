@@ -82,7 +82,7 @@ const Navbar = () => {
         </div>
 
         {/* Navegación segun el rol */}
-        <div className="flex flex-col gap-6 px-3 py-6">
+        <div className="flex flex-col gap-6 px-2 py-6">
           {/* Submenú Consejos Comunales */}
         <div className="flex flex-col relative">
           <button

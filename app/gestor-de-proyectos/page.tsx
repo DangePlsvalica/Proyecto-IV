@@ -109,6 +109,11 @@ const GestorProyectos: React.FC = () => {
             disabled={filteredData.length === 0}
           />
           <Button
+            onClick={handleExportPDF}
+            title="Exportar a Excel"
+            disabled={true}
+          />
+          <Button
             onClick={() => router.push("/gestor-de-proyectos/register-proyecto")}
             title={"Registrar nuevo proyecto"}
           />
@@ -120,7 +125,7 @@ const GestorProyectos: React.FC = () => {
           return (
             <Button
               key={num}
-              className={`text-gray-950 bg-white hover:bg-sky-950 hover:text-slate-50 ${
+              className={`text-gray-950  hover:bg-sky-950 ${
                 consultaFilter === num ? "bg-slate-800 text-slate-100" : ""
               }`}
               onClick={() => setConsultaFilter(consultaFilter === num ? null : num)}

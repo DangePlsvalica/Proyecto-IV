@@ -1,3 +1,11 @@
+export interface Persona {
+  id: string;
+  nombres: string;
+  apellidos: string;
+  ci: string;
+  telefono: string;
+}
+
 export interface Comuna {
   id: string;
   codigo: string;
@@ -12,14 +20,19 @@ export interface Comuna {
   linderoSur: string;
   linderoEste: string;
   linderoOeste: string;
-  consejosComunales: any; 
+  consejosComunales: any;
   fechaUltimaEleccion: Date;
   parroquiaRelation: any;
-  nombreVocero: string;
-  ciVocero: string;
-  telefono: string;
   cantidadConsejosComunales: number;
   poblacionVotante: number;
+  bancoDeLaComuna: Persona[];
+  // ADDED: New interfaces for the new governing bodies
+  titularesComisionElectoral?: Persona[];
+  suplentesComisionElectoral?: Persona[];
+  titularesContraloria?: Persona[];
+  suplentesContraloria?: Persona[];
+  parlamentoComuna?: Persona[];
+  consejoJusticiaPaz?: Persona[];
 }
 
 export interface ComunaFormData {
@@ -39,10 +52,8 @@ export interface ComunaFormData {
   consejosComunales: string[];
   fechaUltimaEleccion: string;
   parroquiaId: number;
-  nombreVocero: string;
-  ciVocero: string;
-  telefono: string;
   cantidadConsejosComunales: number;
   poblacionVotante: number;
+  bancoDeLaComuna?: string[]; // Nuevo: array de IDs para la creación
 }
   

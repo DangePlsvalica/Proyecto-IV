@@ -96,10 +96,15 @@ const ConsejosComunales: React.FC = () => {
             title="Exportar a PDF"
             disabled={selectedRows.length === 0}
           />
-            <Button
-              onClick={() => router.push("/consejos-comunales/register-consejo")}
-              title="Registrar nuevo consejo comunal"
-            />
+          <Button
+            onClick={handleExportPDF}
+            title="Exportar a Excel"
+            disabled={true}
+          />
+          <Button
+            onClick={() => router.push("/consejos-comunales/register-consejo")}
+            title="Registrar nuevo consejo comunal"
+          />
         </div>
       </div>
       <Table

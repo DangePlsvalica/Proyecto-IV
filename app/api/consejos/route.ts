@@ -1,8 +1,9 @@
-import { NextResponse } from 'next/server'; 
+import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// Endpoint GET: Obtiene todos los consejos comunales con sus relaciones
 export async function GET() {
   try {
     const consejos = await prisma.consejoComunal.findMany({
@@ -16,12 +17,12 @@ export async function GET() {
             suplente: true,
           },
         },
-        comisionElectoral: true,
-        suplenteComisionElectoral: true,
-        contraloria: true,
-        suplenteContraloria: true,
-        finanzas: true,
-        suplenteFinanzas: true,
+        titularesComisionElectoral: true,
+        suplentesComisionElectoral: true,
+        titularesContraloria: true,
+        suplentesContraloria: true,
+        titularesFinanzas: true,
+        suplentesFinanzas: true,
       },
     });
 
@@ -32,6 +33,7 @@ export async function GET() {
   }
 }
 
+// Endpoint POST: Crea un nuevo consejo comunal con sus relaciones
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -45,16 +47,16 @@ export async function POST(request: Request) {
       poblacionVotante,
       parroquiaId,
       comunaId,
-      comisionElectoralId,
-      suplenteComisionElectoralId,
-      contraloriaId,
-      suplenteContraloriaId,
-      finanzasId,
-      suplenteFinanzasId,
+      titularesComisionElectoralIds,
+      suplentesComisionElectoralIds,
+      titularesContraloriaIds,
+      suplentesContraloriaIds,
+      titularesFinanzasIds,
+      suplentesFinanzasIds,
       voceriasEjecutivas,
     } = body;
 
-    /* Validaciones básicas */
+    // 1. Validaciones básicas (se mantiene igual)
     if (
       !cc ||
       !rif ||
@@ -69,7 +71,7 @@ export async function POST(request: Request) {
       );
     }
 
-    /* Creación en Prisma */
+    // 2. Creación del Consejo Comunal (sin las relaciones)
     const nuevoConsejo = await prisma.consejoComunal.create({
       data: {
         cc,
@@ -80,16 +82,36 @@ export async function POST(request: Request) {
         poblacionVotante: Number(poblacionVotante),
         parroquiaId,
         comunaId,
-        comisionElectoralId,
-        suplenteComisionElectoralId,
-        contraloriaId,
-        suplenteContraloriaId,
-        finanzasId,
-        suplenteFinanzasId,
       },
     });
 
-        // Crear vocerías asociadas
+    // 3. Conexión de las relaciones de personas (ahora como una actualización)
+    // Usamos el ID del nuevo consejo para vincular las personas
+    await prisma.consejoComunal.update({
+      where: { id: nuevoConsejo.id },
+      data: {
+        titularesComisionElectoral: {
+          connect: titularesComisionElectoralIds.map((id: number) => ({ id })),
+        },
+        suplentesComisionElectoral: {
+          connect: suplentesComisionElectoralIds.map((id: number) => ({ id })),
+        },
+        titularesContraloria: {
+          connect: titularesContraloriaIds.map((id: number) => ({ id })),
+        },
+        suplentesContraloria: {
+          connect: suplentesContraloriaIds.map((id: number) => ({ id })),
+        },
+        titularesFinanzas: {
+          connect: titularesFinanzasIds.map((id: number) => ({ id })),
+        },
+        suplentesFinanzas: {
+          connect: suplentesFinanzasIds.map((id: number) => ({ id })),
+        },
+      },
+    });
+    
+    // 4. Creación de vocerías ejecutivas (se mantiene igual)
     if (Array.isArray(voceriasEjecutivas)) {
       for (const voc of voceriasEjecutivas) {
         await prisma.voceria.create({
@@ -105,7 +127,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json(nuevoConsejo, { status: 201 });
   } catch (error: any) {
-    /* Manejo específico de duplicado de RIF (código P2002) */
     if (error.code === "P2002" && error.meta?.target?.includes("rif")) {
       return NextResponse.json(
         { error: "El RIF ya existe" },

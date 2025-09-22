@@ -2,7 +2,7 @@ import type { ConsejoComunal } from "./consejo.comunal.interface";
 import type { Vehiculo } from "./vehiculo.interface";
 
 export interface Persona {
-    id?: number;
+    id: number;
     nombres: string;
     apellidos: string;
     ci: string;

@@ -7,6 +7,7 @@ import DeleteButton from "@/components/DeleteButton";
 import Loading from "@/components/Loading";
 import { notFound } from "next/navigation";
 import VoceroCard from "@/components/VoceroCard";
+import { Key } from "react";
 
 const ViewConsejoPage = () => {
   const { id } = useParams();
@@ -16,7 +17,12 @@ const ViewConsejoPage = () => {
 
   const consejo = consejosData?.find((c) => c.id === id);
   if (!consejo) notFound();
-console.log("first", consejo)
+
+  // Función para obtener los primeros 5 titulares o suplentes
+  const getFirstFive = (data?: any[]) => {
+    return data?.slice(0, 5) ?? [];
+  };
+
   return (
     <div className="mx-auto my-1 max-w-[95%] px-14 py-8 border border-sky-200 rounded-xl bg-[#f8f8f8]">
       <h1 className="text-2xl font-bold mb-6 text-sky-950">
@@ -28,6 +34,7 @@ console.log("first", consejo)
         <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">Información Básica</h3>
         <div className="grid grid-cols-4 gap-4">
           <FieldDisplay label="Estado" value={consejo.parroquiaRelation?.estado} />
+          <FieldDisplay label="Codigo Situr" value={12345} />
           <FieldDisplay label="Municipio" value={consejo.parroquiaRelation?.municipio} />
           <FieldDisplay label="Parroquia" value={consejo.parroquiaRelation?.nombre} />
           <FieldDisplay label="Nombre" value={consejo.cc} />
@@ -45,18 +52,18 @@ console.log("first", consejo)
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <VoceroCard
             titulo="Comisión Electoral"
-            titular={consejo.comisionElectoral}
-            suplente={consejo.suplenteComisionElectoral}
+            titular={getFirstFive(consejo.titularesComisionElectoral)}
+            suplente={getFirstFive(consejo.suplentesComisionElectoral)}
           />
           <VoceroCard
             titulo="Unidad de Contraloría Social"
-            titular={consejo.contraloria}
-            suplente={consejo.suplenteContraloria}
+            titular={getFirstFive(consejo.titularesContraloria)}
+            suplente={getFirstFive(consejo.suplentesContraloria)}
           />
           <VoceroCard
             titulo="Unidad Administrativa y Financiera Comunitaria"
-            titular={consejo.finanzas}
-            suplente={consejo.suplenteFinanzas}
+            titular={getFirstFive(consejo.titularesFinanzas)}
+            suplente={getFirstFive(consejo.suplentesFinanzas)}
           />
         </div>
       </div>
@@ -66,7 +73,7 @@ console.log("first", consejo)
         <div className="mt-10">
           <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">Vocerías Ejecutivas</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {consejo.vocerias.map((voceria) => (
+            {consejo.vocerias.map((voceria: { tipoVoceria: { id: Key | null | undefined; nombre: string; }; titular: { nombres?: string; apellidos?: string; ci?: string; telefono?: string; } | { nombres?: string; apellidos?: string; ci?: string; telefono?: string; }[] | undefined; suplente: { nombres?: string; apellidos?: string; ci?: string; telefono?: string; } | { nombres?: string; apellidos?: string; ci?: string; telefono?: string; }[] | undefined; }) => (
               <VoceroCard
                 key={voceria.tipoVoceria.id}
                 titulo={voceria.tipoVoceria.nombre}

@@ -11,6 +11,7 @@ export const useRegisterConsejoComunal = () => {
 
   const mutation = useMutation({
     mutationFn: async (formData: ConsejoComunalFormData) => {
+      // Modifica la estructura del body para coincidir con el endpoint POST
       return post<ConsejoComunal>({
         path: '/api/consejos',
         body: {

@@ -60,42 +60,29 @@ model Parroquia {
 }
 
 model ConsejoComunal {
-  id                String     @id @default(uuid())
-  parroquiaRelation Parroquia? @relation(fields: [parroquiaId], references: [id])
-  parroquiaId       Int?
-  cc                String     @unique
-  rif               String     @unique
-  situr             String?     @unique
-  numeroCuenta      String
-  fechaConstitucion DateTime
-  fechaVencimiento  DateTime
-  poblacionVotante  Int
-  comunaId          String? // Clave foránea
-  comuna            Comuna?    @relation(fields: [comunaId], references: [id], onDelete: SetNull)
-  vehiculos         Vehiculo[] // 1:N
+  id                        String       @id @default(uuid())
+  parroquiaRelation         Parroquia?   @relation(fields: [parroquiaId], references: [id])
+  parroquiaId               Int?
+  cc                        String       @unique
+  rif                       String       @unique
+  situr                     String?      @unique
+  numeroCuenta              String
+  fechaConstitucion         DateTime
+  fechaVencimiento          DateTime
+  poblacionVotante          Int
+  comunaId                  String?
+  comuna                    Comuna?      @relation(fields: [comunaId], references: [id], onDelete: SetNull)
+  vehiculos                 Vehiculo[]
 
-  // Vocerías principales (estructura fija)
-  comisionElectoralId Int?     @unique
-  comisionElectoral   Persona? @relation("ComisionElectoral", fields: [comisionElectoralId], references: [id])
+  titularesComisionElectoral  Persona[] @relation("TitularesComisionElectoral")
+  suplentesComisionElectoral  Persona[] @relation("SuplentesComisionElectoral")
+  titularesContraloria        Persona[] @relation("TitularesContraloria")
+  suplentesContraloria        Persona[] @relation("SuplentesContraloria")
+  titularesFinanzas           Persona[] @relation("TitularesFinanzas")
+  suplentesFinanzas           Persona[] @relation("SuplentesFinanzas")
 
-  suplenteComisionElectoralId Int?     @unique
-  suplenteComisionElectoral   Persona? @relation("SuplenteComisionElectoral", fields: [suplenteComisionElectoralId], references: [id])
-
-  contraloriaId Int?     @unique
-  contraloria   Persona? @relation("Contraloria", fields: [contraloriaId], references: [id])
-
-  suplenteContraloriaId Int?     @unique
-  suplenteContraloria   Persona? @relation("SuplenteContraloria", fields: [suplenteContraloriaId], references: [id])
-
-  finanzasId Int?     @unique
-  finanzas   Persona? @relation("Finanzas", fields: [finanzasId], references: [id])
-
-  suplenteFinanzasId Int?     @unique
-  suplenteFinanzas   Persona? @relation("SuplenteFinanzas", fields: [suplenteFinanzasId], references: [id])
-
-  // Vocerías ejecutivas (flexibles)
-  vocerias Voceria[] // Relación con vocerías adicionales
-  proyectos  Proyecto[]
+  vocerias                  Voceria[]
+  proyectos                 Proyecto[]
 }
 
 model CategoriaVoceria {
@@ -130,22 +117,28 @@ model Voceria {
 }
 
 model Persona {
-  id        Int       @id @default(autoincrement())
-  nombres   String
-  apellidos String
-  ci        String
-  telefono  String
-  vehiculo  Vehiculo?
+  id                                Int            @id @default(autoincrement())
+  nombres                           String
+  apellidos                         String
+  ci                                String
+  telefono                          String
+  vehiculo                          Vehiculo?
 
-  voceriaTitular  Voceria? @relation("TitularRelation")
-  voceriaSuplente Voceria? @relation("SuplenteRelation")
+  // Relaciones inversas a los arrays del ConsejoComunal
+  consejoTitularComisionElectoral   ConsejoComunal[] @relation("TitularesComisionElectoral")
+  consejoSuplenteComisionElectoral  ConsejoComunal[] @relation("SuplentesComisionElectoral")
+  consejoTitularContraloria         ConsejoComunal[] @relation("TitularesContraloria")
+  consejoSuplenteContraloria        ConsejoComunal[] @relation("SuplentesContraloria")
+  consejoTitularFinanzas            ConsejoComunal[] @relation("TitularesFinanzas")
+  consejoSuplenteFinanzas           ConsejoComunal[] @relation("SuplentesFinanzas")
 
-  consejoComElectoral ConsejoComunal? @relation("ComisionElectoral")
-  consejoSuplenteCom  ConsejoComunal? @relation("SuplenteComisionElectoral")
-  consejoContraloria  ConsejoComunal? @relation("Contraloria")
-  consejoSuplContral  ConsejoComunal? @relation("SuplenteContraloria")
-  consejoFinanzas     ConsejoComunal? @relation("Finanzas")
-  consejoSuplFinanzas ConsejoComunal? @relation("SuplenteFinanzas")
+  // Otras relaciones
+  voceriaTitular                    Voceria?       @relation("TitularRelation")
+  voceriaSuplente                   Voceria?       @relation("SuplenteRelation")
+
+  // Nuevo campo para la relación con el Banco de la Comuna
+  bancoDeLaComunaRelation           Comuna?          @relation("BancoDeLaComuna", fields: [comunaId], references: [id])
+  comunaId                          String?
 }
 
 model Proyecto {
@@ -161,30 +154,27 @@ model Proyecto {
   consejoComunal      ConsejoComunal  @relation(fields: [consejoComunalId], references: [id])
 }
 
-
 model Comuna {
-  id                        String           @id @default(uuid())
-  codigo                    String
-  numComisionPromotora      String
-  fechaComisionPromotora    DateTime
-  rif                       String
-  cuentaBancaria            String
-  fechaRegistro             DateTime
-  nombre                    String
-  direccion                 String
-  linderoNorte              String
-  linderoSur                String
-  linderoEste               String
-  linderoOeste              String
-  fechaUltimaEleccion       DateTime
-  parroquiaRelation         Parroquia?       @relation(fields: [parroquiaId], references: [id])
-  parroquiaId               Int?
-  nombreVocero              String
-  ciVocero                  String
-  telefono                  String
+  id                      String          @id @default(uuid())
+  codigo                  String
+  numComisionPromotora    String
+  fechaComisionPromotora  DateTime
+  rif                     String
+  cuentaBancaria          String
+  fechaRegistro           DateTime
+  nombre                  String
+  direccion               String
+  linderoNorte            String
+  linderoSur              String
+  linderoEste             String
+  linderoOeste            String
+  fechaUltimaEleccion     DateTime
+  parroquiaRelation       Parroquia?      @relation(fields: [parroquiaId], references: [id])
+  parroquiaId             Int?
   cantidadConsejosComunales Int
   poblacionVotante          Int
-  consejosComunales         ConsejoComunal[] // Relación 1-N
+  consejosComunales       ConsejoComunal[] // Relación 1-N
+  bancoDeLaComuna         Persona[]       @relation("BancoDeLaComuna")
 }
 
 enum VehiculoStatus {

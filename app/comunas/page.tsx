@@ -10,6 +10,7 @@ import Loading from "@/components/Loading";
 import useComunas from "@/hooks/useComunas";
 import { Comuna } from "@/hooks/interfaces/comuna.interface";
 import exportToPDF from "@/utils/exportToPdf";
+import exportToExcel from "@/utils/exportToExcel";
 
 const Comunas: React.FC = () => {
   const router = useRouter();
@@ -25,18 +26,10 @@ const Comunas: React.FC = () => {
     "Cuenta Bancaria",
     "Fecha Registro Comuna",
     "Nombre Comuna",
-    "Dirección Comuna",
-    "Lindero Norte",
-    "Lindero Sur",
-    "Lindero Este",
-    "Lindero Oeste",
     "C.C que Integra la Comuna",
     "Fecha Última Elección",
     "Municipio",
     "Parroquia",
-    "Nombre y Apellidos Vocero",
-    "C.I",
-    "Teléfono",
   ];
 
   const tdClassName = "border-b border-r py-2 border-sky-950";
@@ -62,13 +55,7 @@ const Comunas: React.FC = () => {
           {comuna.fechaRegistro && new Date(comuna.fechaRegistro).toLocaleDateString()}
         </td>
         <td className={tdClassName}>{comuna.nombre}</td>
-        <td className={tdClassName}>{comuna.direccion}</td>
-        <td className={tdClassName}>{comuna.linderoNorte}</td>
-        <td className={tdClassName}>{comuna.linderoSur}</td>
-        <td className={tdClassName}>{comuna.linderoEste}</td>
-        <td className={tdClassName}>{comuna.linderoOeste}</td>
         <td className={tdClassName}>
-        {/* Generar lista numerada como texto */}
         {comuna.consejosComunales?.map((cc: any, index: number) => (
           <div className="py-1 border-b-2" key={cc.id}>{index + 1}. {cc.cc}</div>
         ))}
@@ -78,9 +65,6 @@ const Comunas: React.FC = () => {
         </td>
         <td className={tdClassName}>{comuna.parroquiaRelation?.municipio}</td>
         <td className={tdClassName}>{comuna.parroquiaRelation?.nombre}</td>
-        <td className={tdClassName}>{comuna.nombreVocero}</td>
-        <td className={tdClassName}>{comuna.ciVocero}</td>
-        <td className={tdClassName}>{comuna.telefono}</td>
       </>
     );
   };
@@ -106,9 +90,6 @@ const Comunas: React.FC = () => {
       comuna.fechaUltimaEleccion ? new Date(comuna.fechaUltimaEleccion).toLocaleDateString() : "",
       comuna.parroquiaRelation?.municipio || "",
       comuna.parroquiaRelation?.nombre || "", 
-      comuna.nombreVocero || "",
-      comuna.ciVocero || "",
-      comuna.telefono || "",
     ]);
 
     exportToPDF({
@@ -118,6 +99,40 @@ const Comunas: React.FC = () => {
       title: "Listado de Comunas",
     });
   };
+  const handleExportExcel = () => {
+    const exportData = selectedRows.length > 0 ? selectedRows : filteredData;
+
+      const formattedData = exportData.map((comuna) => [
+        comuna.codigo || "",
+        comuna.numComisionPromotora || "",
+        comuna.fechaComisionPromotora
+          ? new Date(comuna.fechaComisionPromotora).toLocaleDateString()
+          : "",
+        comuna.rif || "",
+        comuna.cuentaBancaria || "",
+        comuna.fechaRegistro
+          ? new Date(comuna.fechaRegistro).toLocaleDateString()
+          : "",
+        comuna.nombre || "",
+        comuna.consejosComunales
+          ? comuna.consejosComunales
+              .map((cc: { cc: any }, index: number) => `${index + 1}. ${cc.cc}`)
+              .join("\n")
+          : "",
+        comuna.fechaUltimaEleccion
+          ? new Date(comuna.fechaUltimaEleccion).toLocaleDateString()
+          : "",
+        comuna.parroquiaRelation?.municipio || "",
+        comuna.parroquiaRelation?.nombre || "",
+      ]);
+
+      exportToExcel({
+        headers,
+        data: formattedData,
+        filename: "comunas.xlsx",
+        sheetName: "Comunas",
+      });
+    }
 
     if (isLoading) {
       return ( <Loading /> );
@@ -135,10 +150,15 @@ const Comunas: React.FC = () => {
             title="Exportar a PDF"
             disabled={selectedRows.length === 0}
           />
-            <Button
-              onClick={() => router.push("/comunas/register-comuna")}
-              title="Registrar nueva comuna"
-            />
+          <Button
+            onClick={handleExportExcel}
+            title="Exportar a Excel"
+            disabled={selectedRows.length === 0}
+          />
+          <Button
+            onClick={() => router.push("/comunas/register-comuna")}
+            title="Registrar nueva comuna"
+          />
         </div>
       </div>
       <Table

@@ -1,59 +1,76 @@
-import type { Persona } from "./persona.interface";
+import { Persona } from "./comuna.interface";
 
 export interface ConsejoComunal {
   id: string;
-  cc: string;
-  rif: string;
-  numeroCuenta: string;
-  fechaConstitucion: string;
-  fechaVencimiento: string;
-  poblacionVotante: number;
-
-  parroquiaRelation?: { nombre: string; municipio: string; estado: string };
-  comuna?: { nombre: string };
-
-  // Vocerías dinámicas
-  vocerias?: VoceriaEjecutivaPayload[];
-
-  // Vocerías fijas (principales)
-  comisionElectoral?: Persona;
-  suplenteComisionElectoral?: Persona;
-  contraloria?: Persona;
-  suplenteContraloria?: Persona;
-  finanzas?: Persona;
-  suplenteFinanzas?: Persona;
-}
-
-export interface VoceriaEjecutivaPayload {
-  id: number;
-  tipoVoceriaId: number;
-  titularId?: number;
-  suplenteId?: number;
-
-  tipoVoceria: {
+  parroquiaRelation: {
     id: number;
     nombre: string;
-    esObligatoria?: boolean;
-    categoriaId?: number;
+    municipio: string;
+    estado: string;
   };
+  cc: string;
+  rif: string;
+  situr: string | null;
+  numeroCuenta: string;
+  fechaConstitucion: Date;
+  fechaVencimiento: Date;
+  poblacionVotante: number;
+  comunaId: string | null;
 
-  titular?: {
+  titularesComisionElectoral: {
     id: number;
-    nombres: string;
-    apellidos: string;
-    ci?: string;
-    telefono?: string;
-  };
+    nombre: string;
+    apellido: string;
+    cedula: string;
+  }[];
+  suplentesComisionElectoral: {
+    id: number;
+    nombre: string;
+    apellido: string;
+    cedula: string;
+  }[];
+  titularesContraloria: {
+    id: number;
+    nombre: string;
+    apellido: string;
+    cedula: string;
+  }[];
+  suplentesContraloria: {
+    id: number;
+    nombre: string;
+    apellido: string;
+    cedula: string;
+  }[];
+  titularesFinanzas?: Persona[];
+  suplentesFinanzas: {
+    id: number;
+    nombre: string;
+    apellido: string;
+    cedula: string;
+  }[];
 
-  suplente?: {
-    id: number;
-    nombres: string;
-    apellidos: string;
-    ci?: string;
-    telefono?: string;
-  };
+  vocerias: {
+    id: string;
+    tipoVoceria: {
+      id: number;
+      nombre: string;
+    };
+    titular: {
+      id: number;
+      nombre: string;
+      apellido: string;
+      cedula: string;
+    };
+    suplente: {
+      id: number;
+      nombre: string;
+      apellido: string;
+      cedula: string;
+    };
+  }[];
+  proyectos: any[]; // Define esta interfaz si es necesario
+  vehiculos: any[]; // Define esta interfaz si es necesario
 }
-
 
 export interface ConsejoComunalFormData {
   cc: string;
@@ -65,13 +82,13 @@ export interface ConsejoComunalFormData {
   parroquiaId?: number;
   comunaId?: string;
 
-  // Vocerías principales (obligatorias)
-  comisionElectoralId?: number;
-  suplenteComisionElectoralId?: number;
-  contraloriaId?: number;
-  suplenteContraloriaId?: number;
-  finanzasId?: number;
-  suplenteFinanzasId?: number;
+  // Vocerías principales (cambiadas a arreglos de números)
+  titularesComisionElectoralIds: number[];
+  suplentesComisionElectoralIds: number[];
+  titularesContraloriaIds: number[];
+  suplentesContraloriaIds: number[];
+  titularesFinanzasIds: number[];
+  suplentesFinanzasIds: number[];
 
   // Vocerías ejecutivas (dinámicas)
   voceriasEjecutivas?: {

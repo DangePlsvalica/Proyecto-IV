@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Select, { SingleValue } from "react-select";
+import React, { useState } from "react";
+import Select, { SingleValue, MultiValue } from "react-select";
 import { useQueryClient } from "@tanstack/react-query";
 import Button from "@/components/Button";
 import FormInput from "@/components/FormInput";
@@ -10,12 +10,12 @@ import toast from "react-hot-toast";
 import { useRegisterConsejoComunal } from "@/hooks/useRegisterConsejo";
 import useParroquias from "@/hooks/useParroquias";
 import { Persona } from "@/hooks/interfaces/persona.interface";
-import { ConsejoComunalFormData } from "@/hooks/interfaces/consejo.comunal.interface";
+import { ConsejoComunalFormData, ConsejoComunal } from "@/hooks/interfaces/consejo.comunal.interface"; // <- Se cambió a ConsejoComunal
 import Modal from "@/components/Modal";
 import RegisterPersonaForm from "@/components/RegisterPersonaForm";
 import { useTiposVoceria } from "@/hooks/useTiposVoceria";
 import AddVoceriaModal from "@/components/AddVoceriaModal";
-
+import useConsejos from "@/hooks/useConsejos";
 
 const RegisterConsejoPage = () => {
   type OptionType = { value: number; label: string };
@@ -24,26 +24,75 @@ const RegisterConsejoPage = () => {
   const { mutate: registerConsejo } = useRegisterConsejoComunal();
   const { data: parroquias = [] } = useParroquias();
   const { data: tiposVoceria = [] } = useTiposVoceria();
+  const { data: consejosExistentes = [] } = useConsejos();
   const voceros = queryClient.getQueryData<Persona[]>(["personas"]) || [];
 
-  const initialVoceroOptions: OptionType[] = voceros.map(v => ({
-    value: v.id!,
-    label: `${v.nombres} ${v.apellidos}`,
-  }));
+  // Función para obtener todos los IDs de voceros que ya están asignados en otros consejos
+  const getAssignedVoceroIds = (allConsejos: ConsejoComunal[]) => { // <- Uso de ConsejoComunal
+    const assignedIds = new Set<number>();
+    allConsejos.forEach(consejo => {
+      // Verificación de 'id' para evitar el error de tipado
+      consejo.titularesComisionElectoral.forEach((v) => {
+        if (v.id !== undefined) {
+          assignedIds.add(v.id);
+        }
+      });
+      consejo.suplentesComisionElectoral.forEach((v) => {
+        if (v.id !== undefined) {
+          assignedIds.add(v.id);
+        }
+      });
+      consejo.titularesContraloria.forEach((v) => {
+        if (v.id !== undefined) {
+          assignedIds.add(v.id);
+        }
+      });
+      consejo.suplentesContraloria.forEach((v) => {
+        if (v.id !== undefined) {
+          assignedIds.add(v.id);
+        }
+      });
+      consejo.titularesFinanzas.forEach((v) => {
+        if (v.id !== undefined) {
+          assignedIds.add(v.id);
+        }
+      });
+      consejo.suplentesFinanzas.forEach((v) => {
+        if (v.id !== undefined) {
+          assignedIds.add(v.id);
+        }
+      });
+      consejo.vocerias.forEach(voceria => {
+        if (voceria.titular?.id !== undefined) { // Uso de encadenamiento opcional para más seguridad
+          assignedIds.add(voceria.titular.id);
+        }
+        if (voceria.suplente?.id !== undefined) {
+          assignedIds.add(voceria.suplente.id);
+        }
+      });
+    });
+    return assignedIds;
+  };
+
+  const assignedVoceroIds = getAssignedVoceroIds(consejosExistentes as ConsejoComunal[]);
+
+  const initialVoceroOptions: OptionType[] = voceros
+    .filter(v => v.id !== undefined && !assignedVoceroIds.has(v.id)) // Verificación adicional de 'v.id'
+    .map(v => ({
+      value: v.id!,
+      label: `${v.nombres} ${v.apellidos}`,
+    }));
 
   const parroquiaOptions: OptionType[] = parroquias.map(p => ({
     value: p.id,
     label: p.nombre,
   }));
 
-  // Separar vocerías obligatorias y opcionales
   const voceriasObligatorias = tiposVoceria.filter(v => v.esObligatoria);
   const voceriasOpcionales = tiposVoceria.filter(v => !v.esObligatoria);
 
   const [voceroOptionsState, setVoceroOptionsState] = useState<OptionType[]>(initialVoceroOptions);
   const [isModalOpen, setModalOpen] = useState(false);
-
-  // Modal para seleccionar vocerías opcionales para agregar
   const [modalVoceriaOpen, setModalVoceriaOpen] = useState(false);
 
   const [formData, setFormData] = useState<ConsejoComunalFormData>({
@@ -55,21 +104,36 @@ const RegisterConsejoPage = () => {
     poblacionVotante: 0,
     parroquiaId: undefined,
     comunaId: undefined,
-    comisionElectoralId: undefined,
-    suplenteComisionElectoralId: undefined,
-    contraloriaId: undefined,
-    suplenteContraloriaId: undefined,
-    finanzasId: undefined,
-    suplenteFinanzasId: undefined,
+    titularesComisionElectoralIds: [],
+    suplentesComisionElectoralIds: [],
+    titularesContraloriaIds: [],
+    suplentesContraloriaIds: [],
+    titularesFinanzasIds: [],
+    suplentesFinanzasIds: [],
   });
 
-  // Estado para vocerías ejecutivas
   const [voceriasEjecutivas, setVoceriasEjecutivas] = useState<
     { tipoVoceriaId: number; titularId?: number; suplenteId?: number }[]
   >([]);
-
-  // Estado para vocerías opcionales agregadas
   const [voceriasOpcionalesSeleccionadas, setVoceriasOpcionalesSeleccionadas] = useState<number[]>([]);
+
+  const getAllSelectedVoceroIds = (): number[] => {
+    const selectedIds = new Set<number>();
+
+    formData.titularesComisionElectoralIds.forEach(id => selectedIds.add(id));
+    formData.suplentesComisionElectoralIds.forEach(id => selectedIds.add(id));
+    formData.titularesContraloriaIds.forEach(id => selectedIds.add(id));
+    formData.suplentesContraloriaIds.forEach(id => selectedIds.add(id));
+    formData.titularesFinanzasIds.forEach(id => selectedIds.add(id));
+    formData.suplentesFinanzasIds.forEach(id => selectedIds.add(id));
+
+    voceriasEjecutivas.forEach(voceria => {
+      if (voceria.titularId) selectedIds.add(voceria.titularId);
+      if (voceria.suplenteId) selectedIds.add(voceria.suplenteId);
+    });
+
+    return Array.from(selectedIds);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -79,13 +143,14 @@ const RegisterConsejoPage = () => {
     }));
   };
 
-  const handleSelectChange = (
+  const handleMultiSelectChange = (
     field: keyof ConsejoComunalFormData,
-    selected: SingleValue<OptionType>
+    selected: MultiValue<OptionType>
   ) => {
+    const ids = selected.map(option => option.value);
     setFormData(prev => ({
       ...prev,
-      [field]: selected ? selected.value : undefined,
+      [field]: ids,
     }));
   };
 
@@ -101,7 +166,6 @@ const RegisterConsejoPage = () => {
     });
   };
 
-  // Agregar vocería opcional seleccionada desde modal
   const agregarVoceriaOpcional = (tipoId: number) => {
     if (!voceriasOpcionalesSeleccionadas.includes(tipoId)) {
       setVoceriasOpcionalesSeleccionadas(prev => [...prev, tipoId]);
@@ -113,7 +177,6 @@ const RegisterConsejoPage = () => {
       value: nuevaPersona.id!,
       label: `${nuevaPersona.nombres} ${nuevaPersona.apellidos}`,
     };
-
     setVoceroOptionsState(prev => [nuevaOpcion, ...prev]);
     setModalOpen(false);
   };
@@ -128,22 +191,32 @@ const RegisterConsejoPage = () => {
       fechaVencimiento,
       poblacionVotante,
       parroquiaId,
-      comisionElectoralId,
-      contraloriaId,
-      finanzasId,
+      titularesComisionElectoralIds,
+      suplentesComisionElectoralIds,
+      titularesContraloriaIds,
+      suplentesContraloriaIds,
+      titularesFinanzasIds,
+      suplentesFinanzasIds
     } = formData;
 
-    if (!cc || !rif || !numeroCuenta || !fechaConstitucion || !fechaVencimiento || !poblacionVotante || !parroquiaId) {
+    if (!cc || !rif || !numeroCuenta || !fechaConstitucion || !fechaVencimiento || poblacionVotante == null || !parroquiaId) {
       toast.error("Por favor completa todos los campos obligatorios.");
       return;
     }
 
-    if (!comisionElectoralId || !contraloriaId || !finanzasId) {
-      toast.error("Debes asignar las vocerías principales obligatorias.");
-      return;
+    const voceriasPrincipales = [
+      { name: 'Comisión Electoral', titulares: titularesComisionElectoralIds, suplentes: suplentesComisionElectoralIds },
+      { name: 'Unidad de Contraloría Social', titulares: titularesContraloriaIds, suplentes: suplentesContraloriaIds },
+      { name: 'Unidad Administrativa y Financiera', titulares: titularesFinanzasIds, suplentes: suplentesFinanzasIds },
+    ];
+
+    for (const voceria of voceriasPrincipales) {
+      if (voceria.titulares.length !== 5 || voceria.suplentes.length !== 5) {
+        toast.error(`La ${voceria.name} debe tener exactamente 5 titulares y 5 suplentes.`);
+        return;
+      }
     }
 
-    // Validar vocerías ejecutivas obligatorias: que tengan titular
     for (const voceria of voceriasObligatorias) {
       const voceriaAsignada = voceriasEjecutivas.find(v => v.tipoVoceriaId === voceria.id);
       if (!voceriaAsignada || !voceriaAsignada.titularId) {
@@ -160,12 +233,15 @@ const RegisterConsejoPage = () => {
     registerConsejo(payload);
   };
 
+  const allCurrentSelectedIds = new Set(getAllSelectedVoceroIds());
+  const allAvailableOptions = voceroOptionsState.filter(option => !allCurrentSelectedIds.has(option.value));
+
   return (
     <div className="animate-fade-in opacity-0 mx-auto my-1 max-w-[95%] px-8 py-6 border border-sky-200 rounded-xl bg-[#f8f8f8]">
       <Tittle title="Registrar Consejo Comunal" />
 
       <form onSubmit={handleSubmit} className="pt-6 px-6 space-y-8">
-        {/* Sección 1 */}
+        {/* Información Básica */}
         <div>
           <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">Información Básica</h3>
           <div className="grid grid-cols-4 gap-4">
@@ -176,14 +252,17 @@ const RegisterConsejoPage = () => {
               <label className="block text-sm mb-1">Parroquia</label>
               <Select
                 options={parroquiaOptions}
-                onChange={selected => handleSelectChange("parroquiaId", selected)}
-                value={parroquiaOptions.find(p => p.value === formData.parroquiaId)}
+                onChange={selected => {
+                  const id = (selected as SingleValue<OptionType>)?.value;
+                  setFormData(prev => ({ ...prev, parroquiaId: id }));
+                }}
+                value={parroquiaOptions.find(p => p.value === formData.parroquiaId) || null}
               />
             </div>
           </div>
         </div>
 
-        {/* Sección 2 */}
+        {/* Fechas y Estadísticas */}
         <div>
           <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">Fechas y Estadísticas</h3>
           <div className="grid grid-cols-4 gap-4">
@@ -191,26 +270,22 @@ const RegisterConsejoPage = () => {
               type="date"
               id="fechaConstitucion"
               label="Fecha de Constitución"
-              value={
-                typeof formData.fechaConstitucion === "string"
-                  ? formData.fechaConstitucion
-                  : formData.fechaConstitucion instanceof Date
+              value={typeof formData.fechaConstitucion === "string"
+                ? formData.fechaConstitucion
+                : formData.fechaConstitucion instanceof Date
                   ? formData.fechaConstitucion.toISOString().slice(0, 10)
-                  : ""
-              }
+                  : ""}
               onChange={handleChange}
             />
             <FormInput
               type="date"
               id="fechaVencimiento"
               label="Fecha de Vencimiento"
-              value={
-                typeof formData.fechaVencimiento === "string"
-                  ? formData.fechaVencimiento
-                  : formData.fechaVencimiento instanceof Date
+              value={typeof formData.fechaVencimiento === "string"
+                ? formData.fechaVencimiento
+                : formData.fechaVencimiento instanceof Date
                   ? formData.fechaVencimiento.toISOString().slice(0, 10)
-                  : ""
-              }
+                  : ""}
               onChange={handleChange}
             />
             <FormInput
@@ -225,9 +300,7 @@ const RegisterConsejoPage = () => {
 
         {/* Vocerías Principales */}
         <div>
-          <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">
-            Vocerías Principales
-          </h3>
+          <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">Vocerías Principales</h3>
 
           <div className="absolute top-[400px] right-[60px] group">
             <Button title="+ Registrar nuevo vocero" onClick={() => setModalOpen(true)} type="button" />
@@ -238,48 +311,77 @@ const RegisterConsejoPage = () => {
 
           <div className="space-y-4">
             {[
-              { id: "comisionElectoralId", suplenteId: "suplenteComisionElectoralId", label: "Comisión Electoral" },
-              { id: "contraloriaId", suplenteId: "suplenteContraloriaId", label: "Unidad de Contraloría Social" },
-              { id: "finanzasId", suplenteId: "suplenteFinanzasId", label: "Unidad Administrativa y Financiera Comunitaria" },
-            ].map((voceria) => (
-              <div key={voceria.id} className="border p-4 rounded-md bg-white shadow-sm">
-                <p className="text-sky-900 font-bold mb-2">{voceria.label}</p>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm text-gray-700 block mb-1">Titular</label>
-                    <Select
-                      placeholder="Seleccionar Titular"
-                      options={voceroOptionsState}
-                      value={voceroOptionsState.find(v => v.value === formData[voceria.id as keyof typeof formData])}
-                      onChange={(selected) =>
-                        handleSelectChange(voceria.id as keyof typeof formData, selected)
-                      }
-                      isClearable
-                    />
+              { id: "titularesComisionElectoralIds", suplenteId: "suplentesComisionElectoralIds", label: "Comisión Electoral" },
+              { id: "titularesContraloriaIds", suplenteId: "suplentesContraloriaIds", label: "Unidad de Contraloría Social" },
+              { id: "titularesFinanzasIds", suplenteId: "suplentesFinanzasIds", label: "Unidad Administrativa y Financiera Comunitaria" },
+            ].map(voceria => {
+                const currentTitulares = formData[voceria.id as keyof ConsejoComunalFormData] as number[] || [];
+                const currentSuplentes = formData[voceria.suplenteId as keyof ConsejoComunalFormData] as number[] || [];
+                
+                const availableOptionsForTitular = allAvailableOptions.concat(
+                  currentTitulares.map(id => voceroOptionsState.find(opt => opt.value === id)!).filter(Boolean)
+                );
+                
+                const availableOptionsForSuplente = allAvailableOptions.concat(
+                  currentSuplentes.map(id => voceroOptionsState.find(opt => opt.value === id)!).filter(Boolean)
+                );
+                
+                return (
+                  <div key={voceria.id} className="border p-4 rounded-md bg-white shadow-sm">
+                    <p className="text-sky-900 font-bold mb-2">{voceria.label}</p>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-sm text-gray-700 block mb-1">Titular (5)</label>
+                        <Select
+                          placeholder="Seleccionar Titulares"
+                          options={availableOptionsForTitular}
+                          onChange={selected =>
+                            handleMultiSelectChange(voceria.id as keyof ConsejoComunalFormData, selected as MultiValue<OptionType>)
+                          }
+                          value={currentTitulares.map(id =>
+                            voceroOptionsState.find(option => option.value === id)!
+                          )}
+                          isMulti
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm text-gray-700 block mb-1">Suplente (5)</label>
+                        <Select
+                          placeholder="Seleccionar Suplentes"
+                          options={availableOptionsForSuplente}
+                          onChange={selected =>
+                            handleMultiSelectChange(voceria.suplenteId as keyof ConsejoComunalFormData, selected as MultiValue<OptionType>)
+                          }
+                          value={currentSuplentes.map(id =>
+                            voceroOptionsState.find(option => option.value === id)!
+                          )}
+                          isMulti
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <label className="text-sm text-gray-700 block mb-1">Suplente</label>
-                    <Select
-                      placeholder="Seleccionar Suplente"
-                      options={voceroOptionsState}
-                      value={voceroOptionsState.find(v => v.value === formData[voceria.suplenteId as keyof typeof formData])}
-                      onChange={(selected) =>
-                        handleSelectChange(voceria.suplenteId as keyof typeof formData, selected)
-                      }
-                      isClearable
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
+                );
+              })}
           </div>
         </div>
+
         {/* Vocerías Ejecutivas Obligatorias */}
         <div>
           <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">Vocerías Ejecutivas Obligatorias</h3>
           <div className="grid grid-cols-2 gap-4">
             {voceriasObligatorias.map(tipo => {
               const voceriaAsignada = voceriasEjecutivas.find(v => v.tipoVoceriaId === tipo.id);
+              const currentTitularId = voceriaAsignada?.titularId;
+              const currentSuplenteId = voceriaAsignada?.suplenteId;
+              
+              const availableOptionsForTitular = allAvailableOptions.concat(
+                currentTitularId ? [voceroOptionsState.find(opt => opt.value === currentTitularId)!] : []
+              ).filter(Boolean);
+
+              const availableOptionsForSuplente = allAvailableOptions.concat(
+                currentSuplenteId ? [voceroOptionsState.find(opt => opt.value === currentSuplenteId)!] : []
+              ).filter(Boolean);
+              
               return (
                 <div key={tipo.id} className="col-span-1 border p-3 rounded">
                   <p className="font-medium text-sm text-sky-800">
@@ -287,17 +389,17 @@ const RegisterConsejoPage = () => {
                   </p>
                   <Select
                     placeholder="Titular"
-                    options={voceroOptionsState}
-                    value={voceroOptionsState.find(v => v.value === voceriaAsignada?.titularId)}
-                    onChange={selected => updateVoceria(tipo.id, "titularId", selected?.value)}
+                    options={availableOptionsForTitular}
+                    value={voceroOptionsState.find(option => option.value === voceriaAsignada?.titularId) || null}
+                    onChange={selected => updateVoceria(tipo.id, "titularId", (selected as SingleValue<OptionType>)?.value)}
                     isClearable
                   />
                   <Select
                     className="mt-2"
                     placeholder="Suplente"
-                    options={voceroOptionsState}
-                    value={voceroOptionsState.find(v => v.value === voceriaAsignada?.suplenteId)}
-                    onChange={selected => updateVoceria(tipo.id, "suplenteId", selected?.value)}
+                    options={availableOptionsForSuplente}
+                    value={voceroOptionsState.find(option => option.value === voceriaAsignada?.suplenteId) || null}
+                    onChange={selected => updateVoceria(tipo.id, "suplenteId", (selected as SingleValue<OptionType>)?.value)}
                     isClearable
                   />
                 </div>
@@ -306,36 +408,46 @@ const RegisterConsejoPage = () => {
           </div>
         </div>
 
-        {/* Botón para abrir modal de vocerías opcionales */}
+        {/* Vocerías Opcionales */}
         <div className="mt-6 flex justify-end">
           <Button onClick={() => setModalVoceriaOpen(true)} title="Agregar Vocería Opcional" />
         </div>
 
-        {/* Vocerías Ejecutivas Opcionales Seleccionadas */}
         {voceriasOpcionalesSeleccionadas.length > 0 && (
           <div className="mt-8">
             <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">Vocerías Ejecutivas Opcionales</h3>
             <div className="grid grid-cols-2 gap-4">
               {voceriasOpcionales
-                .filter(v => voceriasOpcionalesSeleccionadas.includes(v.id))
+                .filter(tipo => voceriasOpcionalesSeleccionadas.includes(tipo.id))
                 .map(tipo => {
                   const voceriaAsignada = voceriasEjecutivas.find(v => v.tipoVoceriaId === tipo.id);
+                  const currentTitularId = voceriaAsignada?.titularId;
+                  const currentSuplenteId = voceriaAsignada?.suplenteId;
+                  
+                  const availableOptionsForTitular = allAvailableOptions.concat(
+                    currentTitularId ? [voceroOptionsState.find(opt => opt.value === currentTitularId)!] : []
+                  ).filter(Boolean);
+
+                  const availableOptionsForSuplente = allAvailableOptions.concat(
+                    currentSuplenteId ? [voceroOptionsState.find(opt => opt.value === currentSuplenteId)!] : []
+                  ).filter(Boolean);
+                  
                   return (
                     <div key={tipo.id} className="col-span-1 border p-3 rounded">
                       <p className="font-medium text-sm text-sky-800">{tipo.nombre}</p>
                       <Select
                         placeholder="Titular"
-                        options={voceroOptionsState}
-                        value={voceroOptionsState.find(v => v.value === voceriaAsignada?.titularId)}
-                        onChange={selected => updateVoceria(tipo.id, "titularId", selected?.value)}
+                        options={availableOptionsForTitular}
+                        value={voceroOptionsState.find(option => option.value === voceriaAsignada?.titularId) || null}
+                        onChange={selected => updateVoceria(tipo.id, "titularId", (selected as SingleValue<OptionType>)?.value)}
                         isClearable
                       />
                       <Select
                         className="mt-2"
                         placeholder="Suplente"
-                        options={voceroOptionsState}
-                        value={voceroOptionsState.find(v => v.value === voceriaAsignada?.suplenteId)}
-                        onChange={selected => updateVoceria(tipo.id, "suplenteId", selected?.value)}
+                        options={availableOptionsForSuplente}
+                        value={voceroOptionsState.find(option => option.value === voceriaAsignada?.suplenteId) || null}
+                        onChange={selected => updateVoceria(tipo.id, "suplenteId", (selected as SingleValue<OptionType>)?.value)}
                         isClearable
                       />
                     </div>
@@ -351,17 +463,17 @@ const RegisterConsejoPage = () => {
         </div>
       </form>
 
-      {/* Modal para registrar nueva persona */}
+      {/* Modal Persona */}
       <Modal open={isModalOpen} onClose={() => setModalOpen(false)} title="Registrar nueva Persona">
         <RegisterPersonaForm onSuccess={handleNuevaPersona} />
       </Modal>
 
-      {/* Modal para seleccionar vocería opcional */}
+      {/* Modal Vocería Opcional */}
       <AddVoceriaModal
         open={modalVoceriaOpen}
         onClose={() => setModalVoceriaOpen(false)}
-        onAddVoceria={(ids) => {
-          ids.forEach((id) => agregarVoceriaOpcional(id));
+        onAddVoceria={ids => {
+          ids.forEach(id => agregarVoceriaOpcional(id));
           setModalVoceriaOpen(false);
         }}
         voceriasOpcionales={voceriasOpcionales}

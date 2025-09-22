@@ -4,6 +4,7 @@ import Divider from "../../components/Divider";
 import Loading from "@/components/Loading";
 import Tittle from "@/components/Tittle";
 import { useTiposVoceria } from "@/hooks/useTiposVoceria";
+import DeleteButton from "@/components/DeleteButton";
 
 const nombresCategorias: Record<number, string> = {
   1: "Economía Productiva",
@@ -37,10 +38,12 @@ const Vocerias: React.FC = () => {
 
   return (
     <>
-      <Tittle title="Vocerías" />
+      <Tittle title="Comites" />
       <Divider />
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-x-0 gap-y-6 pl-6 mt-6">
+      <div className="pt-3 ml-[1470px]">
+        <DeleteButton onClick={()=>{}} isPending={false} label="Eliminar Comite" /> 
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-x-0 gap-y-6 pl-6 mt-2">
         {voceriasPorCategoria.map(({ categoriaId, vocerias }) => (
           <div
             key={categoriaId}
