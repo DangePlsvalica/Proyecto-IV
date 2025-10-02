@@ -51,9 +51,9 @@ const RegisterConsejoPage = () => {
           assignedIds.add(v.id);
         }
       });
-      consejo.titularesFinanzas.forEach((v) => {
+      consejo.titularesFinanzas?.forEach((v) => {
         if (v.id !== undefined) {
-          assignedIds.add(v.id);
+          assignedIds.add(Number(v.id));
         }
       });
       consejo.suplentesFinanzas.forEach((v) => {

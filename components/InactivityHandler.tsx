@@ -1,7 +1,8 @@
 'use client'
-import Button from "@/components/Button";
-import { useEffect, useRef, useState } from 'react'
+// Importamos 'useCallback'
+import { useEffect, useRef, useState, useCallback } from 'react' 
 import { signOut } from 'next-auth/react'
+import Button from "@/components/Button";
 
 const MAX_MINUTES = 30
 const WARNING_MINUTES = 1
@@ -12,6 +13,7 @@ const InactivityHandler = () => {
   const [showWarning, setShowWarning] = useState(false)
   const [isWarningPhase, setIsWarningPhase] = useState(false)
 
+  // Esta función debe ser definida para que useCallback pueda usarla
   const startTimers = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
     if (warningTimeoutRef.current) clearTimeout(warningTimeoutRef.current)
@@ -27,13 +29,15 @@ const InactivityHandler = () => {
       setIsWarningPhase(true)
     }, (MAX_MINUTES - WARNING_MINUTES) * 60 * 1000)
   }
-
-  // Solo se reinicia si NO está en la fase de advertencia
-  const handleUserActivity = () => {
+  
+  // Usamos useCallback para memoizar la función y que solo cambie si cambia 'isWarningPhase'.
+  // Al incluirla en el array de dependencias del useEffect, la advertencia desaparece.
+  const handleUserActivity = useCallback(() => {
+    // Solo se reinicia si NO está en la fase de advertencia
     if (!isWarningPhase) {
       startTimers()
     }
-  }
+  }, [isWarningPhase]) // <-- Incluimos isWarningPhase como dependencia de useCallback
 
   // El botón sí reinicia todo
   const handleContinueSession = () => {
@@ -44,6 +48,8 @@ const InactivityHandler = () => {
 
   useEffect(() => {
     const events = ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart']
+    
+    // Aquí es donde se usa handleUserActivity, la cual ahora es una dependencia segura
     events.forEach((event) => window.addEventListener(event, handleUserActivity))
     startTimers()
 
@@ -52,7 +58,9 @@ const InactivityHandler = () => {
       if (warningTimeoutRef.current) clearTimeout(warningTimeoutRef.current)
       events.forEach((event) => window.removeEventListener(event, handleUserActivity))
     }
-  }, [])
+  // Añadimos handleUserActivity al array de dependencias. 
+  // Esto ahora es seguro gracias a useCallback.
+  }, [handleUserActivity]) 
 
   return (
     showWarning && (

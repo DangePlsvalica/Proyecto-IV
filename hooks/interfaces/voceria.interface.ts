@@ -1,20 +1,24 @@
-export interface Proyecto {
-    id?: number;
-    nombre: string;
-    status: string;
-    fechaCreacion: Date;
-    ultimaActividad: Date;
-    categoria: string;
-    comuna: string;
-  }
 
-  export interface ProyectoFormData {
-    id?: string;
+export type Persona = {
+    nombres?: string;
+    apellidos?: string;
+    ci?: string;
+    telefono?: string;
+};
+
+export type VoceroDataType = Persona | Persona[] | null | undefined;
+
+export interface TipoVoceriaData {
+    id: number | string | null;
     nombre: string;
-    status: string;
-    fechaCreacion: string;
-    ultimaActividad: string;
-    categoria: string;
-    comuna: string;
-  }
-  
+}
+
+export interface Voceria {
+  id: number; 
+  ccId: string;
+  tipoVoceriaId: number;
+  tipoVoceria: TipoVoceriaData;
+  titular: VoceroDataType;
+  suplente: VoceroDataType; 
+}
+ 

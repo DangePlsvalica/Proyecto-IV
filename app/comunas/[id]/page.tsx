@@ -8,26 +8,56 @@ import { notFound } from "next/navigation";
 import DeleteButton from "@/components/DeleteButton";
 import useGenerarActaPDF from "@/hooks/useGenerarActaPDF";
 import { Persona } from '@/hooks/interfaces/comuna.interface';
-import { useMemo } from "react";
+import { useMemo } from "react"; // Línea 14
 import { ConsejoComunal } from "@/hooks/interfaces/consejo.comunal.interface";
 import VoceroCard from "@/components/VoceroCard";
 
 const ViewComunaPage = () => {
+  // --- PASO 1: LLAMAR A TODOS LOS HOOKS PRIMERO ---
+  // Los Hooks deben estar en el nivel superior y ser llamados incondicionalmente.
   const { id } = useParams();
   const { data: comunasData, isLoading } = useComunas();
   const generarPDF = useGenerarActaPDF();
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
+  // ----------------------------------------------------------------------
+  // Ahora definimos las variables necesarias para el useMemo, incluso si están vacías
+  // o si la data aún no ha cargado.
   const comuna = comunasData?.find((c) => c.id === id);
 
-  if (!comuna) {
-    notFound(); 
-  }
-
+  // La dependencia principal del useMemo es 'comuna', que puede ser 'undefined' si no se encuentra.
+  // La lógica de useMemo debe manejar el caso de que 'comuna' sea undefined/null.
   const organizedMembers = useMemo(() => {
+    // Si 'comuna' es null/undefined, devolvemos un objeto con listas vacías 
+    // para evitar errores de acceso (ej. comuna.consejosComunales)
+    if (!comuna) {
+      return {
+        electoralTitulares: [],
+        electoralSuplentes: [],
+        contraloriaTitulares: [],
+        contraloriaSuplentes: [],
+        finanzasTitulares: [],
+        finanzasSuplentes: [],
+        bancoDeLaComuna: [],
+        parlamentoTitulares: [],
+        parlamentoSuplentes: [],
+        justiciaPazTitulares: [],
+        justiciaPazSuplentes: [],
+        planificacionTitulares: [],
+        planificacionSuplentes: [],
+        economiaTitulares: [],
+        economiaSuplentes: [],
+        felicidadSocialTitulares: [],
+        felicidadSocialSuplentes: [],
+        serviciosPublicosTitulares: [],
+        serviciosPublicosSuplentes: [],
+        seguridadPazTitulares: [],
+        seguridadPazSuplentes: [],
+        juventudTitulares: [],
+        juventudSuplentes: [],
+      };
+    }
+
+    // --- Lógica de organización de miembros original (dentro del useMemo) ---
     const electoralTitulares: Persona[] = [];
     const electoralSuplentes: Persona[] = [];
     const contraloriaTitulares: Persona[] = [];
@@ -142,7 +172,21 @@ const ViewComunaPage = () => {
       juventudTitulares,
       juventudSuplentes,
     };
-  }, [comuna]);
+  }, [comuna]); // <-- La dependencia 'comuna' ahora es segura, ya que está definida
+
+  // --- PASO 2: LÓGICA CONDICIONAL Y RETORNOS ANTICIPADOS ---
+
+  // Este retorno ahora es seguro porque se llama *después* de todos los Hooks.
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  // Este chequeo también es seguro.
+  if (!comuna) {
+    notFound();
+  }
+  // ----------------------------------------------------------------------
+
 
   return (
     <div className="mx-auto my-1 max-w-[95%] px-7 py-8 border border-sky-200 rounded-xl bg-[#f8f8f8]">
@@ -156,11 +200,12 @@ const ViewComunaPage = () => {
           Información Básica
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-          <FieldDisplay label="Nombre" value={comuna.nombre} />
-          <FieldDisplay label="Código Situr" value={comuna.codigo} />
-          <FieldDisplay label="RIF" value={comuna.rif} />
-          <FieldDisplay label="Cuenta Bancaria" value={comuna.cuentaBancaria} />
-          <FieldDisplay label="Población Votante" value={comuna.poblacionVotante?.toLocaleString()} />
+          {/* Aquí comuna ya está garantizado que existe */}
+          <FieldDisplay label="Nombre" value={comuna!.nombre} /> 
+          <FieldDisplay label="Código Situr" value={comuna!.codigo} />
+          <FieldDisplay label="RIF" value={comuna!.rif} />
+          <FieldDisplay label="Cuenta Bancaria" value={comuna!.cuentaBancaria} />
+          <FieldDisplay label="Población Votante" value={comuna!.poblacionVotante?.toLocaleString()} />
         </div>
       </div>
       
@@ -170,13 +215,13 @@ const ViewComunaPage = () => {
           Ubicación Geográfica
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-          <FieldDisplay label="Municipio" value={comuna.parroquiaRelation?.municipio} />
-          <FieldDisplay label="Parroquia" value={comuna.parroquiaRelation?.nombre} />
-          <FieldDisplay label="Dirección" value={comuna.direccion} />
-          <FieldDisplay label="Lindero Norte" value={comuna.linderoNorte} />
-          <FieldDisplay label="Lindero Sur" value={comuna.linderoSur} />
-          <FieldDisplay label="Lindero Este" value={comuna.linderoEste} />
-          <FieldDisplay label="Lindero Oeste" value={comuna.linderoOeste} />
+          <FieldDisplay label="Municipio" value={comuna!.parroquiaRelation?.municipio} />
+          <FieldDisplay label="Parroquia" value={comuna!.parroquiaRelation?.nombre} />
+          <FieldDisplay label="Dirección" value={comuna!.direccion} />
+          <FieldDisplay label="Lindero Norte" value={comuna!.linderoNorte} />
+          <FieldDisplay label="Lindero Sur" value={comuna!.linderoSur} />
+          <FieldDisplay label="Lindero Este" value={comuna!.linderoEste} />
+          <FieldDisplay label="Lindero Oeste" value={comuna!.linderoOeste} />
         </div>
       </div>
 
@@ -186,10 +231,10 @@ const ViewComunaPage = () => {
           Datos Legales y Registro
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-          <FieldDisplay label="Fecha de Registro" value={comuna.fechaRegistro ? new Date(comuna.fechaRegistro).toLocaleDateString() : ""} />
-          <FieldDisplay label="N° Comisión Promotora" value={comuna.numComisionPromotora} />
-          <FieldDisplay label="Fecha Comisión Promotora" value={comuna.fechaComisionPromotora ? new Date(comuna.fechaComisionPromotora).toLocaleDateString() : ""} />
-          <FieldDisplay label="Fecha Última Elección" value={comuna.fechaUltimaEleccion ? new Date(comuna.fechaUltimaEleccion).toLocaleDateString() : ""} />
+          <FieldDisplay label="Fecha de Registro" value={comuna!.fechaRegistro ? new Date(comuna!.fechaRegistro).toLocaleDateString() : ""} />
+          <FieldDisplay label="N° Comisión Promotora" value={comuna!.numComisionPromotora} />
+          <FieldDisplay label="Fecha Comisión Promotora" value={comuna!.fechaComisionPromotora ? new Date(comuna!.fechaComisionPromotora).toLocaleDateString() : ""} />
+          <FieldDisplay label="Fecha Última Elección" value={comuna!.fechaUltimaEleccion ? new Date(comuna!.fechaUltimaEleccion).toLocaleDateString() : ""} />
         </div>
       </div>
 
@@ -201,12 +246,12 @@ const ViewComunaPage = () => {
         <div className="grid grid-cols-1 gap-4">
           <div>
             <label className="block text-sm text-sky-950 font-medium mb-2">
-              Consejos Comunales que integran la comuna ({comuna.cantidadConsejosComunales})
+              Consejos Comunales que integran la comuna ({comuna!.cantidadConsejosComunales})
             </label>
             <div className="p-3 bg-gray-100 rounded">
-              {comuna.consejosComunales?.length > 0 ? (
+              {comuna!.consejosComunales?.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
-                  {comuna.consejosComunales.map((cc: ConsejoComunal) => (
+                  {comuna!.consejosComunales.map((cc: ConsejoComunal) => (
                     <div key={cc.id} className="bg-white rounded px-3 py-2 shadow-sm border border-gray-200">
                       <div className="font-medium text-sky-950">{cc.cc}</div>
                     </div>
@@ -303,7 +348,7 @@ const ViewComunaPage = () => {
       {/* Botones de Acción */}
       <div className="flex justify-center pt-6 gap-4">
         <Button title="Editar Comuna" href={`/comunas/${id}/edit`} />
-        <Button title="Imprimir Carta Fundacional" onClick={() => generarPDF(comuna)} />
+        <Button title="Imprimir Carta Fundacional" onClick={() => generarPDF(comuna!)} />
         <Button title="Acta De Instalacion De Gobierno" href={`/comunas/${id}/edit`} />
         <DeleteButton onClick={()=>{}} isPending={false} label="Eliminar Comuna" />
       </div>

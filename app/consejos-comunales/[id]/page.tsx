@@ -7,7 +7,6 @@ import DeleteButton from "@/components/DeleteButton";
 import Loading from "@/components/Loading";
 import { notFound } from "next/navigation";
 import VoceroCard from "@/components/VoceroCard";
-import { Key } from "react";
 
 const ViewConsejoPage = () => {
   const { id } = useParams();
@@ -73,7 +72,7 @@ const ViewConsejoPage = () => {
         <div className="mt-10">
           <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">Vocerías Ejecutivas</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
-            {consejo.vocerias.map((voceria: { tipoVoceria: { id: Key | null | undefined; nombre: string; }; titular: { nombres?: string; apellidos?: string; ci?: string; telefono?: string; } | { nombres?: string; apellidos?: string; ci?: string; telefono?: string; }[] | undefined; suplente: { nombres?: string; apellidos?: string; ci?: string; telefono?: string; } | { nombres?: string; apellidos?: string; ci?: string; telefono?: string; }[] | undefined; }) => (
+            {consejo.vocerias.map((voceria: any) => (
               <VoceroCard
                 key={voceria.tipoVoceria.id}
                 titulo={voceria.tipoVoceria.nombre}
