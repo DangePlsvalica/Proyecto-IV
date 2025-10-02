@@ -8,6 +8,7 @@ export async function GET() {
     const personas = await prisma.persona.findMany({
       include: {
         vehiculo: true,   // Vehículo asignado
+        consejoTitularFinanzas: true,
       },
     });
 

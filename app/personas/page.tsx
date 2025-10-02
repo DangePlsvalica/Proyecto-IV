@@ -15,8 +15,7 @@ const Personas: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const { data: personasData, isLoading } = usePersonas();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Filtra datos según el término de búsqueda
+console.log(personasData)
   const filteredData = personasData
     ? personasData.filter((persona) =>
         Object.values(persona)
@@ -26,8 +25,8 @@ const Personas: React.FC = () => {
       )
     : [];
 
-const headers = ["Nombres", "Apellidos", "C.I", "Teléfono", "Consejo Comunal", "Vehículo Asignado"
-];
+  const headers = ["Nombres", "Apellidos", "C.I", "Teléfono", "Consejo Comunal", "Vehículo Asignado"
+  ];
 
   const tdClassName = "border-b border-r py-2 border-sky-950";
 
@@ -38,7 +37,7 @@ const renderRow = (persona: Persona) => (
     <td className={tdClassName}>{persona.ci || "—"}</td>
     <td className={tdClassName}>{persona.telefono}</td>
     <td className={tdClassName}>
-      {persona.cc?.cc || "No asignado"}
+      {persona.consejoTitularFinanzas?.nombre || "No asignado"}
     </td>
     <td className={tdClassName}>
       {persona.vehiculo?.placa || "No asignado"}

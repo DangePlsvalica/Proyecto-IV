@@ -12,7 +12,6 @@ const ViewProyectoPage = () => {
 
   if (isLoading) return <Loading />;
 
-  // Convertimos el id de params a número
   const proyecto = proyectosData?.find((p) => p.id === id);
   if (!proyecto) notFound();
 
@@ -28,11 +27,11 @@ const ViewProyectoPage = () => {
           Información Básica
         </h3>
         <div className="grid grid-cols-4 gap-4">
-          <FieldDisplay label="Consulta" value={proyecto.consulta} />
+          <FieldDisplay label="Consulta" value={proyecto.consulta?.nombre} />
           <FieldDisplay label="Nombre del Proyecto" value={proyecto.nombreProyecto} />
           <FieldDisplay label="Código del Proyecto" value={proyecto.codigoProyecto} />
           <FieldDisplay label="Estatus" value={proyecto.estatusProyecto} />
-          <FieldDisplay label="Categoría" value={proyecto.categoria} />
+          <FieldDisplay label="Categoría" value={proyecto.categoria?.nombre} />
         </div>
       </div>
 
@@ -51,6 +50,27 @@ const ViewProyectoPage = () => {
           <FieldDisplay label="Código SITUR Consejo Comunal" value={proyecto.consejoComunal?.situr} />
         </div>
       </div>
+      
+      {/* Indicadores de Beneficiados */}
+      <div className="mt-10">
+        <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">
+          Indicadores
+        </h3>
+        <div className="grid grid-cols-4 gap-4">
+          <FieldDisplay label="Familias Beneficiadas" value={proyecto.familiasBeneficiadas} />
+          <FieldDisplay label="Personas Beneficiadas" value={proyecto.personasBeneficiadas} />
+          <FieldDisplay label="Comunidades Beneficiadas" value={proyecto.comunidadesBeneficiadas} />
+        </div>
+      </div>
+
+      {/* Observación */}
+      {proyecto.observacion && (
+        <div className="mt-10">0
+          <div className="grid grid-cols-1">
+            <FieldDisplay value={proyecto.observacion} label={"Observación"} />
+          </div>
+        </div>
+      )}
 
       {/* Acciones */}
       <div className="flex justify-center pt-6 gap-4">

@@ -69,9 +69,8 @@ const Comunas: React.FC = () => {
     );
   };
 
-  const handleExportPDF = () => {
-    const exportData = selectedRows.length > 0 ? selectedRows : filteredData;
-    const formattedData = exportData.map((comuna) => [
+  const formatComunaDataForExport = (data: any[]) => {
+    return data.map((comuna) => [
       comuna.codigo || "",
       comuna.numComisionPromotora || "",
       comuna.fechaComisionPromotora ? new Date(comuna.fechaComisionPromotora).toLocaleDateString() : "",
@@ -79,11 +78,6 @@ const Comunas: React.FC = () => {
       comuna.cuentaBancaria || "",
       comuna.fechaRegistro ? new Date(comuna.fechaRegistro).toLocaleDateString() : "",
       comuna.nombre || "",
-      comuna.direccion || "",
-      comuna.linderoNorte || "",
-      comuna.linderoSur || "",
-      comuna.linderoEste || "",
-      comuna.linderoOeste || "",
       comuna.consejosComunales 
       ? comuna.consejosComunales.map((cc: { cc: any; }, index: number) => `${index + 1}. ${cc.cc}`).join('\n')
       : "",
@@ -91,6 +85,11 @@ const Comunas: React.FC = () => {
       comuna.parroquiaRelation?.municipio || "",
       comuna.parroquiaRelation?.nombre || "", 
     ]);
+  };
+
+  const handleExportPDF = () => {
+    const exportData = selectedRows.length > 0 ? selectedRows : filteredData;
+    const formattedData = formatComunaDataForExport(exportData);
 
     exportToPDF({
       headers,
@@ -99,40 +98,18 @@ const Comunas: React.FC = () => {
       title: "Listado de Comunas",
     });
   };
+
   const handleExportExcel = () => {
     const exportData = selectedRows.length > 0 ? selectedRows : filteredData;
+    const formattedData = formatComunaDataForExport(exportData);
 
-      const formattedData = exportData.map((comuna) => [
-        comuna.codigo || "",
-        comuna.numComisionPromotora || "",
-        comuna.fechaComisionPromotora
-          ? new Date(comuna.fechaComisionPromotora).toLocaleDateString()
-          : "",
-        comuna.rif || "",
-        comuna.cuentaBancaria || "",
-        comuna.fechaRegistro
-          ? new Date(comuna.fechaRegistro).toLocaleDateString()
-          : "",
-        comuna.nombre || "",
-        comuna.consejosComunales
-          ? comuna.consejosComunales
-              .map((cc: { cc: any }, index: number) => `${index + 1}. ${cc.cc}`)
-              .join("\n")
-          : "",
-        comuna.fechaUltimaEleccion
-          ? new Date(comuna.fechaUltimaEleccion).toLocaleDateString()
-          : "",
-        comuna.parroquiaRelation?.municipio || "",
-        comuna.parroquiaRelation?.nombre || "",
-      ]);
-
-      exportToExcel({
-        headers,
-        data: formattedData,
-        filename: "comunas.xlsx",
-        sheetName: "Comunas",
-      });
-    }
+    exportToExcel({
+      headers,
+      data: formattedData,
+      filename: "comunas.xlsx",
+      sheetName: "Comunas",
+    });
+  };
 
     if (isLoading) {
       return ( <Loading /> );

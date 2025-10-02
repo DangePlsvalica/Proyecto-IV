@@ -56,7 +56,6 @@ export async function POST(request: Request) {
       voceriasEjecutivas,
     } = body;
 
-    // 1. Validaciones básicas (se mantiene igual)
     if (
       !cc ||
       !rif ||
@@ -71,7 +70,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // 2. Creación del Consejo Comunal (sin las relaciones)
     const nuevoConsejo = await prisma.consejoComunal.create({
       data: {
         cc,
@@ -85,8 +83,6 @@ export async function POST(request: Request) {
       },
     });
 
-    // 3. Conexión de las relaciones de personas (ahora como una actualización)
-    // Usamos el ID del nuevo consejo para vincular las personas
     await prisma.consejoComunal.update({
       where: { id: nuevoConsejo.id },
       data: {
@@ -111,7 +107,6 @@ export async function POST(request: Request) {
       },
     });
     
-    // 4. Creación de vocerías ejecutivas (se mantiene igual)
     if (Array.isArray(voceriasEjecutivas)) {
       for (const voc of voceriasEjecutivas) {
         await prisma.voceria.create({

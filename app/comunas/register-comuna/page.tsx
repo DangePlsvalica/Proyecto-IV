@@ -63,12 +63,10 @@ const RegisterComunaPage = () => {
     consejosComunalesData
       .filter(cc => selectedCcIds.includes(cc.id))
       .forEach(cc => {
-        // Usa `titularesFinanzas` según tu modelo de Prisma
         cc.titularesFinanzas?.forEach((persona: Persona) => {
           if (!uniqueVoceros.has(persona.id)) {
             uniqueVoceros.set(persona.id, {
               value: persona.id,
-              // Utiliza los nombres de campo de tu interfaz Persona
               label: `${persona.nombres} ${persona.apellidos} - CI: ${persona.ci}`,
             });
           }

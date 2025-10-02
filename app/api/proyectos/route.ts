@@ -14,6 +14,8 @@ export async function GET() {
             comuna: true,
           },
         },
+        consulta: true,
+        categoria: true,
       },
     });
     return NextResponse.json(proyectos);
@@ -31,24 +33,15 @@ export async function POST(req: Request) {
   try {
     const data = await req.json();
     const nuevoProyecto = await prisma.proyecto.create({
-      data: {
-        nombreProyecto: data.nombreProyecto,
-        codigoProyecto: data.codigoProyecto,
-        consulta: data.consulta,
-        estatusProyecto: data.estatusProyecto,
-        circuito: data.circuito,
-        categoria: data.categoria,
-        observacion: data.observacion,
-        consejoComunalId: data.consejoComunalId,
-      },
+      data: { ...data },
     });
     console.log("Nuevo Proyecto creado:", nuevoProyecto);
     return NextResponse.json(nuevoProyecto, { status: 201 });
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Error creando Proyecto:", error.message);
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-    return NextResponse.json({ error: "Error creando Proyecto" }, { status: 500 });
+  if (error instanceof Error) {
+    console.error("Error creando Proyecto:", error.message);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+  return NextResponse.json({ error: "Error creando Proyecto" }, { status: 500 });
   }
 }

@@ -7,8 +7,8 @@ export interface Persona {
     apellidos: string;
     ci: string;
     telefono:string;
-    cc?: ConsejoComunal | null;     // Relación: vocero del consejo comunal
-    vehiculo?: Vehiculo | null;     // Relación: vehículo asignado
+    consejoTitularFinanzas?: any| null;     
+    vehiculo?: Vehiculo | null;    
   }
 
   export interface PersonaFormData {

@@ -1,4 +1,5 @@
 import { Persona } from "./comuna.interface";
+import { Comuna } from "./comuna.interface";
 
 export interface ConsejoComunal {
   id: string;
@@ -15,7 +16,7 @@ export interface ConsejoComunal {
   fechaConstitucion: Date;
   fechaVencimiento: Date;
   poblacionVotante: number;
-  comunaId: string | null;
+  comuna: Comuna;
 
   titularesComisionElectoral: {
     id: number;
@@ -68,8 +69,8 @@ export interface ConsejoComunal {
       cedula: string;
     };
   }[];
-  proyectos: any[]; // Define esta interfaz si es necesario
-  vehiculos: any[]; // Define esta interfaz si es necesario
+  proyectos: any[];
+  vehiculos: any[]; 
 }
 
 export interface ConsejoComunalFormData {
@@ -81,16 +82,12 @@ export interface ConsejoComunalFormData {
   poblacionVotante: number;
   parroquiaId?: number;
   comunaId?: string;
-
-  // Vocerías principales (cambiadas a arreglos de números)
   titularesComisionElectoralIds: number[];
   suplentesComisionElectoralIds: number[];
   titularesContraloriaIds: number[];
   suplentesContraloriaIds: number[];
   titularesFinanzasIds: number[];
   suplentesFinanzasIds: number[];
-
-  // Vocerías ejecutivas (dinámicas)
   voceriasEjecutivas?: {
     tipoVoceriaId: number;
     titularId?: number;

@@ -8,18 +8,31 @@ import Button from "@/components/Button";
 import useProyectos from "@/hooks/useProyectos";
 import { Proyecto } from "@/hooks/interfaces/proyecto.interface";
 import Loading from "@/components/Loading";
-import Tittle from '@/components/Tittle'
+import Tittle from '@/components/Tittle';
 import exportToPDF from "@/utils/exportToPdf";
+import exportToExcel from "@/utils/exportToExcel";
+import Modal from "@/components/Modal";
+import RegisterConsultaForm from "@/components/RegisterConsultaForm";
+import useConsultas from "@/hooks/useConsultas";
+import { useQueryClient } from "@tanstack/react-query";
 
 const GestorProyectos: React.FC = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [consultaFilter, setConsultaFilter] = useState<number | null>(null);
+  const [consultaFilter, setConsultaFilter] = useState<string | null>(null);
   const [selectedRows, setSelectedRows] = useState<Proyecto[]>([]);
+  const [isConsultaModalOpen, setIsConsultaModalOpen] = useState(false);
 
   const { data: proyectosData, isLoading } = useProyectos();
+  const { data: consultasData } = useConsultas();
 
-  // Filtro por búsqueda y por consulta
+  const handleConsultaSuccess = () => {
+    setIsConsultaModalOpen(false);
+    queryClient.invalidateQueries({ queryKey: ["consultas"] });
+  };
+
   const filteredData = proyectosData
     ? proyectosData.filter((proyecto) => {
         const matchesSearch = Object.values(proyecto)
@@ -28,67 +41,75 @@ const GestorProyectos: React.FC = () => {
           .includes(searchTerm.toLowerCase());
 
         const matchesConsulta =
-          consultaFilter === null || proyecto.consulta === consultaFilter;
+          consultaFilter === null || proyecto.consultaId === consultaFilter;
 
         return matchesSearch && matchesConsulta;
       })
     : [];
 
   const headers = [
-    "Estado",
     "Municipio",
     "Parroquia",
+    "Consejo Comunal",
+    "Comuna",
     "Consulta",
     "Nombre del Proyecto",
     "Código del Proyecto",
     "Estatus",
-    "Comuna",
-    "Código Situr de la comuna",
     "Categoría",
-    "Consejo Comunal",
   ];
 
   const tdClassName = "border-b border-r py-2 border-sky-950";
 
   const renderRow = (proyecto: Proyecto) => (
     <>
-      <td className={tdClassName}>{proyecto.consejoComunal?.parroquiaRelation?.estado}</td>
       <td className={tdClassName}>{proyecto.consejoComunal?.parroquiaRelation?.municipio}</td>
       <td className={tdClassName}>{proyecto.consejoComunal?.parroquiaRelation?.nombre}</td>
-      <td className={tdClassName}>{proyecto.consulta}</td>
+      <td className={tdClassName}>{proyecto.consejoComunal?.cc}</td>
+      <td className={tdClassName}>{proyecto.consejoComunal?.comuna?.nombre}</td>
+      <td className={tdClassName}>{proyecto.consulta?.nombre}</td>
       <td className={tdClassName}>{proyecto.nombreProyecto}</td>
       <td className={tdClassName}>{proyecto.codigoProyecto}</td>
-      <td className={tdClassName}>{proyecto.estatusProyecto}</td>
-      <td className={tdClassName}>{proyecto.circuito}</td>
-      <td className={tdClassName}>{proyecto.consejoComunal?.comuna?.codigo}</td>
-      <td className={tdClassName}>{proyecto.categoria}</td>
-      <td className={tdClassName}>{proyecto.consejoComunal?.cc}</td>
+      <td className={tdClassName}>{proyecto.estatusProyecto}</td>     
+      <td className={tdClassName}>{proyecto.categoria?.nombre}</td>
     </>
   );
 
-  // Exportación a PDF
-  const handleExportPDF = () => {
-    const exportData = selectedRows.length > 0 ? selectedRows : filteredData;
-
-    const formattedData = exportData.map((proyecto) => [
-      proyecto.consejoComunal?.parroquiaRelation?.estado || "",
+  const formatProyectoDataForExport = (data: Proyecto[]) => {
+    return data.map((proyecto) => [
       proyecto.consejoComunal?.parroquiaRelation?.municipio || "",
       proyecto.consejoComunal?.parroquiaRelation?.nombre || "",
-      proyecto.consulta || "",
+      proyecto.consejoComunal?.cc || "",
+      proyecto.consejoComunal?.comuna?.nombre || "",
+      proyecto.consulta?.nombre || "",
       proyecto.nombreProyecto || "",
       proyecto.codigoProyecto || "",
       proyecto.estatusProyecto || "",
-      proyecto.circuito || "",
-      proyecto.consejoComunal?.comuna?.codigo || "",
-      proyecto.categoria || "",
-      proyecto.consejoComunal?.cc || "",
+      proyecto.categoria?.nombre || "",
     ]);
+  };
+
+  const handleExportPDF = () => {
+    const exportData = selectedRows.length > 0 ? selectedRows : filteredData;
+    const formattedData = formatProyectoDataForExport(exportData);
 
     exportToPDF({
       headers,
       data: formattedData,
       filename: "proyectos.pdf",
       title: "Listado de Proyectos",
+    });
+  };
+
+  const handleExportExcel = () => {
+    const exportData = selectedRows.length > 0 ? selectedRows : filteredData;
+    const formattedData = formatProyectoDataForExport(exportData);
+
+    exportToExcel({
+      headers,
+      data: formattedData,
+      filename: "proyectos.xlsx",
+      sheetName: "Proyectos",
     });
   };
 
@@ -100,18 +121,22 @@ const GestorProyectos: React.FC = () => {
     <>
       <Tittle title={"Proyectos"} />
       <Divider />
-      <div className="animate-fade-in opacity-0 flex justify-between px-6 py-4">
+      <div className="animate-fade-in opacity-0 flex justify-between px-4 py-4">
         <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        <div className="flex gap-4">
+        <div className="flex gap-2">
           <Button
             onClick={handleExportPDF}
             title="Exportar a PDF"
-            disabled={filteredData.length === 0}
+            disabled={selectedRows.length === 0}
           />
           <Button
-            onClick={handleExportPDF}
+            onClick={handleExportExcel}
             title="Exportar a Excel"
-            disabled={true}
+            disabled={selectedRows.length === 0}
+          />
+          <Button
+            onClick={() => setIsConsultaModalOpen(true)}
+            title={"Crear nueva consulta"}
           />
           <Button
             onClick={() => router.push("/gestor-de-proyectos/register-proyecto")}
@@ -120,19 +145,16 @@ const GestorProyectos: React.FC = () => {
         </div>
       </div>
       <div className="px-6 pb-4 flex gap-4">
-        {["Primera", "Segunda", "Tercera", "Cuarta", "Quinta"].map((nombre, index) => {
-          const num = index + 1;
-          return (
-            <Button
-              key={num}
-              className={`text-gray-950  hover:bg-sky-950 ${
-                consultaFilter === num ? "bg-slate-800 text-slate-100" : ""
-              }`}
-              onClick={() => setConsultaFilter(consultaFilter === num ? null : num)}
-              title={`${nombre} Consulta`}
-            />
-          );
-        })}
+        {consultasData?.map((consulta) => (
+          <Button
+            key={consulta.id}
+            className={`text-gray-950 hover:bg-sky-950 ${
+              consultaFilter === consulta.id ? "bg-slate-800 text-slate-100" : ""
+            }`}
+            onClick={() => setConsultaFilter(consultaFilter === consulta.id ? null : consulta.id)}
+            title={consulta.nombre}
+          />
+        ))}
       </div>
       <Table
         headers={headers}
@@ -143,6 +165,13 @@ const GestorProyectos: React.FC = () => {
         onSelectionChange={(rows) => setSelectedRows(rows)}
         onRowClick={(proyecto) => router.push(`/gestor-de-proyectos/${proyecto.id}`)}
       />
+      <Modal
+        open={isConsultaModalOpen}
+        onClose={() => setIsConsultaModalOpen(false)}
+        title="Registrar nueva Consulta"
+      >
+        <RegisterConsultaForm onSuccess={handleConsultaSuccess} />
+      </Modal>
     </>
   );
 };

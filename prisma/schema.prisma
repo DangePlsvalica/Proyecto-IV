@@ -141,17 +141,46 @@ model Persona {
   comunaId                          String?
 }
 
+// Modelos para las nuevas tablas de consulta y categoría
+model Consulta {
+  id        String      @id @default(uuid())
+  nombre    String
+  proyectos Proyecto[]
+}
+
+model Categoria {
+  id        String      @id @default(uuid())
+  nombre    String
+  proyectos Proyecto[]
+}
+
+// Define el Enum para el impacto
+enum TipoImpacto {
+  ALTO_RENDIMIENTO
+  NORMAL
+  BAJO_IMPACTO
+}
+
 model Proyecto {
-  id                  String          @id @default(uuid())
-  nombreProyecto      String
-  codigoProyecto      String          @unique
-  estatusProyecto     String
-  circuito            String
-  consulta            Int  
-  categoria           String
-  observacion         String?
-  consejoComunalId    String
-  consejoComunal      ConsejoComunal  @relation(fields: [consejoComunalId], references: [id])
+  id                    String      @id @default(uuid())
+  nombreProyecto        String
+  codigoProyecto        String      @unique
+  estatusProyecto       String
+  observacion           String?
+  familiasBeneficiadas  Int
+  personasBeneficiadas  Int
+  comunidadesBeneficiadas Int
+  impacto                 TipoImpacto?
+
+  // Relaciones con las nuevas tablas
+  consultaId              String?
+  consulta                Consulta?       @relation(fields: [consultaId], references: [id])
+  
+  categoriaId             String?
+  categoria               Categoria?      @relation(fields: [categoriaId], references: [id])
+
+  consejoComunalId      String
+  consejoComunal        ConsejoComunal @relation(fields: [consejoComunalId], references: [id])
 }
 
 model Comuna {

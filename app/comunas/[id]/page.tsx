@@ -220,7 +220,6 @@ const ViewComunaPage = () => {
         </div>
       </div>
       
-      {/* Secciones con el nuevo componente VoceroCard */}
       <h2 className="mt-10 text-lg font-semibold text-sky-900 mb-4 border-b pb-2">
           Instancia de Gobierno
       </h2>

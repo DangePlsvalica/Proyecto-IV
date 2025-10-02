@@ -16,7 +16,7 @@ const ConsejosComunales: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedRows, setSelectedRows] = useState<ConsejoComunal[]>([]);
   const { data: consejosData, isLoading } = useConsejos();
-  // Filtra datos según el término de búsqueda
+
   const filteredData = consejosData
     ? consejosData.filter((consejo) =>
       Object.values(consejo)
@@ -38,7 +38,6 @@ const ConsejosComunales: React.FC = () => {
     "Comuna",
   ];
   const tdClassName = "border-b border-r py-2 border-sky-950";
-  // Función para renderizar cada fila
   const renderRow = (consejo: ConsejoComunal) => (
     <>
       <td className={tdClassName}>{consejo.parroquiaRelation?.municipio || "—"}</td>
@@ -119,5 +118,4 @@ const ConsejosComunales: React.FC = () => {
     </>
   );
 };
-
 export default ConsejosComunales;

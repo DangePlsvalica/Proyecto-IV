@@ -24,7 +24,7 @@ const ViewConsejoPage = () => {
   };
 
   return (
-    <div className="mx-auto my-1 max-w-[95%] px-14 py-8 border border-sky-200 rounded-xl bg-[#f8f8f8]">
+    <div className="mx-auto my-1 max-w-[95%] px-7 py-8 border border-sky-200 rounded-xl bg-[#f8f8f8]">
       <h1 className="text-2xl font-bold mb-6 text-sky-950">
         Detalles del Consejo Comunal
       </h1>
@@ -49,7 +49,7 @@ const ViewConsejoPage = () => {
       {/* Sección: Vocerías Principales */}
       <div className="mt-10">
         <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">Vocerías Principales</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
           <VoceroCard
             titulo="Comisión Electoral"
             titular={getFirstFive(consejo.titularesComisionElectoral)}
@@ -72,7 +72,7 @@ const ViewConsejoPage = () => {
       {consejo.vocerias && consejo.vocerias.length > 0 && (
         <div className="mt-10">
           <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">Vocerías Ejecutivas</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
             {consejo.vocerias.map((voceria: { tipoVoceria: { id: Key | null | undefined; nombre: string; }; titular: { nombres?: string; apellidos?: string; ci?: string; telefono?: string; } | { nombres?: string; apellidos?: string; ci?: string; telefono?: string; }[] | undefined; suplente: { nombres?: string; apellidos?: string; ci?: string; telefono?: string; } | { nombres?: string; apellidos?: string; ci?: string; telefono?: string; }[] | undefined; }) => (
               <VoceroCard
                 key={voceria.tipoVoceria.id}

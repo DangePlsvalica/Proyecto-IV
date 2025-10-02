@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import Select, { SingleValue, MultiValue } from "react-select";
 import { useQueryClient } from "@tanstack/react-query";
@@ -28,7 +27,7 @@ const RegisterConsejoPage = () => {
   const voceros = queryClient.getQueryData<Persona[]>(["personas"]) || [];
 
   // Función para obtener todos los IDs de voceros que ya están asignados en otros consejos
-  const getAssignedVoceroIds = (allConsejos: ConsejoComunal[]) => { // <- Uso de ConsejoComunal
+  const getAssignedVoceroIds = (allConsejos: ConsejoComunal[]) => {
     const assignedIds = new Set<number>();
     allConsejos.forEach(consejo => {
       // Verificación de 'id' para evitar el error de tipado
