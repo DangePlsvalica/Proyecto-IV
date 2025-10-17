@@ -18,6 +18,9 @@ export interface ConsejoComunal {
   poblacionVotante: number;
   comuna: Comuna;
 
+  parroquiaId: number; // <- Agregado
+  comunaId: string; 
+
   titularesComisionElectoral: {
     id: number;
     nombre: string;
@@ -42,7 +45,7 @@ export interface ConsejoComunal {
     apellido: string;
     cedula: string;
   }[];
-  titularesFinanzas?: Persona[];
+  titularesFinanzas: Persona[];
   suplentesFinanzas: {
     id: number;
     nombre: string;
@@ -76,9 +79,10 @@ export interface ConsejoComunal {
 export interface ConsejoComunalFormData {
   cc: string;
   rif: string;
+  situr: string;
   numeroCuenta: string;
-  fechaConstitucion: string | Date;
-  fechaVencimiento: string | Date;
+  fechaConstitucion: string;
+  fechaVencimiento: string;
   poblacionVotante: number;
   parroquiaId?: number;
   comunaId?: string;

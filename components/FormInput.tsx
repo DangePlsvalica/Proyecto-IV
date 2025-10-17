@@ -8,6 +8,7 @@ interface FormInputProps {
   placeholder?: string;
   textarea?: boolean;
   accept?: string;
+  disabled?: boolean;
 }
 
 const FormInput: React.FC<FormInputProps> = ({ label, id, type = 'text', value, onChange, required = false, placeholder = '', textarea = false, accept }) => {
