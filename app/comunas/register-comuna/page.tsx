@@ -125,7 +125,7 @@ const RegisterComunaPage = () => {
             Información Básica
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-            <FormInput label="Código" id="codigo" value={formData.codigo} onChange={handleChange} required />
+            <FormInput label="Código Situr" id="codigo" value={formData.codigo} onChange={handleChange} required />
             <FormInput label="N° comisión promotora" id="numComisionPromotora" value={formData.numComisionPromotora} onChange={handleChange} required />
             <FormInput label="RIF" id="rif" value={formData.rif} onChange={handleChange} required />
             <FormInput label="Nombre de la Comuna" id="nombre" value={formData.nombre} onChange={handleChange} required />

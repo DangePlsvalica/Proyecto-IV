@@ -7,9 +7,17 @@ export async function GET() {
   try {
     const personas = await prisma.persona.findMany({
       include: {
-        vehiculo: true,   // Vehículo asignado
-        consejoTitularFinanzas: true,
-      },
+        vehiculo: true, 
+        consejoTitularComisionElectoral: true,
+        consejoSuplenteComisionElectoral: true,
+        consejoTitularContraloria: true,
+        consejoSuplenteContraloria: true,
+        consejoTitularFinanzas: true, 
+        consejoSuplenteFinanzas: true,
+        voceriaTitular: true,
+        voceriaSuplente: true,
+        bancoDeLaComunaRelation: true,
+    },
     });
 
     return NextResponse.json(personas);

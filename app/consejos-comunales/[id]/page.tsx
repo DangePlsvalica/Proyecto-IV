@@ -1,6 +1,6 @@
 "use client";
-import { useParams, useRouter } from "next/navigation"; // <-- AGREGAR useRouter aquí
-import useConsejos, { useDeleteConsejoComunal } from "@/hooks/useConsejos"; // <-- IMPORTAR useDeleteConsejoComunal
+import { useParams, useRouter } from "next/navigation";
+import useConsejos, { useDeleteConsejoComunal } from "@/hooks/useConsejos"; 
 import { FieldDisplay } from "@/components/FieldDisplay";
 import Button from "@/components/Button";
 import DeleteButton from "@/components/DeleteButton";
@@ -12,30 +12,25 @@ import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
 import { useState } from "react";
 
 const ViewConsejoPage = () => {
-  const router = useRouter(); // <-- Obtener la instancia de router
+  const router = useRouter(); 
   const { id } = useParams();
   const { data: consejosData, isLoading: isConsejosLoading } = useConsejos();
-
-  // 1. Llamar al hook de eliminación
   const { mutate: deleteConsejo, isPending: isDeleting } = useDeleteConsejoComunal();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // 1. Abre el modal al hacer clic en el botón Eliminar
-    const handleOpenDeleteModal = () => {
-        setIsModalOpen(true);
-    };
 
-    // 2. Función que se ejecuta al CONFIRMAR la eliminación
-    const handleConfirmDelete = () => {
-        // Asume que 'id' es el ID del Consejo Comunal que quieres eliminar
-        deleteConsejo(id as string, {
-            onSuccess: () => {
-                // Navegación (si el hook no la maneja)
-                router.push('/consejos-comunales');
-                setIsModalOpen(false); // Cierra el modal al tener éxito
-            },
-            // onError no es necesario si el hook ya lo maneja
-        });
-    };
+  const handleOpenDeleteModal = () => {
+      setIsModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+      // Asume que 'id' es el ID del Consejo Comunal que quieres eliminar
+      deleteConsejo(id as string, {
+          onSuccess: () => {
+              router.push('/consejos-comunales');
+              setIsModalOpen(false);
+          },
+      });
+  };
 
   const { isAdmin, isLoading: isAuthLoading } = useCurrentUser(); 
 
@@ -49,21 +44,16 @@ const ViewConsejoPage = () => {
     return data?.slice(0, 5) ?? [];
   };
 
-  // 2. Función de manejo de eliminación
   const handleDelete = () => {
     const confirmDelete = window.confirm(
       `¿Está seguro de que desea eliminar el Consejo Comunal "${consejo.cc}"? Esta acción no se puede deshacer.`
     );
 
     if (confirmDelete) {
-      // Ejecutar la mutación con el ID del consejo
       deleteConsejo(id as string, {
         onSuccess: () => {
-          // El hook ya maneja el toast y la invalidación.
-          // Aquí forzamos la navegación al listado, ya que el recurso actual no existirá.
           router.push('/consejos-comunales');
         },
-        // El hook ya tiene un onError global, pero se puede añadir uno local si es necesario.
       });
     }
   };
@@ -74,10 +64,6 @@ const ViewConsejoPage = () => {
       <h1 className="text-2xl font-bold mb-6 text-sky-950">
         Detalles del Consejo Comunal
       </h1>
-
-      {/* Sección: Información básica */}
-      {/* ... (el resto del código de visualización se mantiene igual) */}
-      
       {/* Sección: Información básica */}
       <div>
         <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">Información Básica</h3>
@@ -139,10 +125,8 @@ const ViewConsejoPage = () => {
       <div className="flex justify-center pt-6 gap-4">
         {isAdmin && (
           <>
-            <Button title="Editar" href={`/consejos-comunales/${id}/edit`} />
-            {/* 3. Ligar la función handleDelete y el estado isDeleting al DeleteButton */}
+            <Button title="Editar Consejo Comunal" href={`/consejos-comunales/${id}/edit`} />
             <DeleteButton
-                // Clic para ABRIR el modal (ya no elimina directamente)
                 onClick={handleOpenDeleteModal} 
                 isPending={false} // No está pendiente, solo abre el modal
                 label="Eliminar consejo comunal" 
@@ -153,10 +137,10 @@ const ViewConsejoPage = () => {
       </div>
       <DeleteConfirmationModal
           open={isModalOpen}
-          onClose={() => setIsModalOpen(false)} // Función para cerrar el modal
-          onConfirm={handleConfirmDelete}       // Función para confirmar la eliminación
-          itemToDelete={`el Consejo Comunal "${consejo.cc}"`} // Mensaje personalizado
-          isPending={isDeleting}               // Estado de carga de la mutación
+          onClose={() => setIsModalOpen(false)} 
+          onConfirm={handleConfirmDelete}
+          itemToDelete={`el Consejo Comunal "${consejo.cc}"`}
+          isPending={isDeleting}
       />
     </div>
     

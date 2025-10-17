@@ -208,19 +208,18 @@ const EditVehiculoPage = () => {
                         <div className="flex flex-col 2xl:flex-row gap-3 col-span-2">
                             {/* Mostrar archivo actual y opción de eliminar */}
                             <div>
-                                <label className="text-sm font-medium mb-2 text-sky-950">Observación Archivo</label>
                                 {currentArchivoUrl && (
-                                    <div className="mt-1 flex items-center justify-between min-h-[42px] p-2 2xl:p-1 rounded-md border border-gray-500 bg-white">
+                                    <><label className="text-sm font-medium mb-2 text-sky-950">Observación Archivo</label><div className="mt-1 flex items-center justify-between min-h-[42px] p-2 2xl:p-1 rounded-md border border-gray-500 bg-white">
                                         <div className="flex items-center space-x-1">
-                                            <a 
-                                                href={currentArchivoUrl} 
-                                                target="_blank" 
-                                                rel="noopener noreferrer" 
+                                            <a
+                                                href={currentArchivoUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
                                                 className="text-sky-900 text-[12.4px] font-bold ml-1 hover:underline"
                                             >
                                                 Ver Archivo Actual
                                             </a>
-                                            
+
                                         </div>
                                         <span className="text-gray-500 text-sm">|</span>
                                         <label className="flex items-center ml-1 space-x-2 cursor-pointer">
@@ -229,11 +228,10 @@ const EditVehiculoPage = () => {
                                                 checked={deleteCurrentArchivo}
                                                 onChange={(e) => handleFileDeleteToggle(e.target.checked)}
                                                 className="accent-red-500"
-                                                disabled={!!(formData.observacionArchivo instanceof File)}
-                                            />
+                                                disabled={!!(formData.observacionArchivo instanceof File)} />
                                             <span className="text-red-700 text-[12.4px] font-bold ">Eliminar Archivo Actual</span>
                                         </label>
-                                    </div>
+                                    </div></>
                                 )}
                             </div>
                             <FormInput 
