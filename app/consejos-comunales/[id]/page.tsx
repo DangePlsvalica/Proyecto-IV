@@ -44,20 +44,6 @@ const ViewConsejoPage = () => {
     return data?.slice(0, 5) ?? [];
   };
 
-  const handleDelete = () => {
-    const confirmDelete = window.confirm(
-      `¿Está seguro de que desea eliminar el Consejo Comunal "${consejo.cc}"? Esta acción no se puede deshacer.`
-    );
-
-    if (confirmDelete) {
-      deleteConsejo(id as string, {
-        onSuccess: () => {
-          router.push('/consejos-comunales');
-        },
-      });
-    }
-  };
-
 
   return (
     <div className="mx-auto my-1 max-w-[95%] px-7 py-8 border border-sky-200 rounded-xl bg-[#f8f8f8]">

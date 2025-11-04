@@ -11,13 +11,15 @@ export const useRegisterConsejoComunal = () => {
 
   const mutation = useMutation({
     mutationFn: async (formData: ConsejoComunalFormData) => {
+    const fechaConstString = formData.fechaConstitucion as string;
+    const fechaVencString = formData.fechaVencimiento as string;
       // Modifica la estructura del body para coincidir con el endpoint POST
       return post<ConsejoComunal>({
         path: '/api/consejos',
         body: {
           ...formData,
-          fechaConstitucion: new Date(formData.fechaConstitucion).toISOString(),
-          fechaVencimiento: new Date(formData.fechaVencimiento).toISOString(),
+          fechaConstitucion: new Date(fechaConstString).toISOString(),
+          fechaVencimiento: new Date(fechaVencString).toISOString(),
         },
       });
     },

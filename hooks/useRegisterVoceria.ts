@@ -1,14 +1,13 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export interface TipoVoceria {
-  id?: number;
+  id: number;
   nombre: string;
   esObligatoria?: boolean;
   categoriaId: number;
 }
 
 export interface TipoVoceriaFormData {
-  id?: number;
   nombre: string;
   categoriaId: number;
 }
@@ -29,5 +28,11 @@ async function registerVoceria(data: TipoVoceriaFormData): Promise<TipoVoceria> 
 }
 
 export function useRegisterVoceria() {
-  return useMutation({ mutationFn: registerVoceria });
+  const queryClient = useQueryClient();
+  
+  return useMutation({ 
+    mutationFn: registerVoceria, 
+    onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["tiposVoceria"] }); 
+        }});
 }

@@ -46,4 +46,3 @@ const FormInput: React.FC<FormInputProps> = ({ label, id, type = 'text', value, 
   
 
 export default FormInput;
-

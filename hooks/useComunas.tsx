@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Comuna } from "@/hooks/interfaces/comuna.interface";
 import { get } from '@/lib/request/api'
+import toast from "react-hot-toast";
 
 // Función que obtiene los Comunas desde la API
 const fetchComunas = async (): Promise<Comuna[]> => {
@@ -21,3 +22,36 @@ const useComunas = () => {
 };
 
 export default useComunas;
+
+// Función para eliminar una Comuna
+
+const deleteComuna = async (id: string): Promise<boolean> => {
+    const response = await fetch(`/api/comunas/${id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Error al eliminar la Comuna.");
+    }
+    return true; 
+};
+
+export const useDeleteComuna = () => {
+    const queryClient = useQueryClient();
+    
+    return useMutation({
+        mutationFn: (id: string) => deleteComuna(id),
+        
+        onSuccess: (_, deletedId) => {
+            queryClient.invalidateQueries({ queryKey: ["comunas"] }); 
+            queryClient.invalidateQueries({ queryKey: ["comunas", deletedId] });
+            toast.success("Comuna eliminada exitosamente.");
+        },
+        
+        onError: (error) => {
+            toast.error(error.message);
+        }
+    });
+};

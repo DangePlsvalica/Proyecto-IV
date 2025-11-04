@@ -81,7 +81,30 @@ export interface ConsejoComunalFormData {
   rif: string;
   situr: string;
   numeroCuenta: string;
-  fechaConstitucion: string;
+  fechaConstitucion: Date | string | null | undefined;
+  fechaVencimiento: Date | string | null | undefined;
+  poblacionVotante: number;
+  parroquiaId?: number;
+  comunaId?: string;
+  titularesComisionElectoralIds: number[];
+  suplentesComisionElectoralIds: number[];
+  titularesContraloriaIds: number[];
+  suplentesContraloriaIds: number[];
+  titularesFinanzasIds: number[];
+  suplentesFinanzasIds: number[];
+  voceriasEjecutivas?: {
+    tipoVoceriaId: number;
+    titularId?: number;
+    suplenteId?: number;
+  }[];
+}
+
+export interface ConsejoComunalFormDataEdit {
+  cc: string;
+  rif: string;
+  situr: string;
+  numeroCuenta: string;
+  fechaConstitucion: string; 
   fechaVencimiento: string;
   poblacionVotante: number;
   parroquiaId?: number;

@@ -201,7 +201,7 @@ const RegisterComunaPage = () => {
                 isDisabled={formData.consejosComunales.length === 0}
               />
             </div>
-            <FormInput type="number" label="Población Votante" id="poblacionVotante" value={formData.poblacionVotante} onChange={handleChange} required />
+            {/* <FormInput type="number" label="Población Votante" id="poblacionVotante" value={formData.poblacionVotante} onChange={handleChange} required /> */}
           </div>
         </section>
       </form>

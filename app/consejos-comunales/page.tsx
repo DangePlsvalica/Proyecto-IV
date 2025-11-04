@@ -16,6 +16,7 @@ const ConsejosComunales: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedRows, setSelectedRows] = useState<ConsejoComunal[]>([]);
   const { data: consejosData, isLoading } = useConsejos();
+  console.log(consejosData)
 
   const filteredData = consejosData
     ? consejosData.filter((consejo) =>

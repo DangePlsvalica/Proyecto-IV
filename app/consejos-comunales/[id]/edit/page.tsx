@@ -8,7 +8,7 @@ import FormInput from "@/components/FormInput";
 import Tittle from "@/components/Tittle";
 import toast from "react-hot-toast";
 import useParroquias from "@/hooks/useParroquias";
-import { ConsejoComunalFormData, ConsejoComunal } from "@/hooks/interfaces/consejo.comunal.interface";
+import { ConsejoComunalFormDataEdit, ConsejoComunal } from "@/hooks/interfaces/consejo.comunal.interface";
 import useConsejos from "@/hooks/useConsejos";
 import { useUpdateConsejoComunal } from "@/hooks/useUpdateConsejo"; 
 
@@ -35,7 +35,7 @@ const EditConsejoPage = () => {
         }
     }, [isConsejoLoading, consejoAEditar, id, router]);
 
-    const [formData, setFormData] = useState<ConsejoComunalFormData>({
+    const [formData, setFormData] = useState<ConsejoComunalFormDataEdit>({
         cc: "",
         rif: "",
         situr: "",
@@ -169,7 +169,7 @@ const EditConsejoPage = () => {
             return;
         }
 
-        const payload: ConsejoComunalFormData = {
+        const payload: ConsejoComunalFormDataEdit = {
             ...formData,
             voceriasEjecutivas,
         };

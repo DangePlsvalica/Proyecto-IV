@@ -319,10 +319,11 @@ const RegisterConsejoPage = () => {
                             type="date"
                             id="fechaConstitucion"
                             label="Fecha de Constitución"
-                            value={typeof formData.fechaConstitucion === "string"
-                                ? formData.fechaConstitucion
-                                : formData.fechaConstitucion instanceof Date
+                            value={
+                                formData.fechaConstitucion instanceof Date
                                     ? formData.fechaConstitucion.toISOString().slice(0, 10)
+                                    : typeof formData.fechaConstitucion === "string"
+                                    ? formData.fechaConstitucion
                                     : ""}
                             onChange={handleChange}
                         />
@@ -330,10 +331,11 @@ const RegisterConsejoPage = () => {
                             type="date"
                             id="fechaVencimiento"
                             label="Fecha de Vencimiento"
-                            value={typeof formData.fechaVencimiento === "string"
-                                ? formData.fechaVencimiento
-                                : formData.fechaVencimiento instanceof Date
+                            value={
+                                formData.fechaVencimiento instanceof Date
                                     ? formData.fechaVencimiento.toISOString().slice(0, 10)
+                                    : typeof formData.fechaVencimiento === "string"
+                                    ? formData.fechaVencimiento
                                     : ""}
                             onChange={handleChange}
                         />

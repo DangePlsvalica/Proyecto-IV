@@ -30,6 +30,7 @@ export async function GET() {
           select: {
             id: true,
             cc: true,
+            poblacionVotante: true,
             // Aquí se incluyen las relaciones de personas que pertenecen a los CONSEJOS COMUNALES
             titularesComisionElectoral: {
               select: {
@@ -167,4 +168,69 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Error creating comuna" }, { status: 500 });
     }
   }
+}
+
+export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+    const { id } = params; // ID de la Comuna
+
+    try {
+        await prisma.$transaction(async (tx) => {
+            
+            // 1. VALIDACIÓN: Verificar si existen Consejos Comunales dependientes.
+            // Asumimos que el modelo ConsejoComunal tiene un campo 'comunaId'
+            const dependentCCs = await tx.consejoComunal.count({
+                where: { comunaId: id }, 
+            });
+
+            if (dependentCCs > 0) {
+                // Si hay CCs, lanzamos un error que será capturado y devuelto con status 409.
+                throw new Error("Conflict: La Comuna tiene Consejos Comunales asociados y no puede ser eliminada. Elimine los Consejos Comunales primero.");
+            }
+
+            // 2. ENCONTRAR Y LIMPIAR RELACIONES M:N (Persona[])
+            // Limpiamos explícitamente todas las relaciones M:N para evitar fallos
+            // si el campo de la relación no tiene 'onDelete: Cascade'.
+            const comuna = await tx.comuna.findUnique({ where: { id } });
+            
+            if (!comuna) {
+                // Lanzamos un error si no se encuentra (será capturado por el catch de P2025)
+                throw new Error("Comuna no encontrada");
+            }
+            
+            await tx.comuna.update({
+                where: { id },
+                data: {
+                    bancoDeLaComuna: { set: [] },
+                    titularesComisionElectoral: { set: [] },
+                    suplentesComisionElectoral: { set: [] },
+                    titularesContraloria: { set: [] },
+                    suplentesContraloria: { set: [] },
+                    parlamentoComuna: { set: [] },
+                    consejoJusticiaPaz: { set: [] },
+                    // Nota: 'consejosComunales' no se limpia aquí porque la Comuna es el lado 1 de la relación.
+                } as any,
+            });
+            
+            // 3. ELIMINAR LA COMUNA
+            const result = await tx.comuna.delete({
+                where: { id },
+            });
+            
+            return result; 
+        });
+        
+        return NextResponse.json({ message: "Comuna eliminada exitosamente." }, { status: 200 });
+
+    } catch (error: any) {
+        if (error.code === 'P2025' || error.message === "Comuna no encontrada") {
+            return NextResponse.json({ error: "No se pudo encontrar la Comuna a eliminar." }, { status: 404 });
+        }
+        if (error.message.startsWith("Conflict:")) {
+             // Devolvemos 409 Conflict si la Comuna tiene dependencias
+             return NextResponse.json({ error: error.message.replace("Conflict: ", "") }, { status: 409 });
+        }
+        
+        console.error(`Error eliminando Comuna con ID ${id}:`, error);
+        return NextResponse.json({ error: "Error al eliminar la Comuna." }, { status: 500 });
+    }
 }

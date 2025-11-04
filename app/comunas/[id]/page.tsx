@@ -1,6 +1,6 @@
 "use client";
-import { useParams } from "next/navigation";
-import useComunas from "@/hooks/useComunas";
+import { useParams, useRouter } from "next/navigation";
+import useComunas, { useDeleteComuna } from "@/hooks/useComunas";
 import { FieldDisplay } from "@/components/FieldDisplay";
 import Button from "@/components/Button";
 import Loading from "@/components/Loading";
@@ -8,27 +8,37 @@ import { notFound } from "next/navigation";
 import DeleteButton from "@/components/DeleteButton";
 import useGenerarActaPDF from "@/hooks/useGenerarActaPDF";
 import { Persona } from '@/hooks/interfaces/comuna.interface';
-import { useMemo } from "react"; // Línea 14
+import { useMemo } from "react";
 import { ConsejoComunal } from "@/hooks/interfaces/consejo.comunal.interface";
 import VoceroCard from "@/components/VoceroCard";
+import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
+import { useState } from "react";
 
 const ViewComunaPage = () => {
-  // --- PASO 1: LLAMAR A TODOS LOS HOOKS PRIMERO ---
-  // Los Hooks deben estar en el nivel superior y ser llamados incondicionalmente.
+  const router = useRouter(); 
   const { id } = useParams();
   const { data: comunasData, isLoading } = useComunas();
   const generarPDF = useGenerarActaPDF();
+  const { mutate: deleteComuna, isPending: isDeleting } = useDeleteComuna();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // ----------------------------------------------------------------------
-  // Ahora definimos las variables necesarias para el useMemo, incluso si están vacías
-  // o si la data aún no ha cargado.
+    const handleOpenDeleteModal = () => {
+      setIsModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+      // Asume que 'id' es el ID del Consejo Comunal que quieres eliminar
+      deleteComuna(id as string, {
+          onSuccess: () => {
+              router.push('/comunas');
+              setIsModalOpen(false);
+          },
+      });
+  };
+
   const comuna = comunasData?.find((c) => c.id === id);
 
-  // La dependencia principal del useMemo es 'comuna', que puede ser 'undefined' si no se encuentra.
-  // La lógica de useMemo debe manejar el caso de que 'comuna' sea undefined/null.
   const organizedMembers = useMemo(() => {
-    // Si 'comuna' es null/undefined, devolvemos un objeto con listas vacías 
-    // para evitar errores de acceso (ej. comuna.consejosComunales)
     if (!comuna) {
       return {
         electoralTitulares: [],
@@ -54,10 +64,12 @@ const ViewComunaPage = () => {
         seguridadPazSuplentes: [],
         juventudTitulares: [],
         juventudSuplentes: [],
+        poblacionVotanteTotal: 0,
       };
     }
 
     // --- Lógica de organización de miembros original (dentro del useMemo) ---
+    let totalPoblacionVotante = 0;
     const electoralTitulares: Persona[] = [];
     const electoralSuplentes: Persona[] = [];
     const contraloriaTitulares: Persona[] = [];
@@ -90,7 +102,10 @@ const ViewComunaPage = () => {
     };
 
     // Itera sobre cada consejo comunal para obtener los miembros de las comisiones
-    comuna.consejosComunales.forEach((cc: { titularesComisionElectoral: any; suplentesComisionElectoral: any; titularesContraloria: any; suplentesContraloria: any; titularesFinanzas: any; suplentesFinanzas: any; vocerias: any[]; }) => {
+    comuna.consejosComunales.forEach((cc: {
+      poblacionVotante: number; titularesComisionElectoral: any; suplentesComisionElectoral: any; titularesContraloria: any; suplentesContraloria: any; titularesFinanzas: any; suplentesFinanzas: any; vocerias: any[]; 
+}) => {
+      totalPoblacionVotante += cc.poblacionVotante || 0;
       electoralTitulares.push(...(cc.titularesComisionElectoral || []));
       electoralSuplentes.push(...(cc.suplentesComisionElectoral || []));
       contraloriaTitulares.push(...(cc.titularesContraloria || []));
@@ -171,22 +186,17 @@ const ViewComunaPage = () => {
       seguridadPazSuplentes,
       juventudTitulares,
       juventudSuplentes,
+      poblacionVotanteTotal: totalPoblacionVotante,
     };
-  }, [comuna]); // <-- La dependencia 'comuna' ahora es segura, ya que está definida
+  }, [comuna]);
 
-  // --- PASO 2: LÓGICA CONDICIONAL Y RETORNOS ANTICIPADOS ---
-
-  // Este retorno ahora es seguro porque se llama *después* de todos los Hooks.
   if (isLoading) {
     return <Loading />;
   }
 
-  // Este chequeo también es seguro.
   if (!comuna) {
     notFound();
   }
-  // ----------------------------------------------------------------------
-
 
   return (
     <div className="mx-auto my-1 max-w-[95%] px-7 py-8 border border-sky-200 rounded-xl bg-[#f8f8f8]">
@@ -205,7 +215,10 @@ const ViewComunaPage = () => {
           <FieldDisplay label="Código Situr" value={comuna!.codigo} />
           <FieldDisplay label="RIF" value={comuna!.rif} />
           <FieldDisplay label="Cuenta Bancaria" value={comuna!.cuentaBancaria} />
-          <FieldDisplay label="Población Votante" value={comuna!.poblacionVotante?.toLocaleString()} />
+          <FieldDisplay 
+                label="Población Votante" 
+                value={organizedMembers.poblacionVotanteTotal?.toLocaleString() || '0'} 
+            />
         </div>
       </div>
       
@@ -350,8 +363,18 @@ const ViewComunaPage = () => {
         <Button title="Editar Comuna" href={`/comunas/${id}/edit`} />
         <Button title="Imprimir Carta Fundacional" onClick={() => generarPDF(comuna!)} />
         <Button title="Acta De Instalacion De Gobierno" href={`/comunas/${id}/edit`} />
-        <DeleteButton onClick={()=>{}} isPending={false} label="Eliminar Comuna" />
+        <DeleteButton 
+          onClick={handleOpenDeleteModal} 
+          isPending={false} 
+          label="Eliminar Comuna" />
       </div>
+      <DeleteConfirmationModal
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)} 
+          onConfirm={handleConfirmDelete}
+          itemToDelete={`La Comuna "${comuna.nombre}"`}
+          isPending={isDeleting}
+      />
     </div>
   );
 };
