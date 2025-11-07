@@ -54,6 +54,8 @@ export interface ConsejoComunal {
   }[];
 
   vocerias: {
+    titularId: any;
+    suplenteId: any;
     id: string;
     tipoVoceria: {
       id: number;

@@ -66,3 +66,7 @@ export const put = <T>(options: Omit<ApiRequestOptions, 'method'>): Promise<T> =
 export const del = <T>(options: Omit<ApiRequestOptions, 'method'>): Promise<T> => {
   return request<T>({ ...options, method: 'DELETE' });
 };
+
+export const patch = <T>(options: Omit<ApiRequestOptions, 'method'>): Promise<T> => {
+  return request<T>({ ...options, method: 'PATCH' });
+};

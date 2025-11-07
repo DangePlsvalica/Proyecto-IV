@@ -111,15 +111,22 @@ const ViewConsejoPage = () => {
       <div className="flex justify-center pt-6 gap-4">
         {isAdmin && (
           <>
+            <Button 
+              title="Cambiar Vocerías Principales" 
+              href={`/consejos-comunales/${id}/edit-vocerias-principales`} 
+            />
+            <Button 
+                title="Cambiar Vocerías Ejecutivas" 
+                href={`/consejos-comunales/${id}/edit-vocerias-ejecutivas`} 
+            />
             <Button title="Editar Consejo Comunal" href={`/consejos-comunales/${id}/edit`} />
             <DeleteButton
-                onClick={handleOpenDeleteModal} 
-                isPending={false} // No está pendiente, solo abre el modal
-                label="Eliminar consejo comunal" 
+              onClick={handleOpenDeleteModal} 
+              isPending={false}
+              label="Eliminar consejo comunal" 
             />
           </>
         )}
-        <Button title="Cambiar voceros" href={`/consejos-comunales/${id}/edit`} />
       </div>
       <DeleteConfirmationModal
           open={isModalOpen}
