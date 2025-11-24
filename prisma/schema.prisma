@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://Comunas_owner:npg_DaBAd7Tfmu5V@ep-bold-heart-a5vx15un-pooler.us-east-2.aws.neon.tech/Comunas?sslmode=require&schema=public"
+  url      = "postgresql://postgres:123456@localhost:5432/Comunas_local"
 }
 
 model Role {
@@ -123,7 +123,7 @@ model Persona {
   ci                                String
   telefono                          String
   vehiculo                          Vehiculo?
-
+  habilitado                           Boolean       @default(true)
   // Relaciones inversas a los arrays del ConsejoComunal
   consejoTitularComisionElectoral   ConsejoComunal[] @relation("TitularesComisionElectoral")
   consejoSuplenteComisionElectoral  ConsejoComunal[] @relation("SuplentesComisionElectoral")
@@ -201,7 +201,6 @@ model Comuna {
   parroquiaRelation       Parroquia?      @relation(fields: [parroquiaId], references: [id])
   parroquiaId             Int?
   cantidadConsejosComunales Int
-  poblacionVotante          Int
   consejosComunales       ConsejoComunal[] // Relación 1-N
   bancoDeLaComuna         Persona[]       @relation("BancoDeLaComuna")
 }

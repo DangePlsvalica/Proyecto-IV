@@ -139,32 +139,31 @@ const RegisterConsejoPage = () => {
         let newValue: string | number = value;
 
         if (name === "numeroCuenta") {
-            // Lógica: Solo aceptar números para numeroCuenta
-            newValue = value.replace(/[^0-9]/g, '');
+            newValue = value.replace(/[^0-9]/g, '').slice(0, 20); 
         }
 
         if (name === "rif") {
-            // Lógica: Normalizar el RIF a formato L-12345678-9
             let cleaned = value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-            
-            // Si el primer carácter es una letra, la mantiene
-            const letter = cleaned.charAt(0);
-            if (letter.match(/[A-Z]/) && cleaned.length > 0) {
-                cleaned = cleaned.substring(1);
-            } else {
-                // Si el usuario no ha metido una letra válida aún, no procesamos
-                setFormData(prev => ({ ...prev, [name]: value.toUpperCase() }));
+            const letterMatch = cleaned.match(/^[A-Z]/);
+            const letter = letterMatch ? letterMatch[0] : '';
+
+            if (!letter) {
+                setFormData(prev => ({ ...prev, [name]: cleaned }));
                 return;
             }
-            
-            // Limitar a 9 números
-            const numbers = cleaned.replace(/[^0-9]/g, '').slice(0, 9);
+
+            let numbers = cleaned.substring(letter.length).replace(/[^0-9]/g, '');
+
+            numbers = numbers.slice(0, 9);
             
             let formattedValue = letter;
+            
             if (numbers.length > 0) {
+                // Inserta el primer guion después de 8 dígitos (si están disponibles)
                 formattedValue += '-' + numbers.slice(0, 8);
             }
             if (numbers.length > 8) {
+                // Inserta el segundo guion y el último dígito
                 formattedValue += '-' + numbers.slice(8, 9);
             }
 
@@ -220,7 +219,6 @@ const RegisterConsejoPage = () => {
         const {
             cc,
             rif,
-            situr,
             numeroCuenta,
             fechaConstitucion,
             fechaVencimiento,
@@ -234,23 +232,20 @@ const RegisterConsejoPage = () => {
             suplentesFinanzasIds
         } = formData;
 
-        // Validación de campos básicos
         if (!cc || !rif || !numeroCuenta || !fechaConstitucion || !fechaVencimiento || poblacionVotante == null || !parroquiaId) {
             toast.error("Por favor completa todos los campos obligatorios.");
             return;
         }
-        
-        // VALIDACIÓN RIF: Debe coincidir con el formato L-12345678-9
+
         const rifRegex = /^[A-Z]-\d{8}-\d{1}$/;
         if (!rifRegex.test(rif)) {
-             toast.error("El RIF debe tener el formato: Letra-8 dígitos-1 dígito (Ej: J-12345678-9).");
-             return;
+            toast.error("El RIF debe tener el formato: Letra-8 dígitos-1 dígito (Ej: J-12345678-9).");
+            return;
         }
-        
-        // VALIDACIÓN NÚMERO DE CUENTA: Solo números (aunque handleChange ya limpia, es una seguridad)
-        if (/[^0-9]/.test(numeroCuenta)) {
-             toast.error("El número de cuenta solo debe contener dígitos.");
-             return;
+
+        if (/[^0-9]/.test(numeroCuenta) || numeroCuenta.length > 20) {
+            toast.error("El número de cuenta solo debe contener dígitos y tener un máximo de 20 caracteres.");
+            return;
         }
 
         const voceriasPrincipales = [
@@ -292,12 +287,12 @@ const RegisterConsejoPage = () => {
             <form onSubmit={handleSubmit} className="pt-6 px-6 space-y-8">
                 {/* Información Básica */}
                 <div>
-                    <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">Información Básica</h3>
+                    <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">📝 Información Básica</h3>
                     <div className="grid grid-cols-4 gap-4">
                         <FormInput id="cc" label="Nombre" value={formData.cc} onChange={handleChange} required />
-                        <FormInput id="rif" label="RIF (Ej: J-12345678-9)" value={formData.rif} onChange={handleChange} required />
+                        <FormInput id="rif" label="RIF (Ej: C-12345678-9)" value={formData.rif} onChange={handleChange} required />
                         <FormInput id="situr" label="Código SITUR" value={formData.situr} onChange={handleChange} /> 
-                        <FormInput id="numeroCuenta" label="N° de Cuenta (Solo números)" value={formData.numeroCuenta} onChange={handleChange} required />
+                        <FormInput id="numeroCuenta" label="N° de Cuenta (Max 20 dígitos)" value={formData.numeroCuenta} onChange={handleChange} required />
                         
                         <div>
                             <label className="block text-sm mb-1">Parroquia</label>
@@ -313,7 +308,7 @@ const RegisterConsejoPage = () => {
                     </div>
                 </div>
                 <div>
-                    <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">Fechas y Estadísticas</h3>
+                    <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">📅 Fechas y Estadísticas</h3>
                     <div className="grid grid-cols-4 gap-4">
                         <FormInput
                             type="date"
@@ -350,9 +345,8 @@ const RegisterConsejoPage = () => {
                 </div>
 
                 {/* Vocerías Principales */}
-                {/* ... (código para Vocerías Principales) ... */}
                 <div>
-                    <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">Vocerías Principales</h3>
+                    <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">👥 Vocerías Principales</h3>
 
                     <div className="absolute top-[400px] right-[60px] group">
                         <Button title="+ Registrar nuevo vocero" onClick={() => setModalOpen(true)} type="button" />
@@ -418,9 +412,8 @@ const RegisterConsejoPage = () => {
                 </div>
 
                 {/* Vocerías Ejecutivas Obligatorias */}
-                {/* ... (código para Vocerías Ejecutivas Obligatorias) ... */}
                 <div>
-                    <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">Vocerías Ejecutivas Obligatorias</h3>
+                    <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">👥 Vocerías Ejecutivas Obligatorias</h3>
                     <div className="grid grid-cols-2 gap-4">
                         {voceriasObligatorias.map(tipo => {
                             const voceriaAsignada = voceriasEjecutivas.find(v => v.tipoVoceriaId === tipo.id);
@@ -462,14 +455,13 @@ const RegisterConsejoPage = () => {
                 </div>
 
                 {/* Vocerías Opcionales */}
-                {/* ... (código para Vocerías Opcionales) ... */}
                 <div className="mt-6 flex justify-end">
                     <Button onClick={() => setModalVoceriaOpen(true)} title="Agregar Vocería Opcional" />
                 </div>
 
                 {voceriasOpcionalesSeleccionadas.length > 0 && (
                     <div className="mt-8">
-                        <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">Vocerías Ejecutivas Opcionales</h3>
+                        <h3 className="text-lg font-semibold text-sky-900 mb-4 border-b pb-2">👥 Vocerías Ejecutivas Opcionales</h3>
                         <div className="grid grid-cols-2 gap-4">
                             {voceriasOpcionales
                                 .filter(tipo => voceriasOpcionalesSeleccionadas.includes(tipo.id))

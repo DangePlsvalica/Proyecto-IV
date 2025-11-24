@@ -10,10 +10,12 @@ import toast from "react-hot-toast";
 import { useRegisterVehiculo } from "@/hooks/useRegisterVehiculo";
 import { VehiculoFormData } from "@/hooks/interfaces/vehiculo.interface";
 
+// --- Definiciones de Tipos ---
 type OptionType = { value: string | number; label: string };
 type Vocero = { id: number; nombres: string; apellidos: string };
 type ConsejoComunal = { cc: string; rif?: string };
 
+// --- Opciones de Estatus ---
 const VEHICULO_STATUS_OPTIONS: OptionType[] = [
   { value: "asignado", label: "Asignado" },
   { value: "reasignado", label: "Reasignado" },
@@ -26,20 +28,20 @@ const RegisterVehiculoPage = () => {
   const queryClient = useQueryClient();
   const { mutate: registerVehiculo } = useRegisterVehiculo();
 
-  // Obtener consejos comunales cacheados
+  // Obtener data cacheados
   const consejosData = queryClient.getQueryData<ConsejoComunal[]>(["consejoscomunal"]) || [];
   const consejosOptions: OptionType[] = consejosData.map((c) => ({
     value: c.cc,
     label: c.rif ? `${c.cc} - ${c.rif}` : c.cc,
   }));
 
-  // Obtener voceros cacheados (personas)
   const vocerosData = queryClient.getQueryData<Vocero[]>(["personas"]) || [];
   const vocerosOptions: OptionType[] = vocerosData.map((v) => ({
     value: v.id,
     label: `${v.nombres} ${v.apellidos}`,
   }));
 
+  // --- Estado del Formulario ---
   const [formData, setFormData] = useState<VehiculoFormData>({
     placa: "",
     clase: "",
@@ -56,7 +58,7 @@ const RegisterVehiculoPage = () => {
     observacion: "",
   });
 
-  // Manejo cambios en inputs
+  // --- Manejo de Cambios ---
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -67,7 +69,7 @@ const RegisterVehiculoPage = () => {
       if (file) {
         setFormData(prev => ({ ...prev, observacionArchivo: file }));
       }
-      return; // Importante para no continuar con el setFormData normal
+      return;
     }
 
     setFormData(prev => ({
@@ -76,7 +78,6 @@ const RegisterVehiculoPage = () => {
     }));
   };
 
-  // Manejo cambios en selects
   const handleSelectChange = (
     field: keyof VehiculoFormData,
     selectedOption: SingleValue<OptionType>
@@ -87,7 +88,7 @@ const RegisterVehiculoPage = () => {
     }));
   };
 
-  // Submit del formulario
+  // --- Submit del Formulario ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -144,6 +145,10 @@ const RegisterVehiculoPage = () => {
     <div className="animate-fade-in opacity-0 mx-auto my-1 max-w-[95%] px-10 py-6 border border-sky-200 rounded-xl bg-[#f8f8f8]">
       <Tittle title={"Registrar Nuevo Vehiculo"} />
       <form onSubmit={handleSubmit} className="pt-6 px-6 grid grid-cols-4 gap-4">
+        <div className="col-span-full mb-2">
+          <h2 className="text-lg font-semibold text-sky-900 border-b pb-2">🚗 Información General</h2>
+        </div>
+
         <FormInput
           label="Placa"
           id="placa"
@@ -158,22 +163,6 @@ const RegisterVehiculoPage = () => {
           onChange={handleChange}
           required
         />
-        <div>
-          <label htmlFor="cc" className="block pb-[10px] text-sm text-sky-950 font-medium">
-            Consejo Comunal
-          </label>
-          <Select
-            id="cc"
-            options={consejosOptions}
-            placeholder="Seleccionar"
-            onChange={(opt) => handleSelectChange("cc", opt)}
-            value={consejosOptions.find((o) => o.value === formData.cc) || null}
-            styles={{
-              control: (base) => ({ ...base, borderColor: "black", borderRadius: 6 }),
-              menu: (base) => ({ ...base, borderRadius: 6 }),
-            }}
-          />
-        </div>
         <FormInput
           label="Marca"
           id="marca"
@@ -210,6 +199,28 @@ const RegisterVehiculoPage = () => {
           onChange={handleChange}
           required
         />
+        <div className="col-span-1" /> {/* Espacio en blanco para mantener la cuadrícula 4x4 */}
+
+        <div className="col-span-full mb-2 mt-4">
+          <h2 className="text-lg font-semibold text-sky-900 border-b pb-2">📍 Ubicación y Asignación</h2>
+        </div>
+
+        <div>
+          <label htmlFor="cc" className="block pb-[10px] text-sm text-sky-950 font-medium">
+            Consejo Comunal
+          </label>
+          <Select
+            id="cc"
+            options={consejosOptions}
+            placeholder="Seleccionar"
+            onChange={(opt) => handleSelectChange("cc", opt)}
+            value={consejosOptions.find((o) => o.value === formData.cc) || null}
+            styles={{
+              control: (base) => ({ ...base, borderColor: "black", borderRadius: 6 }),
+              menu: (base) => ({ ...base, borderRadius: 6 }),
+            }}
+          />
+        </div>
         <div>
           <label htmlFor="voceroAsignadoId" className="block pb-[10px] text-sm text-sky-950 font-medium">
             Persona asignada
@@ -234,6 +245,13 @@ const RegisterVehiculoPage = () => {
           onChange={handleChange}
           required
         />
+        <div className="col-span-1" />
+
+
+        <div className="col-span-full mb-2 mt-4">
+          <h2 className="text-lg font-semibold text-sky-900 border-b pb-2">📝 Estado y Documentación</h2>
+        </div>
+
         <div className="col-span-1">
           <label htmlFor="estatus" className="block pb-[10px] text-sm text-sky-950 font-medium">
             Estado del vehículo
@@ -264,6 +282,8 @@ const RegisterVehiculoPage = () => {
           onChange={handleChange}
           accept=".pdf,.doc,.docx"
         />
+
+        {/* Botón de envío que ocupa las 4 columnas al final */}
         <div className="col-span-4 flex justify-center pt-6">
           <Button type="submit" title="Registrar Vehiculo" />
         </div>

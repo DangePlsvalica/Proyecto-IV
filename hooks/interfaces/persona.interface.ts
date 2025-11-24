@@ -20,6 +20,7 @@ export interface Persona {
     ci: string;
     telefono: string;
     vehiculo?: Vehiculo | null; 
+    habilitado: boolean;
     voceriaTitular?: VoceriaBase | null;
     voceriaSuplente?: VoceriaBase | null;
     bancoDeLaComunaRelation?: any | null;

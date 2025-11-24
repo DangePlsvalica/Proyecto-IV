@@ -128,19 +128,23 @@ const GestorProyectos: React.FC = () => {
             onClick={handleExportPDF}
             title="Exportar a PDF"
             disabled={selectedRows.length === 0}
+            className="px-0"
           />
           <Button
             onClick={handleExportExcel}
             title="Exportar a Excel"
             disabled={selectedRows.length === 0}
+            className="px-0"
           />
           <Button
             onClick={() => setIsConsultaModalOpen(true)}
-            title={"Crear nueva consulta"}
+            title={"Crear consulta"}
+            className="px-0"
           />
           <Button
             onClick={() => router.push("/gestor-de-proyectos/register-proyecto")}
-            title={"Registrar nuevo proyecto"}
+            title={"Registrar proyecto"}
+            className="px-0"
           />
         </div>
       </div>

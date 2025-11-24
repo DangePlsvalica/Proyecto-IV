@@ -25,7 +25,7 @@ const FormInput: React.FC<FormInputProps> = ({ label, id, type = 'text', value, 
             onChange={onChange}
             required={required}
             placeholder={placeholder}
-            className="block w-full border px-4 py-2 rounded-md"
+            className="block w-full border px-4 py-2 rounded-md "
           />
         ) : (
           <input
