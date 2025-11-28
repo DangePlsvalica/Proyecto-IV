@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ConsejoComunal } from "./interfaces/consejo.comunal.interface";
 import { get } from '@/lib/request/api'
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 // Función que obtiene los consejos comunales
 const fetchConsejoComunal = async (): Promise<ConsejoComunal[]> => {
@@ -25,8 +26,8 @@ const useConsejos = () => {
 export default useConsejos;
 
 // Función para eliminar consejo comunal
-
 const deleteConsejo = async (id: string): Promise<boolean> => {
+    // ... (sin cambios)
     const response = await fetch(`/api/consejos/${id}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
@@ -41,6 +42,7 @@ const deleteConsejo = async (id: string): Promise<boolean> => {
 
 export const useDeleteConsejoComunal = () => {
     const queryClient = useQueryClient();
+    const router = useRouter(); 
     
     return useMutation({
         mutationFn: (id: string) => deleteConsejo(id),
@@ -48,6 +50,9 @@ export const useDeleteConsejoComunal = () => {
             queryClient.invalidateQueries({ queryKey: ["consejoscomunal"] }); 
             queryClient.invalidateQueries({ queryKey: ["consejoscomunal", deletedId] });
             toast.success("Consejo Comunal eliminado exitosamente.");
+
+            // ⭐️ Redirección movida aquí
+            router.push('/consejos-comunales');
         },
         
         onError: (error) => {

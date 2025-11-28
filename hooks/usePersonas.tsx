@@ -14,7 +14,7 @@ const usePersonas = () => {
     queryKey: ["personas"],
     queryFn: fetchProyectos, 
     staleTime: 1000 * 60 * 5, // 5 minutos de datos frescos
-    gcTime: 1000 * 60 * 10, // 10 minutos en caché
+    gcTime: 1000 * 60 * 60, // 10 minutos en caché
     refetchOnWindowFocus: false, // No recargar al cambiar de pestaña
     retry: false,
   });

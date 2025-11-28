@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Comuna } from "@/hooks/interfaces/comuna.interface";
 import { get } from '@/lib/request/api'
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 // Función que obtiene los Comunas desde la API
 const fetchComunas = async (): Promise<Comuna[]> => {
@@ -40,6 +41,7 @@ const deleteComuna = async (id: string): Promise<boolean> => {
 
 export const useDeleteComuna = () => {
     const queryClient = useQueryClient();
+    const router = useRouter(); 
     
     return useMutation({
         mutationFn: (id: string) => deleteComuna(id),
@@ -48,6 +50,7 @@ export const useDeleteComuna = () => {
             queryClient.invalidateQueries({ queryKey: ["comunas"] }); 
             queryClient.invalidateQueries({ queryKey: ["comunas", deletedId] });
             toast.success("Comuna eliminada exitosamente.");
+            router.push('/comunas');
         },
         
         onError: (error) => {

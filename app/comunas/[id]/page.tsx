@@ -362,7 +362,7 @@ const ViewComunaPage = () => {
       <div className="flex justify-center pt-6 gap-4">
         <Button title="Editar Comuna" href={`/comunas/${id}/edit`} />
         <Button title="Imprimir Carta Fundacional"href={`/comunas/${id}/GenerarCarta`} />
-        <Button title="Acta De Instalacion De Gobierno" href={`/comunas/${id}/edit`} />
+        {/*<Button title="Acta De Instalacion De Gobierno" href={`/comunas/${id}/edit`} />*/}
         <DeleteButton 
           onClick={handleOpenDeleteModal} 
           isPending={false} 

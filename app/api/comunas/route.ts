@@ -116,44 +116,68 @@ export async function GET() {
   }
 }
 
-// Manejo del método POST (crear una nueva comuna)
 export async function POST(req: Request) {
   try {
     const data = await req.json();
-    console.log('Data received in server:', data);
 
+    // --- Validaciones ---
     if (!data.consejosComunales || data.consejosComunales.length === 0) {
       return NextResponse.json({ error: 'Consejos Comunales son requeridos' }, { status: 400 });
     }
-
     if (!data.parroquiaId) {
       return NextResponse.json({ error: 'El ID de la parroquia es requerido' }, { status: 400 });
     }
+    
+    // 1. Obtener IDs
+    const parroquiaId = data.parroquiaId;
+    const consejosComunalesIds = data.consejosComunales;
+    const titularesFinanzasIds = data.titularesFinanzas; 
 
-    const comunaData = {
+    // 2. Crear el objeto de datos inicial con campos planos y conversiones
+    const comunaData: any = {
       ...data,
+      
+      // Conversión de Fechas y Números
       fechaComisionPromotora: new Date(data.fechaComisionPromotora),
       fechaRegistro: new Date(data.fechaRegistro),
       fechaUltimaEleccion: new Date(data.fechaUltimaEleccion),
       cantidadConsejosComunales: Number(data.cantidadConsejosComunales),
-      poblacionVotante: Number(data.poblacionVotante),
-      consejosComunales: {
-        connect: data.consejosComunales.map((id: string) => ({ id })),
-      },
     };
+    
+    // --- 3. Limpiar/Eliminar todos los campos que NO son parte del modelo Comuna ---
 
-    // CORRECCIÓN: Usar el nombre de campo correcto del modelo de Prisma
-    if (data.titularesFinanzas && Array.isArray(data.titularesFinanzas)) {
-      comunaData.bancoDeLaComuna = {
-        connect: data.titularesFinanzas.map((id: string) => ({ id })),
-      };
-    }
-
-    delete comunaData.titularesFinanzas; // Eliminar el campo incorrecto para evitar errores de Prisma
+    delete comunaData.poblacionVotante; // Eliminado (no existe en el modelo)
+    delete comunaData.parroquiaId;
+    delete comunaData.consejosComunales;
+    delete comunaData.titularesFinanzas; 
+    
     delete comunaData.nombreVocero;
     delete comunaData.ciVocero;
     delete comunaData.telefono;
+    
+    // --- 4. Agregar las Relaciones usando la sintaxis 'connect' de Prisma ---
+    
+    // Relación Parroquia (Parroquia.id es Int, el frontend envía Int)
+    comunaData.parroquiaRelation = {
+        connect: { id: parroquiaId } 
+    };
+    
+    // Relación Consejos Comunales (ConsejoComunal.id es String/UUID)
+    comunaData.consejosComunales = {
+        connect: consejosComunalesIds.map((id: string) => ({ id })) 
+    };
 
+    // Relación Banco de la Comuna (Persona.id **DEBE** ser Int, aunque se envíe String)
+    if (titularesFinanzasIds && Array.isArray(titularesFinanzasIds)) {
+      comunaData.bancoDeLaComuna = {
+        connect: titularesFinanzasIds.map((id: string) => ({ 
+          // 💡 CORRECCIÓN: Convertir el ID a Int
+          id: Number(id) 
+        })),
+      };
+    }
+    
+    // --- 5. Ejecutar la creación ---
     const nuevaComuna = await prisma.comuna.create({
       data: comunaData,
     });
@@ -162,75 +186,9 @@ export async function POST(req: Request) {
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error creando comuna:", error.message);
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    } else {
-      console.error("Error creando comuna:", error);
-      return NextResponse.json({ error: "Error creating comuna" }, { status: 500 });
+      return NextResponse.json({ error: "Error creando comuna: " + error.message }, { status: 500 });
     }
+    return NextResponse.json({ error: "Error interno del servidor al crear comuna" }, { status: 500 });
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
-    const { id } = params; // ID de la Comuna
-
-    try {
-        await prisma.$transaction(async (tx) => {
-            
-            // 1. VALIDACIÓN: Verificar si existen Consejos Comunales dependientes.
-            // Asumimos que el modelo ConsejoComunal tiene un campo 'comunaId'
-            const dependentCCs = await tx.consejoComunal.count({
-                where: { comunaId: id }, 
-            });
-
-            if (dependentCCs > 0) {
-                // Si hay CCs, lanzamos un error que será capturado y devuelto con status 409.
-                throw new Error("Conflict: La Comuna tiene Consejos Comunales asociados y no puede ser eliminada. Elimine los Consejos Comunales primero.");
-            }
-
-            // 2. ENCONTRAR Y LIMPIAR RELACIONES M:N (Persona[])
-            // Limpiamos explícitamente todas las relaciones M:N para evitar fallos
-            // si el campo de la relación no tiene 'onDelete: Cascade'.
-            const comuna = await tx.comuna.findUnique({ where: { id } });
-            
-            if (!comuna) {
-                // Lanzamos un error si no se encuentra (será capturado por el catch de P2025)
-                throw new Error("Comuna no encontrada");
-            }
-            
-            await tx.comuna.update({
-                where: { id },
-                data: {
-                    bancoDeLaComuna: { set: [] },
-                    titularesComisionElectoral: { set: [] },
-                    suplentesComisionElectoral: { set: [] },
-                    titularesContraloria: { set: [] },
-                    suplentesContraloria: { set: [] },
-                    parlamentoComuna: { set: [] },
-                    consejoJusticiaPaz: { set: [] },
-                    // Nota: 'consejosComunales' no se limpia aquí porque la Comuna es el lado 1 de la relación.
-                } as any,
-            });
-            
-            // 3. ELIMINAR LA COMUNA
-            const result = await tx.comuna.delete({
-                where: { id },
-            });
-            
-            return result; 
-        });
-        
-        return NextResponse.json({ message: "Comuna eliminada exitosamente." }, { status: 200 });
-
-    } catch (error: any) {
-        if (error.code === 'P2025' || error.message === "Comuna no encontrada") {
-            return NextResponse.json({ error: "No se pudo encontrar la Comuna a eliminar." }, { status: 404 });
-        }
-        if (error.message.startsWith("Conflict:")) {
-             // Devolvemos 409 Conflict si la Comuna tiene dependencias
-             return NextResponse.json({ error: error.message.replace("Conflict: ", "") }, { status: 409 });
-        }
-        
-        console.error(`Error eliminando Comuna con ID ${id}:`, error);
-        return NextResponse.json({ error: "Error al eliminar la Comuna." }, { status: 500 });
-    }
-}

@@ -179,7 +179,7 @@ const Personas: React.FC = () => {
 
           <Button
             onClick={() => setIsModalOpen(true)}
-            title={"Registrar una nueva persona"}
+            title={"Registrar una persona"}
           />
         </div>
       </div>
